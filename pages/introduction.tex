@@ -1,9 +1,6 @@
 \section{Introduction}
 
 \subsection{Motivation}
-
-% #### Motivation
-
 \paragraph{}
 
 With the emergence of COVID-19, work from home has rapidly grown in popularity. It has been especially noticeable in the IT industry. This phenomenon has led some businesses to transition to operate fully remote \cite{ozimek2020future}, allowing for potential customers, clients, and employees to operate with the companies' IT systems from all around the globe.
@@ -14,32 +11,33 @@ Establishing identity online for potential employees and clients is not the only
 
 After the EU introduced the eIDAS regulation, an alternative method for identity verification became available. All EU member states are mandated to implement an eID solution in their country and recognize other countries' eID solutions \cite{eulaw-eidas}. Each eID solution comes with an identity certificate and means to prove it by signing a challenge via public-key cryptography. Because of this regulation, it is now possible to obtain a persons' legal identity with trustworthy means.
 
-Particular risks exist that businesses must be aware of before integrating an eID authentication service. There are no comprehensive resources outlining the obstacles and costs associated with implementing eID in the private sector. Lack of information makes it difficult to assess risks and estimate the resources required [?\todo{Cite}]. Unknown risks are an excellent deterrent for innovation and make companies reluctant to use new technologies. Proper research into this subject may lead companies to take risks associated with the implementation and kickstart the mainstream adoption of eIDs in the private sector. 
+Particular risks exist that businesses must be aware of before integrating an eID authentication service. There are no comprehensive resources outlining the obstacles and costs of implementing eID authentication in the private sector. Lack of information makes it difficult to assess risks and estimate the resources required [?\todo{Cite}]. Unknown risks are an excellent deterrent for innovation and make companies reluctant to use new technologies. Proper research into this subject may lead companies to take risks associated with implementation and kickstart the mainstream adoption of eIDs in the private sector. 
 
-% #### Research Problem
+\subsection{Research Problem}
+\paragraph{}
 
-% Convincing investors requires to conduct viability analysis, and analyze different options. The comparison of options can be the basis of my research question:
+The main goal of the thesis is to investigate if the advantages provided by eIDs are sufficient to warrant adoption in the free market and to shine a light on the costs associated with implementation. From this goal, the extracted research question is as follows: 
 
-% > What are the differences between different eID authentication options available to a large Estonia based, EU market targeting company, wishing to implement it as an identity provider in their Web-based Single Sign-On (SSO)?
+\textbf{What is the best eID authentication option available for an Estonian EU targeting enterprise for use in their Web-based Single Sign-On (SSO)?}
+\todo{Maybe it would be good to change to "is the market ready"}
 
-% We can dissect the more ambiguous parts of the question into additional sub-questions:
+The research question can be refined further into additional sub-questions:
 
-% > **differences between**
-% > What is the criteria (properties/aspects) for comparing different options?
-% >
-% > **different eID authentication options**
-% > What eID authentication options are available to the Estonia's private sector?
-% >
-% > **EU market targeting**
-% > What is the market reach (in countries) of implementing a given solution?
-% >
-% > **to implement [eID authentication]**
-% > What are the operational, contractual, development, and maintenance costs or considerations associated to implementing and using an eID solution?
+\begin{itemize}
+    \item What advantages do eIDs provide?
+    \item What technological risks companies must address to implement the solution?
+    \item What privacy considerations must companies take when processing user data?
+    \item What are the categories of eID authentication solutions\todo{QESD vs. middleware}
+    \item What are the different eID authentication options available to Estonia's private sector?
+    \begin{itemize}
+        \item What risks the eID provider transfers?
+        \item What is the market reach (in countries) of a given solution?
+        \item Where are the weak points in the protocol used? How should a company assess them?
+    \end{itemize}
+\end{itemize}
 
-% Additionally, there is a small security/liability concern regarding validity of signatures, and that could influence the decision making process of a business:
-
-% > What are the security, liability guarantees provided by each of the eID providers?
-
+\subsection{Scope and goal}
+\paragraph{}
 % #### Scope and goal
 
 % ###### Preparation:
@@ -201,3 +199,15 @@ Particular risks exist that businesses must be aware of before integrating an eI
 % The research method would be exploratory. The idea is to compare different options, therefore discovery of options, and comparison is required. Each option will be measured by market reach, trust level, operational cost (fixed, variable), and implementation complexity. Market reach, trust level, and operation costs are part of the discovery process and are answerable by reading trough the literature. The implementation complexity analysis will use a model to assign a complexity to the documentation and the implementation process, and compare received value with other eID providers. No recommendations will be made with respect to if it is worth implementing an eID solution, as the context will be different from business to business, however some objective conclusions could still be brought out out of the comparison.
 
 % Validation process would be reproducing the steps outlined in the Scope chapter. Most of the comparison points are publicly available, and the complexity analysis would need to follow the same steps, as outlined in the framework.
+
+\paragraph{Structure of work}
+The document will consist of the following main chapters:
+
+\TODO{ISO standard to pick trust level for if companies even need it}
+\TODO{What are different options in eIDAS, e.g. what is a QESSD}
+\TODO{What are the differences between primary services and middlemen, advantages disadvantages}
+\TODO{What are the weakpoints in the company structrue}
+\TODO{What is the research model?}
+\TODO{Findings about ID Card, Dokobit, and eeID}
+\TODO{Non web-based SSO?}
+\TODO{Ponder about the advantages of middleware pseudominization? Say instead of personal code you get some arbitrary ID that matters only in the system}
