@@ -1,5 +1,6 @@
 \section{Introduction}
 
+
 \subsection{Motivation}
 \paragraph{}
 
@@ -12,6 +13,7 @@ Establishing identity online for potential employees and clients is not the only
 After the EU introduced the eIDAS regulation, an alternative method for identity verification became available. All EU member states are mandated to implement an eID solution in their country and recognize other countries' eID solutions \cite{eulaw-eidas}. Each eID solution comes with an identity certificate and means to prove it by signing a challenge via public-key cryptography. Because of this regulation, it is now possible to obtain a persons' legal identity with trustworthy means.
 
 Particular risks exist that businesses must be aware of before integrating an eID authentication service. There are no comprehensive resources outlining the obstacles and costs of implementing eID authentication in the private sector. Lack of information makes it difficult to assess risks and estimate the resources required [?\todo{Cite}]. Unknown risks are an excellent deterrent for innovation and make companies reluctant to use new technologies. Proper research into this subject may lead companies to take risks associated with implementation and kickstart the mainstream adoption of eIDs in the private sector. 
+
 
 \subsection{Research Problem}
 \paragraph{}
@@ -27,7 +29,7 @@ The research question can be refined further into additional sub-questions:
     \item What advantages do eIDs provide?
     \item What technological risks companies must address to implement the solution?
     \item What privacy considerations must companies take when processing user data?
-    \item What are the categories of eID authentication solutions\todo{QESD vs. middleware}
+    \item What are the categories of eID authentication solutions?\todo{QESD vs. middleware}
     \item What are the different eID authentication options available to Estonia's private sector?
     \begin{itemize}
         \item What risks the eID provider transfers?
@@ -36,9 +38,16 @@ The research question can be refined further into additional sub-questions:
     \end{itemize}
 \end{itemize}
 
+
 \subsection{Scope and goal}
 \paragraph{}
-% #### Scope and goal
+
+In the thesis, there will be some assumptions in place about the company wishing to implement eID authentication:
+
+\begin{itemize}
+    \item Company in question already uses an HTTP-based SSO (in the cloud or on-premises);
+    \item Company is willing to spend money for operational costs;
+\end{itemize}
 
 % ###### Preparation:
 
@@ -89,110 +98,19 @@ The research question can be refined further into additional sub-questions:
 % > 3. Operational cost (fixed, variable)
 % > 4. Implementation complexity
 
-% #### Literature review
+\subsection{Contribution}
+\paragraph{}
 
-% Most of the contextual questions can be answered from literature review. Due to the practical nature of the research, 
+The thesis aims to fill the research gap for the use of eID in the private sector. There is some research about connecting eIDAS nodes, but the focus was to connect eIDAS nodes of other countries and not connect customers to the eIDAS infrastructure.
 
-% ##### eIDAS
 
-% The eIDAS regulation [3] provided the groundwork for recognizing the signatures issued by other EU countries, by imposing strict security and privacy requirements. A concept of a Trust Service Provider (TSP) is established, which means every entity with that status, can be legally considered as a source of truth. Each member state maintains a list of TSP, with entities being trusted for certain tasks, such as timestamping, issuing certificates, or performing other trust activities. The regulation also requires member states to establish eID systems, if they haven't already, and make them able to be integrated in a federal system.
 
-% The regulation was the basis for creating the eIDAS network. At its core, there are nodes [4]. These nodes connect to one another across countries, allowing users to authenticate with the eID of their home (issuer) country in host (current residence) country. This is done by redirecting the authentication request to the appropriate country, federating the identification process. This is useful, as one service provider would be able to open up the entirety of EU market. The main issue with using eIDAS nodes as an authentication method, is the restricted access to it. In email correspondence I learnt that in Estonia, access to this service is limited to public sector only, with plans to open it up to private sector in 2022.
+* The two researches done about the private sector focused on only the eIDAS implementation. 
+* Development cost analysis is ignored. 
+* No instructions as to how to properly connect to eIDAS node for businesses. 
+* No research has been done on the development costs on any of the Estonia's eID authentication methods.
 
-% ##### Attempts of eIDAS implementations in private sector
-
-% In academic literature, there are only two well documented cases of how the private sector would access the eIDAS node network.
-
-% ###### eID@Cloud
-
-% The project eiD@cloud [5], conducted May 2017 to September 2018, has discovered certain issues when attempting to connect to the infrastructure. It has discovered that there's still some differences between the national schemes and the integrations of said national schemes in a unique and interoperable net that must be the eIDAS in the context of the EU, and the deployment of each eIDAS node of each member state by the national politics go at different speeds, which create mistakes and lack of availability to complete the eIDAS project. The authors are pessimistic about the prospect that fully connected Europe can be achieved soon.
-
-% ###### LEPS
-
-% LEPS [6], conducted September 2017 to November 2018 has tried to achieve similar goals to eID@Cloud - to identify gaps in the eIDAS infrastructure. The main challenge identified, much like in the previous research, is the lack of Service Providers, the private sector could use to interface with the eIDAS network.
-
-% ##### eID providers in Estonia
-
-% Applied Cyber Security Group of University of Tartu maintains a list of e-services [7] which uses at least one eID authentication method in Estonia. The following authentication methods were listed: Bank Link, ID-card, Mobile-ID, Smart-ID, TARA, and HarID. 
-
-% ###### Bank Link
-
-% This method of authentication is primarily created for e-services to provide close integration with banks for easier payments. Additionally, it provides an additional method of authentication to those e-services [8]. In a thesis conducted in 2012 [9], it was discovered that "Internet bank authentication [is] extremely insecure". In the years after the publication, the security got significantly better, however even then, from March of 2021 RIA no longer supports authentications with TARA, due to lack of security assessments with regards to eIDAS [https://cybersec.ee/2021/02/22/cyber-security-newsletter-2021-02-22/].
-
-% Due to lack of security scrutiny required to satisfy eIDAS, and a poor market reach, this authentication method will not be considered  purposes of this thesis.
-
-% ###### ID-card
-
-% Id cards are by far the most popular way to access their eID in Estonia, which is primarily due to the legal requirement of having one. Chapter 2 of the Identity Documents Act [10] requires all EU citizens residing in Estonia to hold an ID-card, with which they could access public services online. Because of this quirk, there are more active ID-cards issued, than there are people in Estonia [11].
-
-% There are no variable costs to allow persons to log in to websites with their ID-card, as there are no per-transaction costs for ID card authentication as the certificate validity service (OCSP) can be queried for free [12]. 
-
-% Based on the countries internal policies, the chips on ID-cards can have different data layouts, as it is not standardized. This means that there must be a specialized piece of software to read different countries' ID-cards, requiring additional development costs.
-
-% Certificates to be installed in ID-cards are issued by SK ID Solutions which is a trust service provider for Qualified Certificates for e-signatures [13]
-
-% ###### Mobile-ID
-
-% 5 years after ID cards were started to be used in Estonia, SK ID Solutions, developed a mobile phone friendly way to access the users' eID for use in Estonia, and Lithuania [14]. This was done by extending the functionality of SIM cards to make them mimic functionality of ID-cards.
-
-% The price of using Mobile-ID for the service provider varies based on usage, staring from 10 euro per month (10ct per request), to costing over 5 000 euro, where the effective cost is under 1ct for request [15]. For the end user, mobile operators can charge extra for their monthly subscription fee, based on the contract they have with them.
-
-% Implementation of Mobile-ID would allow service providers to access the markets of two countries: Estonia, and Lithuania, as the technical implementation is identical.
-
-% Investigating the poor market size of users using Mobile-ID, implementation analysis will be left outside of scope of the thesis.
-
-% Certificates to be installed in SIM cards capable of using Mobile-ID are issued by SK ID Solutions which is a trust service provider for Qualified Certificates for e-signatures [13].
-
-% ###### Smart-ID
-
-% Smart-ID is the latest, and fastest growing source of eID, working in all 3 of the Baltic States [16]. It utilizes mobile phones as authentication, however unlike Mobile-ID, it does not require external hardware, and everything is handled in a combination of on-server and on mobile phone. Despite that, it is still eIDAS compliant, and was recognized as a QSCD, allowing it to create QES in 2018 [17].
-
-% The price of using Smart-ID for service providers, much like Mobile-ID varies based on usage, staring from 50 euro per month (10ct per request), to costing over 20 000 euro, where the effective cost is under 1ct for request, based on the total amount of transactions performed within a month [18]. For users, unlike Mobile-ID, there are no telecommunication operators involved and there are no costs associated to using Smart-ID.
-
-% Implementation of Smart-ID would allow users to access the markets of three countries: Estonia, Latvia, and Lithuania.
-
-% Part of the certificate used by Smart-ID is stored by SK ID Solutions which is a trust service provider for Qualified Certificates for e-signatures [13]. The other part is stored on the device of the user.
-
-% ###### TARA
-
-% TARA is the Estonia's eIDAS node interface [19]. It provides the ability for users to sign in with the 3 primary sources of identity in Estonia, and with the eID schemes of other EU member states. According to the business description [20], its use is intended for governmental agencies only, and would not work in a private setting.
-
-% ###### eeID service
-
-% This is a service, that uses TARA as its trust anchor for authentication, allowing users to authenticate with all of the methods provided by TARA [21]. The main difference, is that this method is targeting the private sector, enabling companies to access entirety of EU eID market.
-
-% The service is new and does not have pricing tiers, and currently sits at 9ct per request, regardless of the amount of requests [22].
-
-% Using eeID service would allow users to access the markets of all eIDAS countries, which will eventually include all of EU and EEA. Right now the list of countries (14) are as follows: Estonia, Germany, Italy, Spain, Belgium, Luxembourg, Croatia, Portugal, Latvia, Lithuania, Netherlands, Czech Republic, Slovakia, and Denmark.
-
-% ###### HarID
-
-% This service was created for the youth of Estonia to access different educational institutions across Estonia [23]. ID-cards are only legally required to be held by citizens over age of 15, so everyone under, would have unable to access their school system. HarID accepts TARA sign in methods, and username & password. This authentication method is not accessible by non-education sector, and will be skipped for the purposes of this thesis.
-
-% ###### Dokobit
-
-% In the initial list of services using eID in Estonia, one service stood out - Dokobit [24]. They provide resources similar to eeID, in the way that they aggregate different eID methods (ID-card, Mobile-ID, and Smart-ID), as well as eID methods from other countries. The main difference between it, and eeID, is that authentication achieved by using the native implementations of the publicly available resources of each country, rather than relying on the eIDAS infrastructure.
-
-% Pricing for Dokobit varies drastically, and the provided prices for the Baltic States [25] starts at 50 euro per month (7.1ct per request), going down to 4.2ct per request at 500 euro per month.
-
-% Dokobit supports 11 countries: Estonia, Italy, Spain, Belgium, Latvia, Lithuania, Finland, Norway, Iceland, Poland, and Portugal [24].
-
-% UAB Dokobit is a trust service provider for Qualified validation of qualified e-signature. It means that the service itself does not provide certificates, but validation of signatures is considered to be trustworthy under eIDAS.
-
-% ##### Research methodology
-
-% ###### Development complexity
-
-% One of primary outcomes of the research is to measure the complexity of the development. A model [26] will be used to measure the complexity of the examples and documentation provided by the services, and assign that to measurable values, which can be compared.
-
-% #### Novelty
-
-% * The two researches done about the private sector focused on only the eIDAS implementation. 
-% * Development cost analysis is ignored. 
-% * No instructions as to how to properly connect to eIDAS node for businesses. 
-% * No research has been done on the development costs on any of the Estonia's eID authentication methods.
-
-% This thesis aims to fill the gaps by providing implementation instructions and comparison of 4 eID providers: Estonian ID-card, Smart-ID, Dokobit, and eeID.
+This thesis aims to fill the gaps by providing implementation instructions and comparison of 4 eID providers: Estonian ID-card, Smart-ID, Dokobit, and eeID.
 
 % #### Research methods
 
