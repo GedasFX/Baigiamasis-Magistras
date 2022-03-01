@@ -16,9 +16,6 @@ Depending on the country a company would like to access the market, eID sign-in 
 
 In different countries, the eID solution may vary wildly. There can also be more than one eID solution in a singular county.
 
-\subsubsection{Impact }
-
-
 
 \subsection{eIDAS}
 
@@ -114,13 +111,24 @@ Estonian Ministry of Education and Research created this service for the youth o
 
 \subsubsection{Dokobit}
 
-In the initial list of services using eID in Estonia, one service stands out - Dokobit \cite{dokobit}. They provide services comparable to eeID in that they aggregate different eID methods of Estonia (ID-card, Mobile-ID, and Smart-ID) and other countries. The primary difference between the authentication providers is the multi-national implementation goals - Dokobit relies on integrating each system individually. In contrast, eeID relies on piggybacking of the eIDAS infrastructure \cite{eeid}.
+In the initial list of services using eID in Estonia \cite{ut-eidinestonia}, one service stands out - Dokobit \cite{dokobit}. They provide services comparable to eeID in that they aggregate different eID methods of Estonia (ID-card, Mobile-ID, and Smart-ID) and other countries. The primary difference between the authentication providers is the multi-national implementation goal - Dokobit relies on integrating each country's system individually. In contrast, eeID depends on using the framework of the eIDAS infrastructure \cite{eeid}.
 
 Pricing for Dokobit varies drastically, and the provided prices for the Baltic States \cite{dokobit-pricing} start at 50 euros per month (7.1ct per request), going down to 4.2ct per request at 500 euros per month.
 
 Dokobit supports 11 countries: Estonia, Italy, Spain, Belgium, Latvia, Lithuania, Finland, Norway, Iceland, Poland, and Portugal \cite{dokobit}.
 
 UAB Dokobit is a trust service provider for Qualified validation of qualified e-signature. It means the service itself does not provide Digital Signature certificates, but eIDAS considers the results of validation of signatures trustworthy \cite{eu-trustservices}.
+
+\subsection{Authentication and eID and QSCD}
+
+\TODO{Maybe find a better spot for this section}
+\TODO{Fact check?}
+
+The requirements for Estonian ID cards make a clear distinction between "ADF AWP" and "ADF QSCD" applications. Both software applications are loaded onto the smart card; however, only the QSCD application, guarded by PIN2, can create QES. Implication here is that for authentication with an ID card, a QSCD is not used.
+
+Fundamentally, the only legal guarantees provided by eIDAS require the use of QSCD \cite{eulaw-eidas}, and for authentication this process, this device is not used \cite{ee-id-tech}. It is up to the relying party to trust the authentication certificate and signature associated with the authentication challenge. This technicality affects business in only the document signing part of the business - using encryption or authentication certificates does not provide the necessary legal guarantees.
+
+Similarly, when using a third-party provider such as TARA (eeID) or Dokobit, the new eID provider acts as a new trust anchor. Companies must consider the risks of using such providers, as adding any middleware increases the attack surface on the company. 
 
 % ##### Attempts of eIDAS implementations in private sector
 

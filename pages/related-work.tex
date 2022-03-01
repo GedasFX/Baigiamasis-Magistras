@@ -1,0 +1,56 @@
+\section{Related Work}
+
+\subsection{National e-ID card schemes: A European overview}
+
+In 2008, researcher Siddhartha Arora investigated different uses of eID in Europe \cite{ARORA200846}.
+
+The published technical report leads us to believe that at the time, the eID technology was still in its infancy, and the concept of eID was tied to it being linked to a physical ID card.
+
+Paper references that eID cards offer three forms of information security functionality: identification, authentication, and signature (see table \ref{tab:formsofinfosecurity}).
+
+\begin{table}[h]
+    \begin{center}
+        \caption{Forms of information security functionality provided by eID \cite{ARORA200846, fiat1986prove}}
+        \label{tab:formsofinfosecurity}
+        \begin{tabular}{p{0.25\linewidth} | p{0.6\linewidth}}
+            Identification (I) & A can prove to B that he is A, but someone else can not prove to B that he is A. \\
+            Authentication (A) & A can prove to B that he is A, but B can not prove to someone else that he is A. \\
+            Signature (S)      & A can prove to B that he is A, but B can not prove to himself that he is A.
+        \end{tabular}
+    \end{center}
+\end{table}
+
+The idea of splitting functionality into identification, authentication, and signature can be verified today in Estonian \cite{ee-id-tech}, and Lithuanian \cite{lt-id-howtouse} ID cards. In these cards, there are two certificates — one for client authentication and the second for digital signature.
+
+These authentication and identification certificates are not encrypted, and can anyone with the correct tools can read them from the ID card. Signed documents also have a copy of the certificate attached. These certificates identify a person, but due to ease of replication, the recipient should not trust the sender's certificate because there are no guarantees that the certificate belongs to the sender. 
+
+The authentication and signing certificates require their respective keys to perform asymmetric cryptographic operations. In theory, it is possible to sign documents with the authentication certificate; however, the verification software will reject such signatures because the certificate's purposes would not include digital signature.
+
+\todo{Maybe move this out?}
+
+The paper mentions Austria wants to have multiple sources of eID, not limit themselves only to one card. Many countries followed suit, and in Estonia, there are three primary sources of eID. In France, a source of eID doesn't even come from an ID card \cite{eidas-notify-france}.
+
+The paper's conclusion emphasizes the importance of the eID itself, not ID cards. The EU took this path when implementing the legislation for eIDAS, which allowed easier integration of infrastructure member states already had in place.
+
+\subsection{The Austrian eID ecosystem in the public cloud: How to obtain privacy while preserving practicality}
+
+This paper explores what information the Austrian government stores on the issued identity documents and what operations the documents can perform \cite{ZWATTENDORFER201635}. Researchers identified four types of functionality: identification and authentication of Austrian citizens, qualified electronic signature creation, encryption and decryption, data storage. This functionality matches Estonia's ID card.
+
+Paper presented an interesting issue - Austria does not allow a person identifying code (CRR number) to be "used directly in e-Government applications due to legal data protection restrictions." Austria has created SourcePIN, where it is possible to create different ones for each service trying to access it \cite{ZWATTENDORFER201635,austria-eid-presentation}.
+
+The paper's main contribution to the thesis is to remind that even though technological barriers are crumbling, there might still be legal obstacles to overcome. Austria is currently not part of the eIDAS node network, and it would be an excellent opportunity for further research to investigate what information Austria's eIDAS node provides.
+
+The big concern of the study is that everything goes through one single source of trust, which does not scale well. If many people wanted to use the system, it would quickly become a bottleneck. Moving many essential components to the public cloud can alleviate the problem.
+
+\subsection{Secure cross-cloud single sign-on (SSO) using eIDs}
+
+The idea behind this paper seems to be very close to what I am trying to do. Researchers explore the possibility of users using an SSO system to log in via their eID instead of the traditional username/password authentication method \cite{secure-signon}. As means of doing so, they explore the capabilities of the STORK framework and other frameworks seen in previous references. The STORK framework is the predecessor to eIDAS \cite{stork}.
+
+The idea of the STORK framework is that any EU citizen should be able to use their eID issued by their home country to authenticate with services in other countries. An example of an activity would be opening a bank with an Italian ID card. The paper suggests extending the framework to support federation so private business identity providers can use the security options provided by eIDs and not store weak passwords.
+
+The paper shows a proof of concept prototype usage for bringing STORK to support SSO. Emphasis was given on the backward compatibility, not to require any breaking changes to an existing STORK protocol.
+
+Researchers found that one SAML protocol, however similar they may be, is not compatible with one another. The consumer company wishing to implement the proposed protocol will have to make an adapter to implement different ID providers, such as STORK and Google. Ultimately it is an acceptable compromise.
+
+\subsection{Electronic identity verification: personal data protection challenges and risks}
+
