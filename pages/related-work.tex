@@ -22,7 +22,7 @@ Paper references that eID cards offer three forms of information security functi
 
 The idea of splitting functionality into identification, authentication, and signature can be verified today in Estonian \cite{ee-id-tech}, and Lithuanian \cite{lt-id-howtouse} ID cards. In these cards, there are two certificates — one for client authentication and the second for digital signature.
 
-These authentication and identification certificates are not encrypted, and can anyone with the correct tools can read them from the ID card. Signed documents also have a copy of the certificate attached. These certificates identify a person, but due to ease of replication, the recipient should not trust the sender's certificate because there are no guarantees that the certificate belongs to the sender. 
+These authentication and identification certificates are not encrypted, and can anyone with the correct tools can read them from the ID card. Signed documents also have a copy of the certificate attached. These certificates identify a person, but due to ease of replication, the recipient should not trust the sender's certificate because there are no guarantees that the certificate belongs to the sender.
 
 The authentication and signing certificates require their respective keys to perform asymmetric cryptographic operations. In theory, it is possible to sign documents with the authentication certificate; however, the verification software will reject such signatures because the certificate's purposes would not include digital signature.
 
@@ -54,10 +54,43 @@ Researchers found that one SAML protocol, however similar they may be, is not co
 
 \subsection{Electronic identity verification: personal data protection challenges and risks}
 
-The thesis outlines the conflicting requirements of eIDAS or any other eID law with GDPR \cite{gdpr-thesis}. In the first part, the author presents the history and fundamentals of data protection in the EU. A significant portion of the thesis was allocated to describe the eIDAS law and how it affects privacy. 
+The thesis outlines the conflicting requirements of eIDAS or any other eID law with GDPR \cite{gdpr-thesis}. In the first part, the author presents the history and fundamentals of data protection in the EU. A significant portion of the thesis was allocated to describe the eIDAS law and how it affects privacy.
 
-The second part of the thesis performs a couple of case studies. 
+The second part of the thesis performs a couple of case studies.
 
-The first case study is about Smart-ID. 
+The first case study is about Smart-ID.
 
 \TODO{Try to even talk about this trainwreck of a thesis with misleading sources?}
+
+\subsection{EID @ Cloud: integración de la identificación electrónica en plataformas europeas en la nube de acuerdo con el reglamento eIDAS.}
+
+This paper talks about integrating a new eIDAS node with the private sector in mind \cite{guerola2019eid}. The eID@Cloud research initiative has proven it possible to allow private citizens to integrate this system to authenticate persons. Potential does not mean ready and outlines some issues that need addressing.
+
+Even though the eIDAS node infrastructure brings apparent benefits to the citizens, the public, private entities, and the service vendors, there are still caveats that slow the final integration of the EU digital identity platform. The project eiD@cloud shines light upon these barriers:
+
+\begin{enumerate}
+    \item There are still some differences between the national schemes and the integrations of said national schemes in a unique and interoperable net that must be the eIDAS in the context of the EU.
+    \item The deployment of each eIDAS node of each member state happens at different speeds, creating mistakes and a lack of availability to complete the eIDAS project. 
+\end{enumerate}
+
+The interoperability testing consisted of accessing each partner's cloud platforms to verify the identities that belonged to the citizens of the other partners' countries. Norway's eIDAS node did not work with other countries' eID - the protocol executes correctly, but the user incorrectly received an error message asking for Norway identification. It shows that some parts of the system were not stable at the research time, but the whole infrastructure continued to run.
+
+The eID@Cloud was a great project testing the implementation and readiness for public and private sectors, which provided excellent feedback for the EU Commission. The most important finding is that it would be possible for private entities to connect to the mesh.
+
+\subsection{LEPS - Leveraging eID in the private sector}
+
+This final research \cite{Martin2019303} was performed at a similar time to the eID@cloud \cite{guerola2019eid}, but in different countries. LEPS researchers 
+have implemented an eIDAS node for private customers. However, they also provided market analysis.
+
+The market analysis targeted four main categories of e-service providers:
+
+\begin{enumerate}
+    \item Organizations that need or want to migrate from the existing identity and access management (IAM) solution. This could apply to organizations that have scaled out their internal or tailor-made IAM solutions or organizations that already use partially external or third-party e-identification or authentication services but are looking for a higher level of assurance (LoA).
+    \item Organizations that use low assurance third-party eID providers such as a social login want to elevate the overall level of security and decrease identity theft and fraud by integrating eIDAS eID services.
+    \item Organizations that are already acting or could be acting as eID brokers.
+    \item Organizations that want to open new service delivery channels through mobile phone and are interested in mobile ID solutions that work across borders.
+\end{enumerate}
+
+In the case of the thesis, the targeted e-service providers are of the first category - organizations wishing to improve IAM solutions to include a higher level of assurance.
+
+The researchers recommend using an approach like LEPS to integrate eID authentication rather than creating an eIDAS node. The primary reason for avoiding node creation would be the cost-effectiveness of implementation, as these adopters "are unlikely to have the know-how, resources, and capacity to implement eIDAS connectivity." "Many organizations do not have resources for eID service implementation and operation internally was already exploited by social networks." The targeted benefit is the "easy way to integrate highly scalable, yet low assurance, eID services."
