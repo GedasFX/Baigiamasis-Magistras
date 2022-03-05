@@ -23,10 +23,14 @@
         }
     ],
     "cSpell.words": [
+        "Antiforgery",
         "Arora",
         "Dokobit",
+        "getenv",
         "OCSP",
         "QSCD",
-        "QTSP"
+        "QTSP",
+        "signin",
+        "webeid"
     ]
 }
