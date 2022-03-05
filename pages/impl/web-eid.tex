@@ -15,7 +15,7 @@ The high level overview of the complete flow of data within the Web eID framewor
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.58]{webeid/Web-eID-authentication-communication-diagram}
+    \includegraphics[scale=0.6]{webeid/Web-eID-authentication-communication-diagram}
     \caption{Web eID Authentication flow \cite{ria-webeid-systemarchitecture}}
     \label{fig:web-eid-authentication}
 \end{figure}
@@ -27,7 +27,9 @@ The high level overview of the complete flow of data within the Web eID framewor
 
 % \subsubsection{Legal Power}
 
-% \subsubsection{Risks Transferred and other benefits}
+\subsubsection{Risks Transferred and other benefits}
+
+Unlike Dokobit of eeID, most of the risks the only risks transferred are the ones related to 
 
 % \subsubsection{Maturity and life use cases}
 
@@ -216,7 +218,21 @@ In the case of Estonia's single TSP, we can see that only 3 CA are currently ope
     \label{fig:eu-tsp-skid}
 \end{figure}
 
-An alternative way to obtain certificates 
+An alternative way to obtain certificates would be to go to the government authority of each country responsible for the distribution of certificates. This action requires prior knowledge of who is responsible for issuing certificates and their purposes.
+
+In Lithuania's case, it is the Ministry of the Interior \cite{eid-lt-ministryofinterior-certificates} who issue two certificates (A and B) every couple of years. As of early 2022, four certificates are active, and all will be added to the trusted CA list.
+
+In Estonia's case, SK ID Solutions manages the CA certificates \cite{eid-ee-skid-certificates}. Of the three certificates found on the EU Trust Services Dashboard, only two are relevant to us, the 2015 and 2018 ones, as the 2016 one has its purpose for use in Smart-ID, which the Web eID framework does not support.
+
+The final list of certificates to support Lithuania and Estonia include four certificates from Lithuania's Ministry of the Interior and two certificates issued by SK ID Solutions for a total of six. It is essential to keep track of these certificates as each one of them acts as a point of compromise and must be monitored in the event they are revoked for security \cite{roca-vulnerability-lessons-learned} or other issues.
+
+\paragraph{Exposing the service}
+
+With the certificate validation service configured, it is now required to link it to the Web API. If the company orients around using microservices, this service can be just that. All that the validation service requires is to expose an endpoint that accepts a nonce and a token from the javascript library and returns a validation result.
+
+Proper measures must be taken to protect this service from adversaries as it acts as an important trust anchor for the company. Developers should take measures outlined in assume breach \todo{citation missing}.
+
+\TODO{Related research about legal persons documents?}
 
 \TODO{High-level overview of the system}
 \TODO{Points of compromise?}
