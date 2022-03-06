@@ -133,30 +133,6 @@ Similarly, when using a third-party provider such as TARA (eeID) or Dokobit, the
 When dealing with eID, sensitive personal data processing is required.
 \TODO{GDPR section}
 
-\subsection{Federated Identity Architecture of the European eID System}\todo{Does this belong in related work? This paper is de-facto required background}
-
-The authors of this paper describe the current situation in the identity management landscape \cite{federated-europe-identity}. The researchers provide all the necessary background information to understand the implementation details of any eID authentication system design.
-
-\subsubsection{Authentication methods}
-
-The first significant contribution relates to explaining different ways of authenticating persons.
-
-Any authentication method is based on something user knows (password, pin code, answer to security question), is (biometrics - eyes, fingerprints), or has (physical device - key card, USB device) \cite{o2003comparing}. Any other method would leave the person without agency over the authentication process.
-
-An emphasis is put on the importance of mixing and matching these authentication schemes to increase the system's security.
-
-\subsubsection{Authentication Paradigms and Models}
-
-The second helpful point of the paper is the description of different identity management paradigms and models \cite{identity-paradigms}. Paradigms refer to the implementation and deployment, whereas models refer to the data storage and roles.
-
-The three main paradigms as network, service, or user-centric. The network-centric approach gathers all identities into one place, usually known as a "Domain Controller." The service-centric method would create a new identity for each service, leading to high duplication. The user-centric paradigm makes the user prove their own identity. Europe's eID solution does not favor any of the paradigms allowing identity providers to innovate \cite{eelaw-idcard,eeid,dokobit}.
-
-There are also three authentication models: isolated, centralized, and federated. Unlike paradigms, where any of them is fair game, Europe's identity providers can use only the federated one. The isolated model requires all services to hold a copy of every identity in the EU. The centralized model is suitable for having a central place for looking up identity in a country, and it is an excellent solution for high-profile agencies. The federated system has the advantage of scaling well horizontally and not requiring to keep an index of all citizens it would like to serve, which is a tremendous advantage in the world of GDPR.
-
-\subsubsection{Authentication protocols and services}
-
-Researchers have allocated a good portion of the paper to provide an overview of potential protocols and implementations. The list is massive and in-depth; however, it becomes clear that SAML \cite{saml}, OAuth2.0 \cite{rfc6749}, and OpenID Connect \cite{oidc} protocols are by far the most popular protocols to choose for implementation. The engineers behind the eIDAS network implementation decided to settle on the SAML protocol.
-
 % ##### Research methodology
 
 % ###### Development complexity
