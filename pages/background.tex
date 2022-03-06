@@ -18,45 +18,49 @@ In Estonia, all three major authentication options, ID card, Mobile-ID, and Smar
 
 \subsection{eIDAS}
 
-The eIDAS regulation \cite{eulaw-eidas} provided the groundwork for recognizing the signatures issued by other EU countries by imposing strict liability and mutual-recognition requirements. The regulation introduced the concept of a Trust Service Provider (TSP), which allowed relying parties to have a trust anchor. Each member state maintains a list of TSPs, where each TSP is certified to perform specific tasks, such as timestamping or issuing signing certificates. The regulation also requires member states to establish eID systems, if they haven't already, and make them able to be integrated into a federal system.
+The eIDAS regulation \cite{eulaw-eidas} provided the groundwork for recognizing the signatures issued by other EU countries by imposing strict liability and mutual-recognition requirements. The regulation introduced the concept of a Trust Service Provider (TSP), which allowed relying parties to have a trust anchor. Before, with digital signatures, it was possible to verify that the person signed documents with a certificate and it was valid. However, there was no good way of ascertaining if a trusted authority issued the signing certificate. The role of establishing trust is the purpose of TSPs. Each member state maintains a list of their TSPs, where each TSP is certified to perform specific tasks, such as timestamping or issuing signing certificates.
 
-The regulation was the basis for creating the eIDAS node network \cite{carretero2018federated}. These nodes connect across country borders, allowing users to authenticate with the eID of their home (eID issuer) country in the host (current residence) country. The eIDAS authentication protocol redirects the authentication requests to the appropriate country, federating the identification process. For the institutions trying to target the EU market, this provides a significant advantage since access to one node would mean access to all nodes in the EU.
+The regulation also requires member states to establish eID systems and integrate them into a federal plan if they haven't already. This regulation was also the basis for creating the eIDAS node network \cite{carretero2018federated}. These nodes connect across country borders, allowing users to authenticate with the eID of their home (eID issuer) country in the host (current residence) country. The eIDAS authentication protocol redirects the authentication requests to the appropriate country, federating the identification process. For the institutions trying to target the EU market, this provides a significant advantage since access to one node would mean access to all nodes in the EU.
 
-The main issue private companies will encounter is the highly restricted access to any nodes. The eIDAS network is only concerned about connecting countries. To allow access to the web would be up for the member state to decide.
+The main issue private companies encounter when accessing the network is the highly exclusive access. The eIDAS network is only concerned about connecting countries. How and who can access an eIDAS node is up to the member states to decide.
 
 \paragraph{eIDAS notifications in Estonia and Lithuania}
 
-For countries to communicate through the eIDAS node network, countries must notify the European Commission about what eID authentication methods they could provide \cite{eulaw-eidas}. Other countries can then use these methods to authenticate foreign citizens into their public services.
+For countries to communicate through the eIDAS node network, the governments must first notify the European Commission about what eID authentication methods they will provide \cite{eulaw-eidas}. Other countries can then use these methods to authenticate foreign citizens into their public services.
 
-In the case of Estonia, the country has notified the European Commission about its Smart card and Mobile-ID authentication methods \cite{eulaw-eidas-notified}. Smart-ID is not a permitted method of authentication in the context of eIDAS. In Lithuania's case, only the Smart card solution is allowed - no mobile sign-in methods have been notified \cite{eulaw-eidas-notified}.
+In the case of Estonia, the country has notified the European Commission about its smart card and Mobile-ID authentication methods \cite{eulaw-eidas-notified}. Smart-ID is not a permitted method of authentication in the context of eIDAS. In Lithuania's case, only the smart card solution is allowed - no mobile sign-in methods have been notified \cite{eulaw-eidas-notified}.
 
-Estonia and Lithuania have shown a gap between what countries consider to be a secure and trusted source of eID and what they are willing to be held liable for in the context of eIDAS.
+The governments of these two countries have revealed a gap of what they consider to be a secure and trusted source of eID and what they are willing to be held liable for in the context of the eIDAS network.
 
 \subsection{eID providers in Estonia}
 
 Applied Cyber Security Group of the University of Tartu maintains a list of e-services \cite{ut-eidinestonia} that uses at least one eID authentication method in Estonia. The following authentication methods were listed: Bank Link, ID-card, Mobile-ID, Smart-ID, TARA, and HarID.
 
+While the list does not count Dokobit and eeID as primary eID providers, they list them as consumers of at least of schemes mentioned before. Their business model is to act as an intermediary for ease of integration.
+
 \subsubsection{Bank link}
 
-Banks have initially created this authentication method to provide close integration with e-commerce providers to receive risk-free payments \cite{kerem2003internet}. Over time it saw an additional use case - secure and trustworthy authentication method for the public and private services \cite{sebbanklink}. Over time researchers found that the protocol used was extremely insecure \cite{banklinksecurityanalysis}. From March of 2021, RIA has disabled the use of bank link to access public services \cite{ria-deprecates-bank-link}, which accounted for only 1 percent of all authentications.
+Banks have initially created this authentication method to provide close integration with e-commerce providers to receive risk-free payments \cite{kerem2003internet}. Over time it saw an additional use case - secure and trustworthy authentication method for the public and private services \cite{sebbanklink}. 
+
+Researchers found that the bank link protocol, while applicable, was "extremely insecure" \cite{banklinksecurityanalysis}. From March of 2021, RIA has disabled the use of bank link to access public services \cite{ria-deprecates-bank-link}, which accounted for only 1 percent of all authentications, also revealing its popularity in public.
 
 Due to the lack of security auditing required to satisfy eIDAS, poor market reach, and no support from the government, this authentication method will not be discussed in the scope of this thesis.
 
-\subsubsection{ID-card}
+\subsubsection{Smart card (ID card)}
 
-Id cards are the most popular way to access their eID in Estonia, primarily due to the legal requirement of having one. Chapter 2 of the Identity Documents Act \cite{eelaw-idcard} requires all EU, not only Estonian, citizens residing in Estonia to hold an ID card, with which they could access public services online. Interestingly, this requirement caused the government to issue more ID cards than there are people in Estonia \cite{ria-idee,statee-population}.
+ID cards are the most popular way to access their eID in Estonia, primarily due to the legal requirement of having one. The Identity Documents Act \cite{eelaw-idcard} states that all EU, not only Estonian, citizens residing in Estonia must hold an ID card, with which they could access public services online. Interestingly, this requirement caused the government to issue more ID cards than there are people in Estonia \cite{ria-idee,statee-population}. Smart card functionality touches not only ID cards but residence permits and other government-issued cards as well \cite{eulaw-eidas-notified}.
 
-There are no variable costs to allow a person to log in to websites with their ID card. For this authentication method, no per-transaction fees exist, as the certificate validity service (OCSP) \cite{rfc6960} can be queried for free.
+There are no variable costs to allow a person to log in to websites with their smart card. For this authentication method, no per-transaction fees exist, as the certificate validity service (OCSP) \cite{rfc6960} can be queried for free.
 
-An end user's computer can extract an authentication certificate from their ID card with the help of special software distributed by the government \cite{ria-idee}. This certificate, once on the computer, can be sent to the private company's authorization server with Client Certificate TLS option \cite{rfc8446} natively or with the use of specialized helper library \cite{ria-webeid}, using standard REST calls.
+An end user's computer can extract an authentication certificate from their smart card with the help of special software, generally distributed by the government agency responsible for maintaining the cards \cite{ria-idee}. This certificate, once on the computer, can be sent to the private company's authorization server with Client Certificate TLS option \cite{rfc8446} natively or with the use of specialized helper library \cite{ria-webeid}, using standard REST calls.
 
-Qualified trust service provider for Qualified Certificates for e-signatures \todo{Why does this matter?} installs the certificates in ID-cards \cite{eu-trustservices}, which ensures a high degree of certainty about the identity of person authenticating.
+Qualified trust service provider for Qualified Certificates for e-signatures installs the certificates in ID-cards \cite{eu-trustservices}, which ensures a high degree of certainty about the identity of the person authenticating.
 
-A significant advantage of using a decentralized eID infrastructure, such as the ID-card authentication, is that there are no middlemen in the process, allowing companies to skip going into expensive contracts with an eID service provider.
+A significant advantage of using a decentralized eID infrastructure, such as ID card authentication, is that there is no intermediary service in the process, allowing companies to skip going into expensive contracts with an eID service provider.
 
 \subsubsection{Mobile-ID}
 
-Five years after SK ID Solutions introduced ID cards for use in Estonia, they have developed a mobile phone-friendly way to access the users' eID for use in Estonia and Lithuania \cite{sk-history2007}. SK achieved it by extending the functionality of SIM cards to make them mimic the functionality of ID cards.
+Five years after SK ID Solutions introduced ID cards for use in Estonia, they have developed a mobile phone-friendly way to access the users' eID for use in Estonia and Lithuania \cite{sk-history2007}. SK achieved it by extending the functionality of phone SIM cards by adding new applications on the microchip.
 
 The price of using Mobile-ID for the service provider varies based on usage, starting from 10 euro per month (10ct per request) to costing over 5 000 euro, where the effective cost is under 1ct for request \cite{sk-mobileidpricing}. For the end-user, mobile operators can charge an additional fee for the use of this service \cite{telia-mobileid}.
 
@@ -64,13 +68,12 @@ Accepting Mobile-ID would allow companies to access the markets of two countries
 
 Qualified trust service provider for Qualified Certificates for e-signatures installs the certificates in a particular variety of SIM cards, capable of supporting Mobile-ID \cite{eu-trustservices}, which ensures a high degree of certainty about the identity of person authenticating.
 
-\TODO{Explain why companies should not consider this protocol in the protocol choice section.}
 
 \subsubsection{Smart-ID}
 
 Smart-ID is the latest and fastest-growing way of accessing citizens' eID, working in all 3 of the Baltic States \cite{sk-history2017}. The protocol utilizes mobile phones as authentication, similar to Mobile-ID. Unlike Mobile-ID, it does not require specialized external hardware \cite{smartid-docs}. The authentication process is handled by combining the eID server and the end user's smartphone. Despite that, it still passed the eIDAS compliance audit for the requirement of ensuring signature private key is "with a high level of confidence under sole control" of its owner \cite{enisa-eidasreq}. After passing the audit, Smart-ID was recognized as a QSCD, allowing it to create QES in 2018 \cite{smartid-qscd}.
 
-The price of using Smart-ID for service providers, much like Mobile-ID, varies based on usage, starting from 50 euros per month (10ct per request) to over 20 000 euros, where the effective cost is under 1ct for request, based on the total amount of transactions performed within a month \cite{sk-smartidpricing}. For users, unlike Mobile-ID \cite{telia-mobileid}, there are no telecommunication operators involved, and there are no costs associated with using Smart-ID.
+The price of using Smart-ID for service providers, much like Mobile-ID, varies based on usage, starting from 50 euros per month (10ct per request) to over 20 000 euros, where the effective cost is under 1ct for request, based on the total amount of transactions performed within a month \cite{sk-smartidpricing}. For users, unlike Mobile-ID \cite{telia-mobileid}, there are no telecommunication operators involved, and there are no additional costs.
 
 Implementation of Smart-ID would allow users to access the markets of three countries: Estonia, Latvia, and Lithuania.
 
@@ -84,9 +87,9 @@ Estonian Information System Authority intends to limit the use of TARA to public
 
 Technical implementation for the consumer, unlike Mobile-ID and Smart-ID, will be much easier to implement, as it uses the well-adopted protocol of OpenID Connect \cite{tara-technical, oidc}.
 
-It is worth mentioning while the underlying authentication methods have received proper eIDAS auditing and are backed by a qualified trust service, this and all of the following authentication methods have not been audited in compliance with eIDAS.
+It is worth mentioning while the underlying authentication methods have received proper eIDAS auditing and are backed by a qualified trust service, this and all of the following authentication methods have not been audited in compliance with eIDAS, or the auditing was not made public.
 
-Unlike the eID providers backed by a Trust Service Provider, TARA acts as only an authentication service. It would not be able to provide means of signing documents \cite{tara-technical}. If the business is considering expanding to allow for online digital signing, an infrastructure like TARA will unlikely be a great choice.
+TARA only acts as an authentication service. It would not be able to provide means of signing documents \cite{tara-technical}. If the business is considering expanding to allow for online digital signing, an infrastructure like TARA will unlikely be a great choice.
 
 \subsubsection{eeID}
 
@@ -94,7 +97,7 @@ Estonian Internet Foundation created eeID service for the exclusive purpose of b
 
 The service is new, does not have pricing tiers, and currently asks for 9ct per successful authentication request \cite{eeid-pricing}.
 
-The vision of the said service is to allow users to access the markets of all EU countries. Currently, there are only fourteen countries with notified eID authentication methods \cite{eulaw-eidas-notified}: Estonia, Germany, Italy, Spain, Belgium, Luxembourg, Croatia, Portugal, Latvia, Lithuania, Netherlands, Czech Republic, Slovakia, and Denmark.\todo{Does it work? Have to wait as much as I can}
+The vision of the said service is to allow users to access the markets of all EU countries. Currently, there are only fourteen countries with notified eID authentication methods \cite{eulaw-eidas-notified}: Estonia, Germany, Italy, Spain, Belgium, Luxembourg, Croatia, Portugal, Latvia, Lithuania, Netherlands, Czech Republic, Slovakia, and Denmark.
 
 \subsubsection{HarID}
 
@@ -102,7 +105,7 @@ Estonian Ministry of Education and Research created this service for the youth o
 
 \subsubsection{Dokobit}
 
-In the initial list of services using eID in Estonia \cite{ut-eidinestonia}, one service stands out - Dokobit \cite{dokobit}. They provide services comparable to eeID in that they aggregate different eID methods of Estonia (ID-card, Mobile-ID, and Smart-ID) and other countries. The primary difference between the authentication providers is the multi-national implementation goal - Dokobit relies on integrating each country's system individually. In contrast, eeID depends on using the framework of the eIDAS infrastructure \cite{eeid}.
+In the initial list of services using eID in Estonia \cite{ut-eidinestonia}, one service stands out - Dokobit \cite{dokobit}. They provide services comparable to eeID in that they aggregate different eID methods of Estonia (ID-card, Mobile-ID, and Smart-ID) and other countries. The primary difference between the two authentication providers is how they want to achieve their multi-national implementation goal. Dokobit relies on integrating each country's system individually. In contrast, eeID depends on using the framework of the eIDAS infrastructure \cite{eeid}.
 
 Pricing for Dokobit varies drastically, and the provided prices for the Baltic States \cite{dokobit-pricing} start at 50 euros per month (7.1ct per request), going down to 4.2ct per request at 500 euros per month.
 
