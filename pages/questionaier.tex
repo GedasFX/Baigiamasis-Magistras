@@ -1,0 +1,28 @@
+\section*{II. Questionnaire}
+
+The interview's goal is to understand better the reasons for the poor adoption of eIDs in the private sector. This interview was conducted with the CTO of a multinational logistics company.
+
+
+
+\begin{enumerate}
+    \item With electronic key cards, users can authenticate themselves using a piece of hardware, say a card or a USB stick. This authentication method is often more secure than the usual username and password approach. Are you and the company in general aware of this?
+    \item I would describe an eID scheme as something like your id card, but digitally. There are three main schemes in Estonia: ID cards, Mobile-ID, and Smart-ID. Are you familiar with at least one of them?
+    \item With the eIDAS regulation, these three eID schemes can create digital signatures, with the legal value of a handwritten signature. Do you have a place in the company where you print a document, sign it, scan it and upload it? Would you switch to a solution that would avoid this process?
+    \item Without disclosing the worth of transactions floating around the company, would the security benefits of the eID schemes benefit company enough for you to switch to using them?
+    \item Authentication and signing usually come hand in hand, but if you were to have the ability to choose, assuming authentication and signing both costs equally as much to implement, would you rather spend the resources on authentication or digital signing? SEB Bank used to or still allows for transactions under 50€ to be done without signatures, only authentication. Would you at that point no longer consider the authentication method entirely?
+    \item Your company deals a lot with automation. Would you be comfortable automating the use of digital signatures in your company's name, or would you rather still have a person at the end manually reviewing and signing documents?
+    \item Say a human mistake occurs: a person mistakenly signs a document they shouldn't have, and the company faces losses. It would be easy to track who made a mistake with digital signatures. What would your company do in that case?
+    \item I have four different authentication options a company can take. Assume you would have to pick one of the four and explain the main reasons for your choice.
+    
+    The first option uses the primary eIDAS network of Europe to authenticate themselves to any EU public sector service. For example, a Lithuanian citizen can use their eID to sign into Estonia's banks. This network's security is held to the highest standards. Some discrepancies appear because of the criteria, such as Estonians being unable to sign in via Smart-ID to foreign websites. It is significant as a lot of people use Smart-ID. Do you think it is an acceptable solution for you?
+
+    The second option would use a company in the middle whose sole responsibility would be to federate the sign-in process. Like the first authentication method, you can also sign in from many more European countries, but this time without using the eIDAS network. A clear advantage over the first one is the more lax security requirements, allowing other authentication methods such as Smart-ID. Keep in mind that this authentication method is still highly trustworthy. Would you consider the ability to reach a broader audience at the cost of not using the official infrastructure a risk worth taking?
+
+    The third option puts a lot more risk on the company and allows for only a narrow market band. I am talking about smart cards and how a company could accept one, but the server should never trust the certificate a card sends. This approach is challenging to integrate and susceptible to many attacks; however, its advantage is that it is free to operate. If we ignore the personnel costs for maintaining the trust certificates, that is. Would no operational fees be convincing enough to pick this option?
+
+    The last option is similar to the third about the challenging implementations and the narrow market band. This time you will not have the advantage of free operational costs. However, you will still benefit from not having an intermediary company. This option would be if you integrated with Smart-ID directly. Is having an intermediary company of concern to you?
+
+    \item What is an acceptable price for a single successful authentication? The business model of options 1, 2, and 4 is to charge an amount per authentication. Let's aim for around 10 000 authentications per month; how much do you think is acceptable to spend on such a number? Would 500€ per month be acceptable?
+    \item Options 2-4 also create digital signatures; the first cannot. Does your opinion change at all about which solution you would pick?
+    \item An alternative to using government-issued eID solutions, you can also issue them yourself at a highly reduced price and trust factor. This solution is still more secure than the username+password approach. If you were to change how the company performs authentication, would you switch to the internal system, eID scheme, or not switch at all, and why?
+\end{enumerate}
