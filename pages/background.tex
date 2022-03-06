@@ -1,15 +1,20 @@
 \section{Background}
 
-\subsection{eID}
+\subsection{Electronic identity eID}
 
-In Estonia, digital identity has been around for over 20 years \cite{eelaw-idcard}. The Estonian government has loaded all identity cards issued with certificates enabling cardholders to identify themselves digitally. Compare the speed of adoption to Romania, where the first easy access to eIDs came in the form of new chip ID cards in August of 2021 \cite{romania-adopts-eid}.
+In Estonia, digital identity has been around for over 20 years \cite{eelaw-idcard}. The Estonian government issues ID cards, which are loaded with certificates that enable cardholders to identify themselves digitally. Estonia's early adoption of eID, the political focus on digital government, has led to over 89\% of internet users accessing the e-government, making it the leading country in the EU \cite{eu-desi}. This adoption rate is in stark contrast to another EU country - Romania, where the first easy access to eIDs came in the form of new chip ID cards in August of 2021 \cite{romania-adopts-eid}. In that country, only 16\% of internet users access government services online. The adoption of eIDs in other countries lands somewhere between these two extremes.
 
-Estonia's early adoption of eID, the political focus on digital government, has led to over 89\% of internet users accessing the e-government, landing it the first place in the EU \cite{eu-desi}. The 20 years of easy access to an eID has led to a stark difference to Romania, where only 16\% of internet users access the government services online.
+It is clear that if a company wishes to implement eID authentication in a given country, it must realize the differences between the adoption rates. For some countries' citizens, the button "sign in with eID" will instinctively make them draw their smart card or other eID capable device, where it would confuse and repulse others. Depending on the country's market a company would like to access, eID sign-in may attract or repel potential clients. Early adopters must be aware of the widespread adoption of the eID infrastructure.
 
-Depending on the country a company would like to access the market, eID sign-in may confuse the potential clients. Early adopters must be aware of the widespread adoption of the eID infrastructure.
+\paragraph{eID adoption in Estonia and Lithuania}
 
-In different countries, the eID solution may vary wildly. There can also be more than one eID solution in a singular county.
+On the surface, Estonia and Lithuania have the exact eID solutions: Bank Link, ID card, Mobile-ID, and Smart-ID. However, even with the same infrastructure, we see many inconsistencies even in the case of just these two countries.
 
+Consider Lithuania. It is possible to connect from a centralized website \url{https://epaslaugos.lt} to access the public sector services \cite{eidasnode-lt}. Here it is possible to sign in via bank link, ID card, and Mobile-ID. Smart-ID is not an option. The omission of Smart-ID is strange, as most banks support sign-in via three major eID providers, including Smart-ID, and actively encourage switching to it.
+
+Some banks listed on the public sector gateway portal, like PaySera, provide significant security concerns. With that bank, it is possible to access the e-government services with only email, password, and a 2FA code sent to the registered person's phone number \todo{source: I did it myself 02-27}. For similar security concerns, Estonia's Information System Authority has taken steps to deprecate bank link \cite{ria-deprecates-bank-link} from use in TARA, Estonia's gateway to e-government.
+
+In Estonia, all three major authentication options, ID card, Mobile-ID, and Smart-ID, can be used to access the e-government.
 
 \subsection{eIDAS}
 
@@ -19,15 +24,7 @@ The regulation was the basis for creating the eIDAS node network \cite{carretero
 
 The main issue private companies will encounter is the highly restricted access to any nodes. The eIDAS network is only concerned about connecting countries. To allow access to the web would be up for the member state to decide.
 
-\subsection{eID widespread adoption}
-
-\subsubsection{eID adoption in Estonia and Lithuania}
-
-On the surface, Estonia and Lithuania have the exact eID solutions - Bank Link, ID card, Mobile-ID, and Smart-ID. However, even with the same infrastructure, we see many inconsistencies even in the case of just these two countries.
-
-Consider Lithuania. It is possible to connect from a centralized website \url{https://epaslaugos.lt} to access the public sector services \cite{eidasnode-lt}. Here it is possible to sign in via bank link, ID card, and Mobile-ID. Smart-ID is not part of the list. Although most banks support sign-in via three major eID providers, including Smart-ID, some listed banks like PaySera provide significant security concerns. With that bank, it is possible to access the e-government services with only email, password, and a 2FA code sent to the registered person's phone number \todo{source: I did it myself 02-27}. For this reason, Estonia's Information System Authority has taken steps to deprecate bank link \cite{ria-deprecates-bank-link} from use in TARA. In Estonia, all three major authentication options, ID card, Mobile-ID, and Smart-ID, are available to access the e-government.
-
-\subsubsection{eIDAS notifications in Estonia and Lithuania}
+\paragraph{eIDAS notifications in Estonia and Lithuania}
 
 For countries to communicate through the eIDAS node network, countries must notify the European Commission about what eID authentication methods they could provide \cite{eulaw-eidas}. Other countries can then use these methods to authenticate foreign citizens into their public services.
 
