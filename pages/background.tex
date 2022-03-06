@@ -43,7 +43,7 @@ Estonia and Lithuania have shown a gap between what countries consider to be a s
 
 \subsection{eID providers in Estonia}
 
-Applied Cyber Security Group of the University of Tartu maintains a list of e-services \cite{ut-eidinestonia} that uses at least one eID authentication method in Estonia. The following authentication methods were listed: Bank Link, ID-card, Mobile-ID, Smart-ID, TARA, and HarID. 
+Applied Cyber Security Group of the University of Tartu maintains a list of e-services \cite{ut-eidinestonia} that uses at least one eID authentication method in Estonia. The following authentication methods were listed: Bank Link, ID-card, Mobile-ID, Smart-ID, TARA, and HarID.
 
 \subsubsection{Bank link}
 
@@ -136,7 +136,7 @@ Similarly, when using a third-party provider such as TARA (eeID) or Dokobit, the
 
 \subsection{GDPR}
 
-When dealing with eID, sensitive personal data processing is required. 
+When dealing with eID, sensitive personal data processing is required.
 \TODO{GDPR section}
 
 \subsection{Federated Identity Architecture of the European eID System}\todo{Does this belong in related work? This paper is de-facto required background}
@@ -147,7 +147,7 @@ The authors of this paper describe the current situation in the identity managem
 
 The first significant contribution relates to explaining different ways of authenticating persons.
 
-Any authentication method is based on something user knows (password, pin code, answer to security question), is (biometrics - eyes, fingerprints), or has (physical device - key card, USB device) \cite{o2003comparing}. Any other method would leave the person without agency over the authentication process. 
+Any authentication method is based on something user knows (password, pin code, answer to security question), is (biometrics - eyes, fingerprints), or has (physical device - key card, USB device) \cite{o2003comparing}. Any other method would leave the person without agency over the authentication process.
 
 An emphasis is put on the importance of mixing and matching these authentication schemes to increase the system's security.
 
@@ -163,20 +163,6 @@ There are also three authentication models: isolated, centralized, and federated
 
 Researchers have allocated a good portion of the paper to provide an overview of potential protocols and implementations. The list is massive and in-depth; however, it becomes clear that SAML \cite{saml}, OAuth2.0 \cite{rfc6749}, and OpenID Connect \cite{oidc} protocols are by far the most popular protocols to choose for implementation. The engineers behind the eIDAS network implementation decided to settle on the SAML protocol.
 
-% ##### Attempts of eIDAS implementations in private sector
-
-% In academic literature, there are only two well documented cases of how the private sector would access the eIDAS node network.
-
-% ###### eID@Cloud
-
-% The project eiD@cloud [5], conducted May 2017 to September 2018, has discovered certain issues when attempting to connect to the infrastructure. It has found that there's still some differences between the national schemes and the integrations of said national schemes in a unique and interoperable net that must be the eIDAS in the context of the EU, and the deployment of each eIDAS node of each member state by the national politics go at different speeds, which create mistakes and lack of availability to complete the eIDAS project. The authors are pessimistic about the prospect that fully connected Europe can be achieved soon.
-
-% ###### LEPS
-
-% LEPS [6], conducted September 2017 to November 2018, has tried to achieve similar goals to eID@Cloud - to identify gaps in the eIDAS infrastructure. The main challenge identified, much like in the previous research, is the lack of Service Providers, the private sector could use to interface with the eIDAS network.
-
-% ##### eID providers in Estonia
-
 % ##### Research methodology
 
 % ###### Development complexity
@@ -186,5 +172,46 @@ Researchers have allocated a good portion of the paper to provide an overview of
 
 % By having this access, this process is useful, as one service provider would be able to open up the entirety of the EU market. The main issue with using eIDAS nodes as an authentication method, is the restricted access to it. In email correspondence I learnt that in Estonia, access to this service is limited to public sector only, with plans to open it up to the private sector in 2022.
 
-\subsection{Risks}
+\subsection{Threats}
 
+\TODO{There has to be a source with the extensive list, all protocols I checked look basically the same, but I can't seem to find a post saying yes, you need to do this.}
+
+\begin{figure}
+    \centering
+    \begin{sequencediagram}
+        \newthread{A}{Natural Person}{}
+        \newinst[1]{B}{Relying Party}{}
+        \newinst[1]{C}{QSCD Interface}{}
+        \newinst[2]{D}{QSCD}{}
+
+        \begin{call}{A}{authenticate()}{B}{Auth token}
+            \begin{call}{B}{authenticate()}{C}{Certificate + authenticity proof}
+                \begin{sdblock}{Block}{Outside of RP control}
+                    \begin{call}{C}{getCertificate()}{D}{Client Authentication certificate}\end{call}
+                    \begin{call}{C}{signChallenge()}{D}{Signed challenge}
+                        \begin{call}{D}{enterPin()}{A}{PIN}\end{call}
+                    \end{call}
+                \end{sdblock}
+            \end{call}
+            \begin{call}{B}{validateResponse()}{B}{}\end{call}
+        \end{call}
+
+    \end{sequencediagram}
+    \caption{High-level sequence diagram of a eID authentication flow}
+    \label{fig:eid-auth-flow-seq}
+\end{figure}
+
+In the sequence diagram (see figure \ref{fig:eid-auth-flow-seq}), we see a high-level overview of any eID authentication solution. In the authentication protocol, the relying party (company implementing eID sign-in) is entirely dependent on the QSCD interface, which acts as a trust anchor. A communication channel exists between the relying party and the interface. We can categorize the channel type into two groups:
+
+\begin{enumerate}
+    \item trusted, where the sender can reasonably guarantee that adversaries are unable to change the data in transit (Smart-ID, TARA, Dokobit);
+    \item untrusted, where there is a possibility for data to be tampered with in transit (Web eID).
+\end{enumerate}
+
+Trusted communications generally operate using an encrypted backchannel, where untrusted ones require the client to send data from the QSCD interface. Because the client sends the data, this becomes an untrusted channel, and the relying party must perform additional certificate verification.
+
+Failure to encrypt and establish the authenticity of the interface in a trusted backchannel or not validating data in a untrusted channel allows adversaries to perform man-in-the-middle attacks.
+
+\TODO{Limitations: For the scope of the thesis, only two security aspects will be analyzed: the network communication between the natural person and the interface and the certificate authenticity guarantees. Security analysis of QSCD and its communications with the interface will not be analyzed.}
+
+\TODO{Further research? Limitations: proper analysis of what companies would like to see in a solution for easier bullet points}

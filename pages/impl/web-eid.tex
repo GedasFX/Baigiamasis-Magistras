@@ -6,32 +6,49 @@ Released in the Summer of 2021 \cite{ria-webeid} and having undergone significan
 
 Functionally this framework is split into three parts: custom software the user needs to install, a javascript library that acts as a data intermediary, and the certificate validation library on the back-end.
 
-The software users are required to install is almost identical to the one citizens must use to use their smart cards. The major difference in this scenario is that the software supports more than one countries' eID solutions. Solution currently supports smart cards of Estonia, Latvia, Lithuania, and Finland \cite{ria-webeid}.
-
+The software users need to install is similar to the one various countries' governments issue. The significant difference in this scenario is that the software supports more than one countries' eID solutions. The solution currently supports smart cards of Estonia, Latvia, Lithuania, and Finland \cite{ria-webeid}.
 
 \subsubsection{Data Flow}
 
-The high level overview of the complete flow of data within the Web eID framework is displayed in figure \ref{fig:web-eid-authentication}. A detailed explanation of the steps can be found on the technical specification page \cite{ria-webeid-systemarchitecture}. Companies implementing the framework should only be concerned about the browser and server application (steps 1-3 and 13-17).
+Figure \ref{fig:web-eid-authentication} displays the high-level overview of the complete flow of data within the Web eID framework. A detailed explanation of the steps can be found on the technical specification page \cite{ria-webeid-systemarchitecture}. Companies implementing the framework should only consider the browser and server application (steps 1-3 and 13-17).
 
 \begin{figure}
-    \centering
-    \includegraphics[scale=0.6]{webeid/Web-eID-authentication-communication-diagram}
-    \caption{Web eID Authentication flow \cite{ria-webeid-systemarchitecture}}
-    \label{fig:web-eid-authentication}
+  \centering
+  \includegraphics[scale=0.6]{webeid/Web-eID-authentication-communication-diagram}
+  \caption{Web eID Authentication flow \cite{ria-webeid-systemarchitecture}}
+  \label{fig:web-eid-authentication}
 \end{figure}
 
 
-% \subsubsection{Security Analysis}
+\subsubsection{Security Analysis}
 
-% Arnis Paršovs
+Researcher Arnis Paršovs published a security analysis of the protocol v1 in October of 2021 \cite{arnis-report-webeid}. Developers behind the Web eID framework acknowledged the weaknesses and addressed them in v2 \cite{ria-webeid-systemarchitecture}, which will be used in the scope of the thesis. At the time of writing, independent researchers and auditors have not yet performed security analysis for this version.
 
-% \subsubsection{Legal Power}
+\paragraph{Actors}
 
-\subsubsection{Risks Transferred and other benefits}
+The actors in the figure \ref{fig:eid-auth-flow-seq} assume the roles of: QSCD Interface - web-eid.js \cite{ria-webeid-source-web-eid-js}, web-eid-app \cite{ria-webeid-source-web-eid-app}; QSCD - Smart cards of Estonia, Latvia, Lithuania, and Finland \cite{ria-webeid}. This interface is a separate application from the official id.ee software Estonian citizens use to sign and verify documents. However, "in the future, the final version of Web eID will be added into the ID-software installation package, available for the users the website on www.id.ee" \cite{ria-webeid}. Owners of other countries' smart cards would still have to download the special software.
 
-Unlike Dokobit of eeID, most of the risks the only risks transferred are the ones related to 
+\paragraph{Threat protection}
 
-% \subsubsection{Maturity and life use cases}
+The framework uses an unsecure channel for communications, so special measures are required to be taken. Unlike in Dokobit and eeID, the risk of impersonation is not transfered to the eID service provider so the countermeasures must be performed by the relying party.
+
+\TODO{Discussion: suggest how the certificates are way too challenging to obtain for a casual company and may lead to additional vulnerabilities}
+\TODO{Discussion: phishing attacks if company establishes policy to add certificates if they cannot sign in with their card}
+
+\subsubsection{Trust Anchor}
+
+Unlike Dokobit and eeID, Web eID does not provide any guarantees about the trustworthiness of a certificate. It goes so far in the protocol to remind developers by sending the certificate in a field called "unverifiedCertificate" \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme} because the application transfers the certificate from an untrusted source.
+
+The relying party must verify the certificate and challenge themselves by checking the origin, certificate expiry, trust chain, OCSP responses, and the challenge. This validation structure makes the trust anchor technological and highly depends on the implementation correctness by the developers.
+
+\todo{Discuss how we can never trust developers without proper supervision} More information can be found in the implementation section.
+
+\subsubsection{Pricing}
+
+This service is free of charge for the uses of authentication.
+
+\subsubsection{Maturity of the solution}
+
 
 \subsubsection{Implementation}
 
@@ -41,18 +58,18 @@ For each protocol implementation step, developers will have to fulfill certain g
 
 Building the challenge nonce. The goal of these steps is to create the challenge the user will have to sign with their private key. There are a couple of requirements the developers have to provide:
 \begin{enumerate}
-    \item Generated challenge nonce must be between 32 and 96 bytes (inclusive) in length \cite{ria-webeid-source-web-eid-app-authenticate};
-    \item "It must be guaranteed that the authentication token is received from the same browser to which the corresponding challenge nonce was issued" \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}. The framework creators recommend attaching it to the user session.
-    \item "Cache must be used for protection against replay attacks by guaranteeing that each authentication token can be used exactly once" \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}. The developers must create temporary storage for challenge nonces or any other means to revoke already used nonces.
-    \item "Cookie-based authentication must be protected against cross-site request forgery (CSRF) attacks and extra measures must be taken to secure the cookies by serving them only over HTTPS and setting the HttpOnly, Secure and SameSite attributes" \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}.
+  \item Generated challenge nonce must be between 32 and 96 bytes (inclusive) in length \cite{ria-webeid-source-web-eid-app-authenticate};
+  \item "It must be guaranteed that the authentication token is received from the same browser to which the corresponding challenge nonce was issued" \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}. The framework creators recommend attaching it to the user session.
+  \item "Cache must be used for protection against replay attacks by guaranteeing that each authentication token can be used exactly once" \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}. The developers must create temporary storage for challenge nonces or any other means to revoke already used nonces.
+  \item "Cookie-based authentication must be protected against cross-site request forgery (CSRF) attacks and extra measures must be taken to secure the cookies by serving them only over HTTPS and setting the HttpOnly, Secure and SameSite attributes" \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}.
 \end{enumerate}
 
 In the implementation example, these measures were addressed:
 \begin{enumerate}
-    \item A 64 byte cryptographically secure randomly generated nonce is created (see listing \ref{lst:web-eid-challenge}).
-    \item Challenge nonce is set in the user's session, which adversaries cannot tamper.
-    \item The generated nonce is stored into local memory cache for later use.
-    \item A input field is rendered on the page with a unique CSRF validation token, which prevents cross-site request forgery attacks (see listing \ref{lst:web-eid-challenge-ui}).
+  \item A 64 byte cryptographically secure randomly generated nonce is created (see listing \ref{lst:web-eid-challenge}).
+  \item Challenge nonce is set in the user's session, which adversaries cannot tamper.
+  \item The generated nonce is stored into local memory cache for later use.
+  \item A input field is rendered on the page with a unique CSRF validation token, which prevents cross-site request forgery attacks (see listing \ref{lst:web-eid-challenge-ui}).
 \end{enumerate}
 
 \begin{lstlisting}[caption={Web eID Challenge Endpoint}, label={lst:web-eid-challenge}]
@@ -103,18 +120,18 @@ public IActionResult GetChallenge()
 After the user signs the nonce challenge and sends their certificate, the server must verify its authenticity. There are a couple of steps developers must take before allowing the user to sign in.
 
 \begin{enumerate}
-    \item Verify the CSRF token from earlier steps \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}.
-    \item Verify the challenge nonce came from the original user and has not expired, was not consumed.
-    \item Verify the certificate validity and check if nonce was signed by the associated private key (see below).
-    \item Issue an authentication token with the fields from the certificate's subject.
+  \item Verify the CSRF token from earlier steps \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}.
+  \item Verify the challenge nonce came from the original user and has not expired, was not consumed.
+  \item Verify the certificate validity and check if nonce was signed by the associated private key (see below).
+  \item Issue an authentication token with the fields from the certificate's subject.
 \end{enumerate}
 
 In the implementation example, these measures were addressed:
 \begin{enumerate}
-    \item The back end endpoint for login is decorated with ValidateAntiForgeryToken Attribute. This attribute instructs the ASP.NET API to ignore requests not containing a CSRF token \cite{msdocs-anti-request-forgery}. A JavaScript application can then access the protected endpoints by providing RequestVerificationToken header (see listing \ref{lst:web-eid-challenge-ui}).
-    \item The application tries to extract the challenge nonce from the browsing session. The process would succeed if the session cookie were not modified. After the extraction, the application checks the nonce cache to verify if the challenge is still active. Cache hit means the nonce has not expired, and a previous request has not consumed it already. Remove the challenge nonce from all stores.
-    \item The API calls a standalone validation service to verify the nonce and certificate (see below).
-    \item Application populates the ASP.NET identity management system with the fields from the certificate: serial number, given name, surname, country. An identity session cookie is sent to the client.
+  \item The back end endpoint for login is decorated with ValidateAntiForgeryToken Attribute. This attribute instructs the ASP.NET API to ignore requests not containing a CSRF token \cite{msdocs-anti-request-forgery}. A JavaScript application can then access the protected endpoints by providing RequestVerificationToken header (see listing \ref{lst:web-eid-challenge-ui}).
+  \item The application tries to extract the challenge nonce from the browsing session. The process would succeed if the session cookie were not modified. After the extraction, the application checks the nonce cache to verify if the challenge is still active. Cache hit means the nonce has not expired, and a previous request has not consumed it already. Remove the challenge nonce from all stores.
+  \item The API calls a standalone validation service to verify the nonce and certificate (see below).
+  \item Application populates the ASP.NET identity management system with the fields from the certificate: serial number, given name, surname, country. An identity session cookie is sent to the client.
 \end{enumerate}
 
 \begin{lstlisting}[caption={Web eID Login Endpoint}, label={lst:web-eid-login}]
@@ -203,19 +220,19 @@ Developers can obtain the origin URL by checking the {window.origin} of the page
 For the CA certificate set, the developers or maintainers can get an up-to-date list of trusted certificates at the EU Trust Services Dashboard \cite{eu-trustservices}. The issue with this list is that it contains all trust certificates for various scopes. In our case, we should limit the search to the extent of QCert for ESig. In the case of Estonia and Lithuania, only three entities are certified to issue certificates for QSCD (see figure \ref{fig:eu-tsp-list}). It is in stark contrast to Spain's 31 \cite{eu-trustservices}. It is possible to further narrow down to only certificate generation services for qualified certificates (CA/QC).
 
 \begin{figure}
-    \centering
-    \includegraphics[scale=0.54]{webeid/eu-tsp-search}
-    \caption{List of EU Trust service providers of Estonia and Lithuania capable of creating qualified certificates for e-signatures}
-    \label{fig:eu-tsp-list}
+  \centering
+  \includegraphics[scale=0.54]{webeid/eu-tsp-search}
+  \caption{List of EU Trust service providers of Estonia and Lithuania capable of creating qualified certificates for e-signatures}
+  \label{fig:eu-tsp-list}
 \end{figure}
 
 In the case of Estonia's single TSP, we can see that only 3 CA are currently operational (see figure \ref{fig:eu-tsp-skid}). Unfortunately, there is no standardized way of narrowing down which certificates could be used for authentication any further.
 
 \begin{figure}
-    \centering
-    \includegraphics[scale=0.54]{webeid/eu-tsp-skid}
-    \caption{List of certificates issued to SK ID Solutions AS for the purposes of Qualified certificate for electronic signature}
-    \label{fig:eu-tsp-skid}
+  \centering
+  \includegraphics[scale=0.54]{webeid/eu-tsp-skid}
+  \caption{List of certificates issued to SK ID Solutions AS for the purposes of Qualified certificate for electronic signature}
+  \label{fig:eu-tsp-skid}
 \end{figure}
 
 An alternative way to obtain certificates would be to go to the government authority of each country responsible for the distribution of certificates. This action requires prior knowledge of who is responsible for issuing certificates and their purposes.
@@ -230,9 +247,10 @@ The final list of certificates to support Lithuania and Estonia include four cer
 
 With the certificate validation service configured, it is now required to link it to the Web API. If the company orients around using microservices, this service can be just that. All that the validation service requires is to expose an endpoint that accepts a nonce and a token from the javascript library and returns a validation result.
 
-Proper measures must be taken to protect this service from adversaries as it acts as an important trust anchor for the company. Developers should take measures outlined in assume breach \todo{citation missing}.
+Companies must take proper measures to protect such service from adversaries as it acts as a fundamental trust anchor. Developers should take steps outlined in assume breach \todo{citation missing}.
 
 \TODO{Related research about legal persons documents?}
 
 \TODO{High-level overview of the system}
 \TODO{Points of compromise?}
+\TODO{Complete alternative, using your own issued certificates?}
