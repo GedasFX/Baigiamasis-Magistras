@@ -2,7 +2,7 @@
 
 \subsection{Electronic identity eID}
 
-In Estonia, digital identity has been around for over 20 years \cite{eelaw-idcard}. The Estonian government issues ID cards, which are loaded with certificates that enable cardholders to identify themselves digitally. Estonia's early adoption of eID, the political focus on digital government, has led to over 89\% of internet users accessing the e-government, making it the leading country in the EU \cite{eu-desi}. This adoption rate is in stark contrast to another EU country - Romania, where the first easy access to eIDs came in the form of new chip ID cards in August of 2021 \cite{romania-adopts-eid}. In that country, only 16\% of internet users access government services online. The adoption of eIDs in other countries lands somewhere between these two extremes.
+In Estonia, digital identity has been around for over 20 years \cite{eelaw-idcard}. The Estonian government issues ID cards loaded with certificates that enable cardholders to identify themselves digitally. Estonia's early adoption of eID, the political focus on digital government, has led to over 89\% of internet users accessing the e-government, making it the leading country in the EU \cite{eu-desi}. This adoption rate is in stark contrast to another EU country - Romania, where the first easy access to eIDs came in the form of new chip ID cards in August of 2021 \cite{romania-adopts-eid}. In that country, only 16\% of internet users access government services online. The adoption of eIDs in other countries lands somewhere between these two extremes.
 
 It is clear that if a company wishes to implement eID authentication in a given country, it must realize the differences between the adoption rates. For some countries' citizens, the button "sign in with eID" will instinctively make them draw their smart card or other eID capable device, where it would confuse and repulse others. Depending on the country's market a company would like to access, eID sign-in may attract or repel potential clients. Early adopters must be aware of the widespread adoption of the eID infrastructure.
 
@@ -134,12 +134,24 @@ When using an intermediary such as TARA (eeID) or Dokobit, the new eID provider 
 
 \subsection{Levels of assurance}
 
+The eIDAS regulation uses three assurance levels: low, substantial, and high. These levels refer to the degree of confidence about the claimed or asserted identity of a person \cite{eulaw-eidas}. These assurance levels map to levels 2-4 of ISO 29115 \cite{iso29115}.
 
+\TODO{Finish this section}
+
+% It is important to make that the security requirements for a certain level of assurance are only a prerequisite. 
+% https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32015R1502&from=EN
 
 \subsection{GDPR}
 
-When dealing with eID, sensitive personal data processing is required.
-\TODO{GDPR section}
+When dealing with eID, sensitive personal data processing is required. Two years after the EU enacted the eIDAS legislation, the parliament issued new legislation to consolidate all previous privacy laws \cite{eulaw-gdpr}.
+
+In GDPR, companies must be aware of key terminology. Interested parties can find a complete list of definitions in article 4 of the regulation. Below you can see a list of the most critical keywords in the context of eID authentication.
+
+\paragraph{Personal data} The eID solutions in scope all provide the following personal information: full name, serial number (national id), and the country of origin.
+
+\paragraph{Processing} The minimal amount required to process information is to store uniquely identifying information that would link an eID to an internal id code. At the very least, this action involves collecting, storing, and retrieving personal data.
+
+\paragraph{Processor and Controller} In the minimal case, no third parties are involved, and the controller, the processor, and recipient are the same entity.
 
 \subsection{Threats}
 
