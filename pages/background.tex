@@ -40,7 +40,7 @@ While the list does not count Dokobit and eeID as primary eID providers, they li
 
 \subsubsection{Bank link}
 
-Banks have initially created this authentication method to provide close integration with e-commerce providers to receive risk-free payments \cite{kerem2003internet}. Over time it saw an additional use case - secure and trustworthy authentication method for the public and private services \cite{sebbanklink}. 
+Banks have initially created this authentication method to provide close integration with e-commerce providers to receive risk-free payments \cite{kerem2003internet}. Over time it saw an additional use case - secure and trustworthy authentication method for the public and private services \cite{sebbanklink}.
 
 Researchers found that the bank link protocol, while applicable, was "extremely insecure" \cite{banklinksecurityanalysis}. From March of 2021, RIA has disabled the use of bank link to access public services \cite{ria-deprecates-bank-link}, which accounted for only 1 percent of all authentications, also revealing its popularity in public.
 
@@ -113,19 +113,27 @@ Dokobit supports 11 countries: Estonia, Italy, Spain, Belgium, Latvia, Lithuania
 
 UAB Dokobit is a trust service provider for Qualified validation of qualified e-signature. It means the service itself does not provide Digital Signature certificates, but eIDAS considers the results of validation of signatures trustworthy \cite{eu-trustservices}.
 
-\subsection{Authentication and eID and QSCD}
-
-\TODO{Maybe find a better spot for this section}
-\TODO{Fact check?}
+\subsection{Authentication and QSCD}
 
 The requirements for Estonian ID cards make a clear distinction between "ADF AWP" and "ADF QSCD" applications. Both software applications are loaded onto the smart card; however, only the QSCD application, guarded by PIN2, can create QES. Implication here is that for authentication with an ID card, a QSCD is not used.
 
-Fundamentally, the only legal guarantees provided by eIDAS require the use of QSCD \cite{eulaw-eidas}, and for authentication this process, this device is not used \cite{ee-id-tech}. It is up to the relying party to trust the authentication certificate and signature associated with the authentication challenge. This technicality affects business in only the document signing part of the business - using encryption or authentication certificates does not provide the necessary legal guarantees.
+The fact that smart cards do not use a QSCD for authentication does not mean that the certificate used was not audited under eIDAS. In practice, the same QTSP CA issues both the authentication and the QSCD certificates (see figure \ref{fig:est-id-sameissuer}). "Since the authentication certificate is issued under the same CA and the same Terms and Conditions, the certificate policy documents and other CA statements are applicable to both certificates" \cite{arnis-phd}. While eIDAS does not outline any requirements for authentication modules in the QSCDs, it is reasonable to assume that the QTSP took the exact organizational and technical measures to protect the authentication key on the same physical device.
 
-Similarly, when using a third-party provider such as TARA (eeID) or Dokobit, the new eID provider acts as a new trust anchor. Companies must consider the risks of using such providers, as adding any middleware increases the attack surface on the company.
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.69]{est_id_sameissuer}
+    \caption{Comparison of authentication (left) and signing (right) certificate issuer field}
+    \label{fig:est-id-sameissuer}
+\end{figure}
+
+For different eID authentication schemes, companies have to assess the scheme's security on a case-by-case basis. For all of the methods analyzed in the thesis (Lithuanian and Estonian ID cards, Mobile-ID, and Smart-ID), the same QTSP signed both certificates - for authentication and signing. There seems to be no discernable benefit to issuing an authentication certificate with a different CA, so if a device offers both authentication and qualified signature creation functionality, it is highly likely that the authentication certificate is as trustworthy as the eIDAS compliant QSCD.
+
+\paragraph{Special case: third-party providers}
+
+When using an intermediary such as TARA (eeID) or Dokobit, the new eID provider acts as a new trust anchor. All rigorous eIDAS and QTSP auditing become irrelevant when using intermediary services, as systems are as secure as their weakest links. Companies must first look at the security auditing and the certifications of the intermediary; only then consider the security of authentication options its delegates.
 
 \subsection{Levels of assurance}
-\TODO{Levels of assurance section}
+
 
 
 \subsection{GDPR}
@@ -133,18 +141,9 @@ Similarly, when using a third-party provider such as TARA (eeID) or Dokobit, the
 When dealing with eID, sensitive personal data processing is required.
 \TODO{GDPR section}
 
-% ##### Research methodology
-
-% ###### Development complexity
-
-% One of primary outcomes of the research is to measure the complexity of the development. A model [26] will be used to measure the complexity of the examples and documentation provided by the services, and assign that to measurable values, which can be compared.
-
-
-% By having this access, this process is useful, as one service provider would be able to open up the entirety of the EU market. The main issue with using eIDAS nodes as an authentication method, is the restricted access to it. In email correspondence I learnt that in Estonia, access to this service is limited to public sector only, with plans to open it up to the private sector in 2022.
-
 \subsection{Threats}
 
-\TODO{There has to be a source with the extensive list, all protocols I checked look basically the same, but I can't seem to find a post saying yes, you need to do this.}
+\TODO{There has to be a source with the extensive list, all protocols I checked look the same, but I can't seem to find a post saying yes, you need to do this.}
 
 \begin{figure}
     \centering
@@ -171,17 +170,17 @@ When dealing with eID, sensitive personal data processing is required.
     \label{fig:eid-auth-flow-seq}
 \end{figure}
 
-In the sequence diagram (see figure \ref{fig:eid-auth-flow-seq}), we see a high-level overview of any eID authentication solution. In the authentication protocol, the relying party (company implementing eID sign-in) is entirely dependent on the QSCD interface, which acts as a trust anchor. A communication channel exists between the relying party and the interface. We can categorize the channel type into two groups:
+In the sequence diagram (see figure \ref{fig:eid-auth-flow-seq}), we see a high-level overview of any eID authentication solution. In the authentication protocol, the relying party (company implementing eID sign-in) entirely depends on the QSCD interface, which acts as a trust anchor. A communication channel exists between the relying party and the interface. We can categorize the channel type into two groups:
 
 \begin{enumerate}
     \item trusted, where the sender can reasonably guarantee that adversaries are unable to change the data in transit (Smart-ID, TARA, Dokobit);
-    \item untrusted, where there is a possibility for data to be tampered with in transit (Web eID).
+    \item untrusted, where there is a reasonable possibility for data to be tampered with in transit (Web eID).
 \end{enumerate}
 
 Trusted communications generally operate using an encrypted backchannel, where untrusted ones require the client to send data from the QSCD interface. Because the client sends the data, this becomes an untrusted channel, and the relying party must perform additional certificate verification.
 
-Failure to encrypt and establish the authenticity of the interface in a trusted backchannel or not validating data in a untrusted channel allows adversaries to perform man-in-the-middle attacks.
+Failure to encrypt and establish the authenticity of the interface in a trusted backchannel or not validating data in an untrusted channel allows adversaries to perform man-in-the-middle attacks.
 
 \TODO{Limitations: For the scope of the thesis, only two security aspects will be analyzed: the network communication between the natural person and the interface and the certificate authenticity guarantees. Security analysis of QSCD and its communications with the interface will not be analyzed.}
 
-\TODO{Further research? Limitations: proper analysis of what companies would like to see in a solution for easier bullet points}
+\TODO{Further research? Limitations: proper analysis of what companies would like to see in a solution for more accessible bullet points}
