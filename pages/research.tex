@@ -1,6 +1,31 @@
 \section{Research}
 \subsection{General security requirements}
-\subsubsection{User ID tracking}
+\subsection{System overview}
+\subsubsection{Linking User ID to an eID}
+
+There will be a need to uniquely link an identity to an internal account in the company SSO. The security requirement, in this case, is not to allow other users to access the same account. For this goal, companies must use one or more person-identifying properties.
+
+When using a passport as a reference, it has the following identifiers: (issuer) country code, document number, surname, given name, personal code, citizenship, date of birth, date of issue, date of expiry, and authority. In these cases, it is easy to use the personal code for identifying a person as it is unlikely to change - people change names, documents expire; authorities and date of birth do not narrow it down nearly enough.
+
+Implementers will hit a roadblock when checking a passport of Ireland - additionally, it has a place of birth but, more importantly, no personal identification code. In this case, the next best unique identifier would be to use the document number and update the account with a new number when the document eventually expires and is replaced.
+
+In the world of digital identity, the eIDAS node network must provide a unique identifier for all requests \cite{eidas-saml}. Having a standardized way of obtaining an identifier is good news. All countries who wish to connect to the eIDAS network would have to expose some code to identify a person uniquely, removing the burden from the software architects to analyze what identifier they should use.
+
+In the eIDAS node network, the unique identifier remains "unchanged for the lifetime of the account" \cite{eidas-saml}. Unfortunately, it does not mean that identifiers cannot change; the account associated with that identifier cannot change. If an identifier were to change when "the user's digital identity is replaced or repaired," relying parties should treat the newly obtained identifier as a completely new identity.
+
+\paragraph{eIDAS Unique Identifier Structure} In eIDAS SAML Attribute Profile, an identifier code is defined as:
+\begin{enumerate}
+  \item The first part is the Nationality Code of the identifier. This is one of the ISO 3166-1 alpha-2 codes, followed by a slash ("/")).
+  \item The second part is the Nationality Code of the destination country or international organization. This is one of the ISO 3166-1 alpha-2 codes, followed by a slash ("/").
+  \item The third part a combination of readable characters. This uniquely identifies the identity asserted in the country of origin but does not necessarily reveal any discernible correspondence with the subject's actual identifier (for example, username, fiscal number etc).
+\end{enumerate}
+
+Example: ES/AT/02635542Y (Spanish eIDNumber for an Austrian SP).
+
+\paragraph{Summary} Using eIDAS Unique Identifier structure as a base, we can see that it is enough to uniquely identify a digital identity in eIDAS with country of origin, country of destination, and a set of characters to identify that person in origin country. In our company's case, the destination country will always be the same, so to uniquely identify a person, we will only need its origin country and a unique identifier a member state must provide.
+
+For this thesis, identifiers will be marked as "{\{CC\}}/{\{PID\}}". Unique identifier examples: EE/38001085718, LT/49003111045, SE/870314-2391.
+
 \subsubsection{Privacy policy} \todo{focus on GDPR}
 \subsection{Case study: Dokobit}
 \subsection{Case study: eeID}
