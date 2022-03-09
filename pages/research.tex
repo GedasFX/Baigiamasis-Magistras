@@ -137,7 +137,95 @@ Based on the privacy policies of Web eID and Dokobit, we constructed a rudimenta
 
 Further research can be done to outline better the GDPR requirements needed to process a person's eID.
 
-\subsection{Weak points in the architecture}
+\subsection{Weaknesses in the architecture}
+
+All systems come with points of compromise. It is best to be aware of these weak points and harden against them early on rather than after a cyber incident. The weaknesses can be grouped into two parts: eID provider dependent and local.
+
+\paragraph{eID provider dependant weaknesses}
+
+These threats come from one common issue: trusting an eID service provider when a relying party should not have. There are four primary causes:
+
+\begin{enumerate}
+  \item relying party trusts an input from an insecure channel;
+  \item relying party does not perform the necessary validation;
+  \item weakness in the architecture of transport protocol;
+  \item eID provider itself gets compromised;
+\end{enumerate}
+
+These points will be addressed on a case-by-case basis for each of the eID providers in the study.
+
+\paragraph{Local weaknesses}
+
+In figure \ref{fig:sys-highlevel-witheid}, four components are not linked to a particular eID: AuthServer, SuperApp, application store, user store, and remote key store. We can identify weaknesses for those parts here. Each weakness was analyzed through the lens of CIA security analysis.
+
+
+\subsubsection{SuperApp}
+
+These two assets have similar weaknesses, with the only difference being the way users authenticate themselves. More in-depth analysis on authentication for the AuthServer can be seen on the 
+
+\paragraph{[CI] Users can see and or edit data normally forbidden to access} This issue is usually created by one of two causes:
+
+\begin{enumerate}
+  \item access control measures are disabled or do not protect resources;
+  \item OIDC token validation is disabled or misconfigured;
+\end{enumerate}
+
+The first cause has a trivial fix - developers have likely forgotten to enable the data access guard on the endpoint. It is unlikely that all authorization rules break.
+
+In the case of the second cause, some corners were likely cut in the ID token validation process. When validating a token, the process has to match the one described in the OIDC spec \cite{oidc} exactly. This process consists of three major parts:
+
+\begin{enumerate}
+  \item check if the token's crypto algorithm is as expected;
+  \item validate token signature;
+  \item validate claims - issuer, audience, timestamp, nonce;
+\end{enumerate}
+
+Developers usually need not worry about the process, as most frameworks have adopted the OpenID Connect protocol or have well-maintained libraries.
+
+\paragraph{[A] Service becomes unavailable} This threat is caused by one of the following:
+
+\begin{enumerate}
+  \item server is offline or overloaded;
+  \item OIDC token validation is misconfigured to have an incorrect authority;
+\end{enumerate}
+
+The first case is a common availability issue, meaning the server is suffering a denial of service attack. We will not cover the mitigation of this form of availability threat in the scope of the thesis.
+
+A likely cause for this issue is the manually configured OIDC properties on the relying party. If possible, developers should never configure the properties manually and use the well-known metadata endpoint instead. A metadata endpoint usually looks like this - \url{https://auth.mycompany.org/.well-known/openid-configuration}.
+
+
+\subsubsection{AuthServer}
+
+All of the points that apply to SuperApp also apply to AuthServer. However, there is a critical use case that is worth mentioning explicitly.
+
+\paragraph{[CI] Users can see used eID schemes and add new ones with unsafe sign-in}
+
+As per requirements, users must assign multiple identity providers to their accounts. When adding a new external scheme, the currently signed-in user must have the same privilege level as the scheme they are trying to add. This countermeasure is for the event an adversary gains access to their account; they wouldn't be able to elevate their privileges by adding their eID scheme and signing in with it.
+
+With this requirement in place, registration with an email and password becomes less valuable, as those accounts could never add an eID afterward. An exception to this rule can occur if a user has no eID schemes registered.
+
+This problem is solved by having a company policy to verify the user's first added eID manually. Without this verification, an adversary can register a new account with their real eID and access the data anyway.
+
+\subsubsection{Data stores}
+
+All three data stores have the exact issues between them. For the sake of brevity, they will be grouped under the umbrella of \textit{data store}.
+
+\paragraph{[CI] Users have a less secure way of accessing the data store}
+
+The system is as secure as its weakest link. If users have direct access to the database while bypassing the eID authentication check, the security and assurance guarantees are worthless.
+
+If there are alternative ways of accessing the database, companies must implement proper access rules that would be as secure as the one's eIDs provide. How that can be achieved depends on what data storage option is being used. The best option would be to close down external access to the data stores completely.
+
+\paragraph{[CI] Man-in-the-middle attacks} While uncommon, some data stores are vulnerable to MitM attacks \cite{sql-server-auth-mitm}. Although the best course of action would be to move the data storage server away from the general internet and make it accessible only on the local network or VPN, that is not always enough. For maximum security, companies must implement the recommended MitM prevention techniques \cite{sql-server-enable-tls}.
+
+\paragraph{[A] Data is destroyed or lost}
+
+Ransomware attacks and accidental database corruptions can happen, so offline remote backups are a must.
+
+One must not forget to satisfy the requirement of not allowing for easier access to data even here. These backups must be protected from unauthorized access.
+
+One approach to solving this would be to use encryption; keys should only be available after authenticating with an eID scheme. One equally secure alternative would be to use something like the encryption and decryption functionality of Estonia's ID cards.
+
 \subsection{Case Study: Dokobit}
 \subsection{Case Study: eeID}
 \subsection{Case Study: Web eID}
