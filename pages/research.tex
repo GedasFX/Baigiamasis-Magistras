@@ -1,7 +1,8 @@
 \section{Research}
-\subsection{System overview}
 
-\subsubsection{High-level overview}
+\subsection{System architecture}
+
+\subsubsection{System overview}
 
 \begin{figure}
   \centering
@@ -48,13 +49,55 @@ The key store is represented with the addition of a red lock. Depending on the c
 
 \paragraph{Final state}
 
-The end goal for the scope of this thesis is to implement three eID providers into the architecture. For normal companies, it would make sense to implement multiple in case they would like to get more coverage. Additionally, they could register non eID providers, such as Google or Microsoft social logins. Final high-level overview of the system can be seen in figure \ref{fig:sys-highlevel-final}.
+The end goal for the scope of this thesis is to implement three eID providers into the architecture. For normal companies, it would make sense to implement multiple in case they would like to get more coverage. Additionally, they could register non eID providers, such as Google or Microsoft social logins. The final high-level overview of the system can be seen in figure \ref{fig:sys-highlevel-final}.
 
 \begin{figure}
   \centering
   \includegraphics[scale=0.65]{architecture/final.png}
   \caption{System architecture after the inclusion of all eID providers in scope}
   \label{fig:sys-highlevel-final}
+\end{figure}
+
+\subsubsection{Process overview}
+
+For validation of the architecture, we will consider two use cases.
+
+The first one (see figure \ref{fig:sysprocess-a}) is concerned about accessing a protected resource with a token issued by the AuthServer. This use case validates the base state of the system.
+
+The second use case (see figure \ref{fig:sysprocess-b}) is also concerned about accessing a protected resource, but only those, who authenticate with a higher level of assurance, like eID, can access it. This use case validates the successful implementation of eID authentication and access control.
+
+\begin{figure}
+  \centering
+  \begin{sequencediagram}
+    \newthread{A}{Actor}{}
+    \newinst[3]{B}{AuthServer}{}
+    \newinst[1]{C}{SuperApp}{}
+
+    \begin{call}{A}{accessProtected()}{C}{401 Unauthorized}\end{call}
+
+    \begin{call}{A}{authWithPassword()}{B}{Auth token}\end{call}
+    \begin{call}{A}{accessProtected()}{C}{Data}\end{call}
+    \begin{call}{A}{accessReallyProtected()}{C}{403 Forbidden}\end{call}
+  \end{sequencediagram}
+  \caption{System behavior when authenticated with a username + password scheme}
+  \label{fig:sysprocess-a}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{sequencediagram}
+    \newthread{A}{Actor}{}
+    \newinst[2]{B}{AuthServer}{}
+    \newinst[1]{C}{SuperApp}{}
+
+    \begin{call}{A}{accessProtected()}{C}{401 Unauthorized}\end{call}
+
+    \begin{call}{A}{authWithEid()}{B}{Auth token}\end{call}
+    \begin{call}{A}{accessProtected()}{C}{Data}\end{call}
+    \begin{call}{A}{accessReallyProtected()}{C}{Very Secret Data}\end{call}
+  \end{sequencediagram}
+  \caption{System behavior when authenticated with an eID scheme}
+  \label{fig:sysprocess-b}
 \end{figure}
 
 \subsubsection{Linking eID to an internal user ID}
@@ -73,7 +116,7 @@ In the eIDAS node network, the unique identifier remains "unchanged for the life
 \begin{enumerate}
   \item The first part is the Nationality Code of the identifier. This is one of the ISO 3166-1 alpha-2 codes, followed by a slash ("/")).
   \item The second part is the Nationality Code of the destination country or international organization. This is one of the ISO 3166-1 alpha-2 codes, followed by a slash ("/").
-  \item The third part a combination of readable characters. This uniquely identifies the identity asserted in the country of origin but does not necessarily reveal any discernible correspondence with the subject's actual identifier (for example, username, fiscal number etc).
+  \item The third part is a combination of readable characters. This uniquely identifies the identity asserted in the country of origin but does not necessarily reveal any discernible correspondence with the subject's actual identifier (for example, username, fiscal number etc).
 \end{enumerate}
 
 Example: ES/AT/02635542Y (Spanish eIDNumber for an Austrian SP).
@@ -125,7 +168,7 @@ Researcher Arnis Paršovs published a security analysis of the protocol v1 in Oc
 
 \paragraph{Actors}
 
-The actors in the figure \ref{fig:eid-auth-flow-seq} assume the roles of: QSCD Interface - web-eid.js \cite{ria-webeid-source-web-eid-js}, web-eid-app \cite{ria-webeid-source-web-eid-app}; QSCD - Smart cards of Estonia, Latvia, Lithuania, and Finland \cite{ria-webeid}. 
+The actors in the figure \ref{fig:eid-auth-flow-seq} assume the roles of: QSCD Interface - web-eid.js \cite{ria-webeid-source-web-eid-js}, web-eid-app \cite{ria-webeid-source-web-eid-app}; QSCD - Smart cards of Estonia, Latvia, Lithuania, and Finland \cite{ria-webeid}.
 
 Even though distributed by the same website, id.ee, this interface is separate from the official id.ee software Estonian citizens use to sign and verify documents. "In the future, the final version of Web eID will be added into the ID-software installation package, available for the users the website on www.id.ee" \cite{ria-webeid}. Owners of other countries' smart cards will still have to download the special software from id.ee.
 
