@@ -1,0 +1,51 @@
+\section{Discussion}
+
+\subsection{Do businesses even want eID?}
+
+When conducting the initial investigation on what criteria we should use to compare different eID providers, we interviewed the CTO of a logistics company. The full interview can be found in the appendix. The responses about current practices were shocking but not surprising.
+
+\paragraph{Authentication or Digital Signatures. What is more important to you?}
+
+When asked if there was a choice between implementing eID authentication and qualified digital signature infrastructure, the company's focus would be on digital signature. Authentication only helps ensure the confidentiality and integrity of data and requires an additional heap of technological measures to prevent bypass. Qualified digital signatures offer an immediate benefit in the form of legally binding documents.
+
+\paragraph{Trust. What trust requirements the eID provider should fulfill for you to adopt it?}
+
+When asked if ISO/IEC 20001:2013 certification is sufficient, the answer was a resounding no. This certification should be the bare minimum for the company to consider using that solution. The CTO would "like to see that government portal, or banks are adopting this solution. This provides sufficient trust into the solution". This quote supports the assumption at the start that widespread adoption is low because there are no big-name adopters.
+
+\paragraph{Source. Does the eID have to come from a TSP?}
+
+The company CTO was not concerned much about the kind of eID provider is: primary or third-party. As long as other large entities the solution is trusted by other entities (governments or large companies), there is no significant difference between choosing services from an eIDAS QTSP and not. This logistics company sees no clear advantage in creating a contract with SK ID Solutions to implement Smart-ID authentication over an agreement with the Estonian Internet Foundation.
+
+One can argue that a TSP is the trusted solution by large governmental institutions; however, it comes with a problem, especially in Estonia, of poor market reach, which is also highly important.
+
+\paragraph{Market reach. How much impact does it have?}
+
+While trust and security in solution are the main deciding factors, increasing security would not attract companies to use an eID solution after it reaches a certain widespread adoption level. What will have more impact is the market reach.
+
+We have presented the interviewee four options: eeID (eIDAS), Dokobit (private company), Web eID (DIY), Smart-ID (narrow specialty TSP). With all their advantages and disadvantages, assuming all reach the trust requirement and price of operations are similar, the CTO's option was the one with the highest market reach. The reasoning behind it was saving money on implementing multiple providers, and the less company has to do, the lower the risk of something going wrong.
+
+In short, a larger market size would positively impact the decision process of choosing a particular eID provider.
+
+\paragraph{Pricing. How much is worth spending on eID solutions?}
+
+Reducing costs is one of the cornerstones of running a business. When presented with the ballpark of how much the company would have to spend to operate an eID solution, the company's CTO suggested looking at the broader market for identity management solutions. They currently use Azure for their services. The company would still need to pay Microsoft for their accounts to access the cloud platform infrastructure. Azure AD B2C is used for all other use cases, which provides identity management options the company is used to, and the operational cost is close to nothing.
+
+The issue with the eID solutions is that they are targeting a different kind of company. Still, it is not clear which industry would willingly, without regulatory requirements, choose to implement such a system. The CTO estimates that for 10 000 authentications per month, a company could reasonably support 300-400 active users. This price effectively means adding 1€ per system user to operational costs. Not many industries can afford such a luxury.
+
+\paragraph{Technological hurdles}
+
+The system is only as secure as its weakest link. The hardest part of implementing an eID solution is not integrating with an external provider but creating access controls for new or existing resources. These measures will have to be in place for all interaction methods - from user interfaces to database and backup solutions.
+
+\paragraph{Summary}
+
+Ultimately, the eID authentication solution suffers from a lack of benefits for companies. This solution deals with authentication and, by extension, access control. There is no visible advantage of using eID over a regular MFA solution from Microsoft. The company is just not dealing with data that personal.
+
+The picture I have painted from the interview is that for the eID authentication to be helpful, there should be a legitimate interest to obtain the user's national ID code. There are cheaper alternatives available for those interested in only the additional security measures.
+
+\subsection{Today, they open PDF and apply PNG of signature into the file free of charge}
+
+\TODO{Talk about which of the 3 case studies would work best in a company in early 2022}
+\todo{Should notify how eeID and Web eID are really in their infancy and further research should repeat this study in a couple of years}
+
+
+\TODO{Footnote on ID generation. Why not use the id and not store? Generally you would want to store who created a internal document, or who last edited a page. Using national ID for this purpose can open pandoras box when it comes to logging. Pseudonimization and linking the keys behind strong locks is next best thing.}
