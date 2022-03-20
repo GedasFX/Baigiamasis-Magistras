@@ -228,7 +228,32 @@ One approach to solving this would be to use encryption; keys should only be ava
 
 \subsection{Case Study: Dokobit}
 
+\subsubsection{About}
+
+Dokobit \cite{dokobit}, trademark and subsidiary of Estina \cite{euipo-dokobit}, offers two products: Document Signing Portal and API solutions.
+
+The first product, the Document Signing Portal, was released in 2014 \cite{dokobit-aboutus}. The primary purpose of this solution is to allow users to upload documents and digitally sign them online.
+
+Estina has acquired the DigiDoc portal (\url{https://digidoc.ee}) from SK ID Solutions in 2016 \cite{sk-digidocacquired} which had the exact purpose. This portal should not be confused with the similarly named DigiDoc4 client Estonians commonly use to sign documents \cite{ria-idee}.
+
+The second product, API solutions, targets businesses in a variety of scopes: signature collection, signing, identification, sealing, and TSP monitoring \cite{dokobit}. In the thesis, we will only consider the Identification service.
+
+The company has received ISO/IEC 27001:2013 certification \cite{dokobit-certification} and in 2020 was included in the EU Trusted Service List \cite{eu-trustservices, dokobit-aboutus}.
+
+In 2021, the Norwegian electronic identity solutions provider company Signicat AS acquired UAB Dokobit.
+
+\subsubsection{Data Flow}
+\subsubsection{Trust Anchor}
+\subsubsection{Pricing}
+\subsubsection{Security Analysis}
+
 \subsection{Case Study: eeID}
+
+\subsubsection{About}
+\subsubsection{Data Flow}
+\subsubsection{Trust Anchor}
+\subsubsection{Pricing}
+\subsubsection{Security Analysis}
 
 \subsection{Case Study: Web eID}
 
@@ -239,6 +264,8 @@ Released in the Summer of 2021 \cite{ria-webeid} and having undergone significan
 Functionally this framework is split into three parts: software the user needs to install on their computer, a javascript library that acts as a data intermediary, and the certificate validation library for the back-end.
 
 The software users need to install is similar to the one various countries' governments issue. The significant difference is that this software supports more than one countries' eID solutions. Supported countries include Estonia, Latvia, Lithuania, and Finland \cite{ria-webeid}.
+
+This service is built by the Estonian Information System Authority, responsible for TARA, Estonia's public sector gateway. No publicly available audit certification is available at the time of writing \todo{is this true?}.
 
 \subsubsection{Data Flow}
 
@@ -483,12 +510,8 @@ Researcher Arnis Paršovs published a security analysis of the protocol v1 in Oc
 
 The protocol is two asynchronous JavaScript calls to an API endpoint, which exists on the same website; the user does not need to leave the page. No redirects or third parties are involved; therefore, the analysis of a redirect-based protocol is not applicable in this scenario.
 
-\subsubsection{Certification}
-
-This service is built by the Estonian Information System Authority, responsible for TARA, Estonia's public sector gateway. No publicly available audit certification is available at the time of writing.
-
-
 \TODO{Related research about legal person documents?}
 \TODO{High-level overview of the system}
 \TODO{Points of compromise?}
+
 \TODO{Complete alternative, using your own issued certificates?}
