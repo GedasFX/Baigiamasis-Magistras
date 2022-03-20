@@ -238,12 +238,80 @@ Estina has acquired the DigiDoc portal (\url{https://digidoc.ee}) from SK ID Sol
 
 The second product, API solutions, targets businesses in a variety of scopes: signature collection, signing, identification, sealing, and TSP monitoring \cite{dokobit}. In the thesis, we will only consider the Identification service.
 
-The company has received ISO/IEC 27001:2013 certification \cite{dokobit-certification} and in 2020 was included in the EU Trusted Service List \cite{eu-trustservices, dokobit-aboutus}.
+Dokobit's Identification service allows Lithuanian, Latvian, Estonian, Finnish, Norwegian, Icelandic, Polish, Belgian, Portuguese, Spanish, and Italian \cite{dokobit} users to authenticate themselves with their countries' scheme. It is the highest country count and market reach of all three case studies.
+
+The company has received ISO/IEC 27001:2013 certification \cite{dokobit-certification} and in 2020 was included in the EU Trusted Service List \cite{eu-trustservices, dokobit-aboutus}, thus it becoming a Qualified Trust Service Provider.
 
 In 2021, the Norwegian electronic identity solutions provider company Signicat AS acquired UAB Dokobit.
 
+\subsubsection{Dokobit Identification Service}
+
+Identification service supports two distinct data flows: Gateway and API. The core difference between them is that the Gateway uses a prebuilt UI on their server. In contrast, the API requires the companies to develop their UI and have their server communicate with Dokobit servers instead. This difference only affects the user experience.
+
+The main advantage of Identity Gateway over Identity API is the added brand trust. A study finds that users "associate higher security feelings with a higher level of brand trust" \cite{ha2004factors}. If an organization has not matured yet as a brand (such as a recent startup), it will make more sense for them to choose Identity Gateway over API. On the contrary, if they are a large, highly trusted organization, such as a bank, it would make more sense to use Identity API and have all user interactions happen on the same domain.
+
+For this thesis, we will only analyze the Identity Gateway in depth.
+
+\paragraph{Embed or Redirect}
+
+Identity Gateway comes in two primary user flows: embedded and redirect-based.
+
+In embedded flow, users could stay on the website, authenticate in a pop-up modal, and update the website view accordingly after finishing the authentication process. Embedded flow has the advantage of not requiring the users to leave the website, which is helpful to preserve user data in complex forms.
+
+In redirect-based flow, users are sent to an external website, perform authentication, and redirect to the company website, in a flow similar to OAuth2.
+
+Ultimately, experts consider the embedded flow to be the weaker of the two methods \cite{auth0-universal-vs-embedded} for two main reasons:
+
+\begin{enumerate}
+  \item Cross-origin requests are inherently more dangerous, allowing for MitM and CSRF attacks;
+  \item The client application, even when embedded, receives full client credentials, which adds another point of compromise in the form of XSS;
+\end{enumerate}
+
+When using federated sign-in for Native Apps, "best current practice requires that native apps MUST NOT use embedded user-agents to perform authorization requests" \cite{rfc8252}. This practice means that companies who have a mobile app or would consider having one in the future mustn't use Embedded flow.
+
 \subsubsection{Data Flow}
+
+This section will analyze Dokobit Identity Gateway, redirect-based user flow, the general overview of which can be seen in figure \ref{fig:dokobit-identitygw-redirect}. We can group the authentication process into three parts: establishing a session with Dokobit, user authentication with an eID provider, and user information retrieval.
+
+\begin{figure}
+  \centering
+  \begin{sequencediagram}
+    \newthread{A}{Actor}{}
+    \newinst[2]{B}{AuthServer}{}
+    
+    \newinst[1]{C}{IDGW Backend}{}
+    \newinst[1]{D}{IDGW Frontend}{}
+
+    \begin{call}{A}{1. authenticate()}{B}{Session}
+      \begin{call}{B}{2. POST /api/authentication/create}{C}{session\_token}\end{call}
+      \begin{call}{B}{3. HTTP 302 Redirect}{D}{HTTP 302 Redirect}
+        \begin{call}{D}{4. renderedAuthForm()}{A}{Credentials}\end{call}
+      \end{call}
+
+      \begin{call}{B}{5. GET /api/authentication/\{session\_token\}/status}{C}{User data}\end{call}
+    \end{call}
+  \end{sequencediagram}
+  \caption{Dokobit Identity Gateway - Redirect-based user flow \cite{dokobit-idgw-docs}}
+  \label{fig:dokobit-identitygw-redirect}
+\end{figure}
+
+\paragraph{Establishing a session with Dokobit}
+
+When a user requests to authenticate, the company's back-end systems' first step is to establish a session with Dokobit Identity Gateway. To do this, a {POST} request must be made to the {/api/authenticate/create} endpoint. This response will contain the session identifier and the redirect URL. Users will have to go there to interface with their eID providers.
+
+\paragraph{User authentication with an eID provider}
+
+After the back-end successfully creates a session, they must redirect the user to the received endpoint. An easy way to accomplish that is to respond to the initial authentication request with HTTP status 302 - Found.
+
+Most of the heavy lifting with authentication is delegated to this step and handled by Dokobit. The company's back-end systems should wait for the user to return after authenticating.
+
+\paragraph{User information retrieval}
+
+After the user returns after successful authentication, the back-end servers should make a {GET} request to {/api/authentication/session\_token/status} endpoint. From there, the company can securely receive the user information via a backchannel.
+
 \subsubsection{Trust Anchor}
+
+
 \subsubsection{Pricing}
 \subsubsection{Security Analysis}
 
