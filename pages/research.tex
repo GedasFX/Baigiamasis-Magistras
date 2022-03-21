@@ -161,7 +161,7 @@ In figure \ref{fig:sys-highlevel-witheid}, four components are not linked to a p
 
 \subsubsection{SuperApp}
 
-These two assets have similar weaknesses, with the only difference being the way users authenticate themselves. More in-depth analysis on authentication for the AuthServer can be seen on the 
+These two assets have similar weaknesses, with the only difference being the way users authenticate themselves. More in-depth analysis on authentication for the AuthServer can be seen on the
 
 \paragraph{[CI] Users can see and or edit data normally forbidden to access} This issue is usually created by one of two causes:
 
@@ -278,7 +278,7 @@ This section will analyze Dokobit Identity Gateway, redirect-based user flow, th
   \begin{sequencediagram}
     \newthread{A}{Actor}{}
     \newinst[2]{B}{AuthServer}{}
-    
+
     \newinst[1]{C}{IDGW Backend}{}
     \newinst[1]{D}{IDGW Frontend}{}
 
@@ -299,6 +299,24 @@ This section will analyze Dokobit Identity Gateway, redirect-based user flow, th
 
 When a user requests to authenticate, the company's back-end systems' first step is to establish a session with Dokobit Identity Gateway. To do this, a {POST} request must be made to the {/api/authenticate/create} endpoint. This response will contain the session identifier and the redirect URL. Users will have to go there to interface with their eID providers.
 
+Sample HTTP request data can be seen in listing \ref{lst:dokobit-challenge-http}.
+
+\begin{lstlisting}[caption={Handling Dokobit session creation}, label={lst:dokobit-challenge-http}]
+  Request:
+  POST https://id-sandbox.dokobit.com/api/authentication/create?access_token=YOUR_ACCESS_TOKEN
+  {
+      'return_url': 'https://id-sandbox.dokobit.com/example/success.php'
+  }
+  
+  Response:
+  {
+    "status": "ok",
+    "session_token": "02f922c9917231ea8acbbbcf63796924af548c801d75772f2b1701b413462c61",
+    "url": "https://id-sandbox.dokobit.com/auth/02f922c9917231ea8acbbbcf63796924af548c801d75772f2b1701b413462c61",
+    "expires_in": 3600
+  }
+\end{lstlisting}
+
 \paragraph{User authentication with an eID provider}
 
 After the back-end successfully creates a session, they must redirect the user to the received endpoint. An easy way to accomplish that is to respond to the initial authentication request with HTTP status 302 - Found.
@@ -307,13 +325,258 @@ Most of the heavy lifting with authentication is delegated to this step and hand
 
 \paragraph{User information retrieval}
 
-After the user returns after successful authentication, the back-end servers should make a {GET} request to {/api/authentication/session\_token/status} endpoint. From there, the company can securely receive the user information via a backchannel.
+After the user returns after successful authentication, the back-end servers should make a {GET} request to {/api/authentication/session\_token/status} endpoint. The company can securely receive the user information via a backchannel.
+
+Sample HTTP request data can be seen in listing \ref{lst:dokobit-handleremote-http}.
+
+\begin{lstlisting}[caption={Handling Dokobit session creation}, label={lst:dokobit-handleremote-http}]
+  Request:
+  GET https://id-sandbox.dokobit.com/api/authentication/SESSION_TOKEN/status?access_token=YOUR_ACCESS_TOKEN
+  
+  Response:
+  {
+      "status": "ok",
+      "certificate": { ... },
+      "code": "30303039914",
+      "country_code": "lt",
+      "name": "DEMO",
+      "surname": "SMART-ID",
+      "authentication_method": "smartid",
+      "date_authenticated": "2019-05-06T12:15:34+03:00"
+  }
+\end{lstlisting}
 
 \subsubsection{Trust Anchor}
 
+Dokobit assumes the role of being the trust anchor. This means that it also acts as a single point of failure. Should Dokobit become compromised, all applications using Dokobit will become susceptible to impersonation. On the flip side, there is only one system company developers need to implement, meaning that it would be harder for adversaries to break into the system via external means.
+
+Companies should consider the risks when using a provider capable of dictating who the person is, as no integrity checks are supported in the protocol.
 
 \subsubsection{Pricing}
+
+Dokobit is a commercial product, and therefore it has associated usage costs. In 2022, these costs are as seen in the table \ref{tab:dokobit-pricing}.
+
+\begin{table}[h]
+  \centering
+  \caption{Dokobit Identity Gateway pricing 2022}
+  \begin{tabular}{| l | l | l | l |}
+    \hline
+    \bf{Plan} & \bf{Number of transactions} & \bf{Monthly fee} & \bf{Price per extra transaction} \\
+    \hline
+    1         & 700                         & 50 €             & 0,071 €                          \\
+    \hline
+    2         & 1 600                       & 100 €            & 0,063 €                          \\
+    \hline
+    3         & 5 000                       & 250 €            & 0,050 €                          \\
+    \hline
+    4         & 12 000                      & 500 €            & 0,042 €                          \\
+    \hline
+  \end{tabular}
+  \label{tab:dokobit-pricing}
+\end{table}
+
+Each pricing tier includes a specific number of transactions and adds a cost for each transaction exceeding it. For example, if the total amount of transactions is 200, the price will still be 50 €, as the number of transactions hasn't reached 700.
+
+Assuming the company's users authenticate around 25 times per month, the monthly user price will be in the ballpark of 1-2 €.
+
 \subsubsection{Security Analysis}
+
+\paragraph{Actors}
+
+The actors in the figure \ref{fig:eid-auth-flow-seq} assume the roles of the following: QSCD Interface - Dokobit Identity Gateway; QSCD - eID solutions registered on Dokobit.
+
+In the case of Dokobit Identity Gateway, developers should not be concerned about the QSDC used, as the QSCD interface - Dokobit will provide the user's identity in a standardized form.
+
+\paragraph{Communication channel}
+
+The Dokobit identity gateway uses a secure communication channel, encrypted end-to-end using HTTPS.
+
+\paragraph{Validation requiements}
+
+Unlike eeID and Web eID, Dokobit does not provide validation requirements documentation, so the relying party and developers must be aware of protecting themselves from common authentication attacks.
+
+Because the idea behind authentication is similar inflow to Oauth2, the thesis will use the current security best practices document \cite{ietf-oauth-security-topics-19} and assess which measures developers should be aware of and which ones have been addressed by Dokobit. A detailed explanation of each attack can be found on the IETF document.
+
+Dokobit issues client secrets - API tokens for creating sessions and obtaining user information after the authentication.
+
+\subparagraph{Replay attacks}
+
+\begin{itemize}
+  \item Identity Gateway will reject the second GET request with the session token.
+\end{itemize}
+
+The developer does not have to implement state management to verify that a given session token was used only once. Mitigation measures are sufficient.
+
+\subparagraph{Insufficient Redirect URI Validation}
+
+\begin{itemize}
+  \item The adversary does not have any agency over redirect URI after authentication, as the {authorize} endpoint does not have any query parameters.
+  \item The redirect\_url parameter when sending the initial request outlined in step 3 of the sequence diagram cannot be longer than 255 ASCII characters.
+  \item The redirect URL is never validated on the Dokobit servers, as it was never registered as a client. Each redirect URL is generated for one-time use.
+\end{itemize}
+
+Adversaries cannot influence the redirect URI. Mitigation measures are sufficient.
+
+\subparagraph{Credential Leakage via Referrer Headers}
+
+\begin{itemize}
+  \item Dokobit Identity Gateway does not include third-party resources (javascript, image, or other); therefore, it cannot leak the session token.
+  \item The company is required not to have any third-party resources on the authentication and redirect pages.
+  \item The client is using a secret API key, rendering it impossible to obtain private information without its use.
+\end{itemize}
+
+Dokobit does not leak credentials via Referrer Headers, and the developers should not embed third-party resources in the critical authentication pages. Mitigation measures are sufficient.
+
+\subparagraph{Credential Leakage via Browser History}
+
+\begin{itemize}
+  \item Session tokens are stored in browser history; however, they are single-use only and are immune to replay attacks.
+  \item User personal information details are never exposed to the client.
+\end{itemize}
+
+The only thing adversaries could extract from the browser history is a used-up session token, which does not provide much value. Mitigation measures are sufficient.
+
+\subparagraph{Mix-Up}
+
+\begin{itemize}
+  \item For this attack to work, the adversary must be able to register a client with an eID provider, and the relying authorization server must use more than one provider.
+  \item Dokobit uses a custom protocol, which would make this form of attack impossibly unlikely.
+\end{itemize}
+
+There is almost a 0\% chance of this attack happening. Mitigation measures are not required.
+
+\subparagraph{Session Token Injection and Cross-Site Request Forgery}
+
+Adversaries would perform the injection and CSRF attacks identically.
+
+\begin{itemize}
+  \item The protocol does not protect against session token injection attacks.
+  \item The protocol also adds more attack surfaces by issuing the session token before the user signs in, allowing the adversary to obtain or inject it before and after the user performs authentication.
+  \item It is possible to mitigate adversaries stealing a victim's session.
+  \item \textbf{It is impossible to mitigate adversaries injecting their session} (phishing).
+\end{itemize}
+
+Identity Gateway protocol does not have security measures built-in against session token injection or CSRF attacks. It is possible to prevent adversaries from being able to redeem the victim's session. However, there is \textbf{no possible way to prevent adversaries from injecting their Dokobit session}.
+
+From the attacker's point of view, they can exploit this vulnerability by performing these steps \cite{video-exploitdokobit}:
+
+\begin{enumerate}
+  \item Establish session with identity server and Dokobit;
+  \item Trick the user into opening the link issued by Dokobit;
+  \item After the user authenticates, but before gets redirected, reload the page;
+  \item If an adversary managed to do it in time, they receive that person's access;
+\end{enumerate}
+
+The only way to mitigate this attack for the user will be to make the authentication server invalidate the authenticated session if a request presents the same session\_token. Thankfully, it is easy to detect if the server has consumed the session token already, as Dokobit would reject additional requests, as described in replay attack mitigation.
+
+Mitigation measures are \textbf{weak}, and developers should be ready to implement authentication session revocation.
+
+\subparagraph{Client Impersonating Resource Owner}
+
+\begin{itemize}
+  \item Dokobit does not allow users to choose their id or secret.
+\end{itemize}
+
+Dokobit made it impossible to perform this attack. Mitigation measures are sufficient.
+
+\subparagraph{Clickjacking}
+
+\begin{itemize}
+  \item Dokobit auth page does not use Content-Security-Policy, however it does use header X-Frame-Option: {SAMEORIGIN}.
+  \item Framebusting \cite{RYDSTEDT2010BUSTI} techniques were not discovered.
+\end{itemize}
+
+Mitigation measures are sufficient on modern browsers.
+
+\subsubsection{Discovered weaknesses}
+
+When analyzing and implementing the protocol, two weaknesses were discovered that developers should be aware of and mitigate.
+
+\paragraph{Session binding}
+
+
+The Dokobit Identity Gateway protocol is simple and resilient to most forms of attacks out of the box. However, developers should make sure to enforce session binding. Adversaries can perform this attack by going through the following steps:
+
+\begin{enumerate}
+  \item Adversary establishes an authentication session with the server, and by extension, Dokobit. They receive a Dokobit session\_token.
+  \item Victim establishes an authentication session with authentication session.
+  \item Adversary tricks the user into using their session or injects their session token by other means.
+  \item Victim authenticates on Dokobit with adversary's session token.
+  \item Adversary finishes the session and successfully impersonates the victim. 
+\end{enumerate}
+
+Developers can mitigate this session token injection and CSRF attack by binding the Dokobit session to the browsing session. When the user returns from Dokobit Identity Gateway, the return URL will have the session token attached in the path. If the authentication server can verify that the same browser has sent the session token and created the session, it would be possible to eliminate this attack.
+
+It is possible to eliminate this attack using encrypted cookies with the session\_token attached (see listings \ref{lst:dokobit-challenge}, \ref{lst:dokobit-handleremote}).
+
+\begin{lstlisting}[caption={Handling Dokobit session creation}, label={lst:dokobit-challenge}]
+  protected override async Task HandleChallengeAsync(AuthenticationProperties properties)
+  {
+      if (string.IsNullOrEmpty(properties.RedirectUri))
+          properties.RedirectUri = OriginalPathBase + OriginalPath + Request.QueryString;
+
+      var body = JsonSerializer.Serialize(new { return_url = BuildRedirectUri(Options.CallbackPath) });
+      var response = await ExecuteRequestAsync(HttpMethod.Post, "/api/authentication/create", body);
+
+      response.EnsureSuccessStatusCode();
+      using var sessionResponse = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync(Context.RequestAborted));
+      var root = sessionResponse.RootElement;
+
+      properties.Items["session_token"] = root.GetString("session_token");
+
+      Response.Cookies.Append(Options.StateCookie.Name!, Options.StateDataFormat.Protect(properties), Options.StateCookie.Build(Context, Clock.UtcNow));
+      var redirectContext = new RedirectContext<DokobitOptions>(Context, Scheme, Options, properties, root.GetString("url")!);
+
+      await Events.RedirectToAuthorizationEndpoint(redirectContext);
+  }
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Handling access token creation}, label={lst:dokobit-handleremote}]
+  protected override async Task<HandleRequestResult> HandleRemoteAuthenticateAsync()
+  {
+      var properties = Options.StateDataFormat.Unprotect(Request.Cookies[Options.StateCookie.Name!]);
+      if (properties == null)
+          return HandleRequestResult.Fail("Invalid state");
+  
+      var sessionToken = Request.Query["session_token"];
+      if (StringValues.IsNullOrEmpty(sessionToken))
+          return HandleRequestResult.Fail("Missing session_token", properties);
+  
+      if (properties.Items["session_token"] != sessionToken)
+          return HandleRequestResult.Fail("Unexpected session_token received", properties);
+  
+      var response = await ExecuteRequestAsync(HttpMethod.Get, $"/api/authentication/{sessionToken}/status");
+      response.EnsureSuccessStatusCode();
+  
+      Response.Cookies.Delete(Options.StateCookie.Name!);
+  
+      await using var stream = await response.Content.ReadAsStreamAsync(Context.RequestAborted);
+      using var user = await JsonDocument.ParseAsync(stream);
+  
+      var ticket = await CreateTicketAsync(new ClaimsIdentity(ClaimsIssuer), properties, user.RootElement);
+      return HandleRequestResult.Success(ticket);
+  }
+\end{lstlisting}
+
+The first code block (listing \ref{lst:dokobit-challenge}) has three main parts:
+
+\begin{enumerate}
+  \item establish a session with Dokobit as described in listing \ref{lst:dokobit-challenge-http};
+  \item append an \textbf{encrypted} session cookie which would bind the browser to that specific Dokobit session (this cookie stores the encrypted session\_token);
+  \item redirect the user to the authorization endpoint;
+\end{enumerate}
+
+After the user authenticates and returns, the next code block gets executed (listing \ref{lst:dokobit-handleremote}). This code performs request validation in addition to retrieving the user data:
+
+\begin{enumerate}
+  \item try to decrypt the cookie data - if decryption fails, it was likely tampered with, and the application cannot proceed with the authentication;
+  \item try to obtain the session token from query parameters - it should always exist if the request was not tampered with;
+  \item verify the session\_token received from cookie and query parameters match - prevents victim's session from being stolen, as adversaries would be unable to redeem it;
+  \item redeem the session\_token and receive user data as described in listing \ref{lst:dokobit-handleremote-http};
+  \item if redemption was unsuccessful, \textbf{invalidate the previous user session} \cite{video-exploitdokobit};
+  \item clean up the used cookies;
+  \item issue an access token or a new session for use in the company;
+\end{enumerate}
 
 \subsection{Case Study: eeID}
 
