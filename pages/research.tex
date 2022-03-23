@@ -238,7 +238,7 @@ Estina has acquired the DigiDoc portal (\url{https://digidoc.ee}) from SK ID Sol
 
 The second product, API solutions, targets businesses in a variety of scopes: signature collection, signing, identification, sealing, and TSP monitoring \cite{dokobit}. In the thesis, we will only consider the Identification service.
 
-Dokobit's Identification service allows Lithuanian, Latvian, Estonian, Finnish, Norwegian, Icelandic, Polish, Belgian, Portuguese, Spanish, and Italian \cite{dokobit} users to authenticate themselves with their countries' scheme. It is the highest country count and market reach of all three case studies.
+Dokobit's Identification service allows Lithuanian, Latvian, Estonian, Finnish, Norwegian, Icelandic, Polish, Belgian, Portuguese, Spanish, and Italian \cite{dokobit} users to authenticate themselves with their countries' scheme.
 
 The company has received ISO/IEC 27001:2013 certification \cite{dokobit-certification} and in 2020 was included in the EU Trusted Service List \cite{eu-trustservices, dokobit-aboutus}, thus it becoming a Qualified Trust Service Provider.
 
@@ -581,7 +581,21 @@ After the user authenticates and returns, the next code block gets executed (lis
 \subsection{Case Study: eeID}
 
 \subsubsection{About}
+
+The Estonian Information System Authority has created TARA - a gateway for public sector services to integrate eID authentication easier and cheaper \cite{tara-business}. At its core, it uses OpenID Connect \cite{tara-technical} protocol to communicate between the service and relying parties.
+
+The Estonian Internet Foundation has then created the eeID service - a clone of TARA, but with the intent to open it up for private businesses at a premium \cite{eeid}.
+
+These services' goal is to use domestic eID providers (ID cards, Mobile-ID, and Smart-ID) and act as a gateway to the eIDAS node network. European Commission regulates this network, allowing for cross-border authentication in a standardized way \cite{eulaw-eidas}.
+
+Cross-border authentication supported by these schemes extends (or will soon extend) to the notified countries \cite{eulaw-eidas-notified}. Currently notified countries (in order of time notified) include Germany, Italy, Croatia, Estonia, Spain, Luxembourg, Belgium, Portugal, Czechia, Netherlands, Slovakia, Latvia, Denmark, Lithuania, Malta, France, and Sweden.
+
+At the time of writing, TARA does not support the eID schemes of the last three - Malta, France, and Sweden. Cross-border authentication is only in the planned state for the eeID service and is currently not supported.
+
 \subsubsection{Data Flow}
+
+
+
 \subsubsection{Trust Anchor}
 \subsubsection{Pricing}
 \subsubsection{Security Analysis}
@@ -842,7 +856,4 @@ Researcher Arnis Paršovs published a security analysis of the protocol v1 in Oc
 The protocol is two asynchronous JavaScript calls to an API endpoint, which exists on the same website; the user does not need to leave the page. No redirects or third parties are involved; therefore, the analysis of a redirect-based protocol is not applicable in this scenario.
 
 \TODO{Related research about legal person documents?}
-\TODO{High-level overview of the system}
-\TODO{Points of compromise?}
-
 \TODO{Complete alternative, using your own issued certificates?}
