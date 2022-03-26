@@ -438,15 +438,6 @@ Dokobit does not leak credentials via Referrer Headers, and the developers shoul
 
 The only thing adversaries could extract from the browser history is a used-up session token, which does not provide much value. Mitigation measures are sufficient.
 
-\subparagraph{Mix-Up}
-
-\begin{itemize}
-  \item For this attack to work, the adversary must be able to register a client with an eID provider, and the relying authorization server must use more than one provider.
-  \item Dokobit uses a custom protocol, which would make this form of attack impossibly unlikely.
-\end{itemize}
-
-There is almost a 0\% chance of this attack happening. Mitigation measures are not required.
-
 \subparagraph{Session Token Injection and Cross-Site Request Forgery}
 
 Adversaries would perform the injection and CSRF attacks identically.
@@ -504,7 +495,7 @@ The Dokobit Identity Gateway protocol is simple and resilient to most forms of a
   \item Victim establishes an authentication session with authentication session.
   \item Adversary tricks the user into using their session or injects their session token by other means.
   \item Victim authenticates on Dokobit with adversary's session token.
-  \item Adversary finishes the session and successfully impersonates the victim. 
+  \item Adversary finishes the session and successfully impersonates the victim.
 \end{enumerate}
 
 Developers can mitigate this session token injection and CSRF attack by binding the Dokobit session to the browsing session. When the user returns from Dokobit Identity Gateway, the return URL will have the session token attached in the path. If the authentication server can verify that the same browser has sent the session token and created the session, it would be possible to eliminate this attack.
@@ -657,7 +648,97 @@ The Dokobit identity gateway uses a secure communication channel, encrypted end-
 
 \paragraph{Validation requiements}
 
-OpenID Connect specifies three different flows - code, implicit, and hybrid \cite{oidc}. In code flow, all sensitive tokens are handled via backchannel - a secure communications channel where the user client is not involved. The implicit flow is the opposite - a client receives an identity token and sends it to the company's authentication server, which validates the signature. A hybrid flow is a mixture of the two. Security experts consider the code flow to be the safest option of the three \cite{ietf-oauth-security-topics-19}. Coincidentally, it is the only supported flow by TARA and eeID.
+OpenID Connect specifies three different flows - code, implicit, and hybrid \cite{oidc}. In code flow, all sensitive tokens are handled via backchannel - a secure communications channel where the user client is not involved. The implicit flow is the opposite - a client receives an identity token and sends it to the company's authentication server, which validates the signature. A hybrid flow is a mixture of the two. Security experts consider the code flow to be the safest option of the three \cite{ietf-oauth-security-topics-19}. Coincidentally, it is the only supported flow by TARA and eeID \cite{tara-technical}.
+
+\subparagraph{Replay attacks}
+
+\begin{itemize}
+  \item eeID will reject the second POST /token request with the same code.
+\end{itemize}
+
+The developer does not have to implement state management to verify that a given session token was used only once. Mitigation measures are sufficient.
+
+\subparagraph{Insufficient Redirect URI Validation}
+
+\begin{itemize}
+  \item Changes in the registered OIDC application undergo manual verification by eeID employees.
+\end{itemize}
+
+The manual verification process was sufficient to mitigate this attack; impossible to test if countermeasures existed on the client registration interface. Mitigation measures are adequate.
+\TODO{Talk about mix up attacks broadly in the architecture topic}
+\subparagraph{Credential Leakage via Referrer Headers}
+
+\begin{itemize}
+  \item eeID does not include third-party resources (javascript, image, or other); therefore, it cannot leak any query parameters to third parties.
+  \item The company is required not to have any third-party resources on the authentication and redirect pages.
+  \item The client is using a secret API key, rendering it impossible to obtain private information without its use.
+\end{itemize}
+
+The eeID service does not leak credentials via Referrer Headers, and the developers should not embed third-party resources in the critical authentication pages. Mitigation measures are sufficient.
+
+\subparagraph{Credential Leakage via Browser History}
+
+\begin{itemize}
+  \item Replay attacks are mitigated against.
+  \item Form post response mode is not supported.
+\end{itemize}
+
+The only thing adversaries could extract from the browser history is a used-up session token, which does not provide much value. Mitigation measures are sufficient.
+
+\subparagraph{Authorization Code Injection and Cross-Site Request Forgery}
+
+\begin{itemize}
+  \item The use of state parameter prevents CSRF, but not code injection attacks. Because the state is not bound to an authorization code, an attacker can perform a high level attack and inject their code to someone else's user agent, or steal someone else's code.
+  \item eeID optionally supports the OIDC nonce parameter which fixes the injection attack. When user is initially redirected to the endpoint, a nonce parameter will be bound to the given code response. After the token was received, the RP can check if nonce in received token matches the one in the user agent session. If they are not, a session token was likely injected.
+\end{itemize}
+
+Mitigation measures are sufficient.
+
+\subparagraph{Client Impersonating Resource Owner}
+
+\begin{itemize}
+  \item eeID does allow users to chose their client id, but is registering applications manually.
+\end{itemize}
+
+Issue resolved via operational security. Mitigation measures are sufficient.
+
+\subparagraph{Clickjacking}
+
+\begin{itemize}
+  \item Dokobit auth page does not use Content-Security-Policy, however it does use header X-Frame-Option: {DENY}.
+  \item Framebusting \cite{RYDSTEDT2010BUSTI} techniques were not discovered.
+\end{itemize}
+
+Mitigation measures are sufficient on modern browsers.
+
+\subsubsection{Implementation}
+
+\subsubsection{Discovered Weaknesses}
+
+\paragraph{Incorrect implementation of at\_hash}
+
+In the TARA Technical Specification \cite{tara-technical}, the identity token has at\_hash value that is not according to the OIDC spec \cite{oidc}.
+
+When looking at the id token response, it has a property at\_hash with the value of {X0MVjwrmMQs/IBzfU2osvw==}. This value is supposed to be base64url encoded. Instead, it is a regular base64 string. The Demo REST Client example provided by the same authors \cite{tara-demorest} correctly converts the base64 value into the base64url encoded value, which leads us to believe that there is a mistake in the documentation and or implementation. If it was following the specifications of the TARA documentation and not OIDC spec, it should have no reason to do so.
+
+The eeID service is following the TARA documentation, and because of that, the at\_hash uses base64. An issue arises when the using OpenID Connect libraries (see listing \ref{lst:ms-oidc-at-hash}).
+
+\begin{lstlisting}[caption={Microsoft.IdentityModel.Protocols.OpenIdConnect fails to validate at\_hash}, label={lst:ms-oidc-at-hash}]
+  IDX21348: Validating the 'at_hash' failed, see inner exception.
+  IDX21300: The hash claim: 'UtsKV8+hA/bB0EE/xR9cCQ==' in the id_token did not validate with against: 'AT-95-VU6Y2LZjrNrVCdhlEaCxG6Gpzt0RsE-Z', algorithm: 'RS256'.
+\end{lstlisting}
+
+If we compute the hash manually we see that this is exactly what happens (see listing \ref{lst:athash-manual}). The same transcoding behavior is seen on the TARA Demo Client \cite{tara-demorest}.
+
+\begin{lstlisting}[caption={Verifying at\_hash manually}, label={lst:athash-manual}, language={bash}]
+  user@localhost:~$ access_token="AT-95-VU6Y2LZjrNrVCdhlEaCxG6Gpzt0RsE-Z"
+  user@localhost:~$ echo -n $access_token | openssl dgst -binary -sha256 | head -c 16 | base64
+  UtsKV8+hA/bB0EE/xR9cCQ==
+  user@localhost:~$ echo -n $access_token | openssl dgst -binary -sha256 | head -c 16 | base64 | tr '/+' '_-' | tr -d '='
+  UtsKV8-hA_bB0EE_xR9cCQ
+\end{lstlisting}
+
+The implication of this discovery means that all working clients which use eeID have incorrect OpenID connect implementation. This issue affects only those who use the correct OpenID Connect implementation libraries.
 
 \subsection{Case Study: Web eID}
 
