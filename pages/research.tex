@@ -728,7 +728,7 @@ The eeID service is following the TARA documentation, and because of that, the a
   IDX21300: The hash claim: 'UtsKV8+hA/bB0EE/xR9cCQ==' in the id_token did not validate with against: 'AT-95-VU6Y2LZjrNrVCdhlEaCxG6Gpzt0RsE-Z', algorithm: 'RS256'.
 \end{lstlisting}
 
-If we compute the hash manually we see that this is exactly what happens (see listing \ref{lst:athash-manual}). The same transcoding behavior is seen on the TARA Demo Client \cite{tara-demorest}.
+If we compute the hash manually, we see precisely why the verification failure happens (see listing \ref{lst:athash-manual}). The same transcoding behavior is seen on the TARA Demo Client \cite{tara-demorest}.
 
 \begin{lstlisting}[caption={Verifying at\_hash manually}, label={lst:athash-manual}, language={bash}]
   user@localhost:~$ access_token="AT-95-VU6Y2LZjrNrVCdhlEaCxG6Gpzt0RsE-Z"
@@ -738,7 +738,7 @@ If we compute the hash manually we see that this is exactly what happens (see li
   UtsKV8-hA_bB0EE_xR9cCQ
 \end{lstlisting}
 
-The implication of this discovery means that all working clients which use eeID have incorrect OpenID connect implementation. This issue affects only those who use the correct OpenID Connect implementation libraries.
+The implication of this discovery means that all working clients who use eeID have incorrect OpenID connect implementation. This issue affects only those who use the correct OpenID Connect implementation libraries.
 
 \subsection{Case Study: Web eID}
 
