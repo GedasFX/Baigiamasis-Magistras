@@ -1,5 +1,7 @@
 \section{Research}
 
+\TODO{Redo the validation sections into 1) security requirements, 2) security requirement compliance by eID provider, 3) security requirement compliance by developers}
+
 \subsection{System architecture}
 
 \subsubsection{System overview}
@@ -629,18 +631,33 @@ The underlying data transfer protocol used by eeID is OpenID Connect code flow \
 
 \subsubsection{Trust Anchor}
 
-One of the main advantages of using eeID is the simplicity of integrating multiple sources of eID (ID card, Mobile-ID, Smart-ID, and eIDAS) with the use of a single API. To accommodate this, eeID needs to act as an intermediary service, reading and reprocessing data to create a unified response. With this approach, there are two issues: confidentiality and integrity.
+One of the main advantages of using eeID is the simplicity of integrating multiple sources of eID (ID card, Mobile-ID, Smart-ID, and eIDAS) with a single API. To accommodate this, eeID needs to act as an intermediary service, reading and reprocessing data to create a unified response. With this approach, there are two issues: confidentiality and integrity.
 
 Confidentiality issues occur whenever users do not wish to share their personal information with more parties than absolutely required. For example, if a user wanted to authenticate with Smart-ID, only two parties should be involved: the company user is trying to log in to and SK ID Solutions. With eeID, another entity is added between them who has full access to the data.
 
-Integrity issues are caused by having that full access to data. There is 
+Integrity issues are caused by having that full access to data. Should the identity provider or the part issuing identity tokens get compromised, attackers could impersonate anyone.
 
-Dokobit assumes the role of being the trust anchor. This means that it also acts as a single point of failure. Should Dokobit become compromised, all applications using Dokobit will become susceptible to impersonation. On the flip side, there is only one system company developers need to implement, meaning that it would be harder for adversaries to break into the system via external means.
-
-Companies should consider the risks when using a provider capable of dictating who the person is, as no integrity checks are supported in the protocol.
+Companies should keep these risks in mind when integrating the eeID identity provider.
 
 \subsubsection{Pricing}
+
+The operational cost when using the eeID identity provider is nine cents per successful authentication \cite{eeid-pricing}. It is the highest price from all identity providers and does not have tiers. A thousand successful authentications would cost 90 €.
+
 \subsubsection{Security Analysis}
+
+\paragraph{Actors}
+
+The actors in the figure \ref{fig:eid-auth-flow-seq} assume the roles of the following: QSCD Interface - eeID; QSCD - eID solutions registered on eeID.
+
+In the case of eeID, developers should not be concerned about the QSDC used, as the QSCD interface - eeID will provide the user's identity in a standardized form.
+
+\paragraph{Communication channel}
+
+The Dokobit identity gateway uses a secure communication channel, encrypted end-to-end using HTTPS.
+
+\paragraph{Validation requiements}
+
+OpenID Connect specifies three different flows - code, implicit, and hybrid \cite{oidc}. In code flow, all sensitive tokens are handled via backchannel - a secure communications channel where the user client is not involved. The implicit flow is the opposite - a client receives an identity token and sends it to the company's authentication server, which validates the signature. A hybrid flow is a mixture of the two. Security experts consider the code flow to be the safest option of the three \cite{ietf-oauth-security-topics-19}. Coincidentally, it is the only supported flow by TARA and eeID.
 
 \subsection{Case Study: Web eID}
 
