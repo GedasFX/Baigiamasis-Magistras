@@ -594,9 +594,43 @@ At the time of writing, TARA does not support the eID schemes of the last three 
 
 \subsubsection{Data Flow}
 
+The underlying data transfer protocol used by eeID is OpenID Connect code flow \cite{tara-technical, oidc}. A high-level overview of the flow can be seen in figure \ref{fig:oidc-code-flow}. In this flow there are seven main steps:
 
+\begin{figure}
+  \centering
+  \begin{sequencediagram}
+    \newthread{A}{Actor}{}
+    \newinst[3]{B}{AuthServer}{}
+    \newinst[2]{C}{TARA/eeID}{}
+
+    \begin{call}{A}{1. login()}{B}{3xx Redirect}\end{call}
+    \begin{call}{A}{2. authorize()}{C}{Auth Page}\end{call}
+    \begin{call}{A}{3. login()}{C}{3xx Redirect + code}\end{call}
+
+    \begin{call}{A}{4. loginCallback()}{B}{Auth token}
+      \begin{call}{B}{5. verifyState()}{B}{}\end{call}
+      \begin{call}{B}{6. token()}{C}{id\_token}\end{call}
+      \begin{call}{B}{7. verifySignature()}{B}{}\end{call}
+    \end{call}
+  \end{sequencediagram}
+  \caption{OIDC code flow used in TARA/eeID}
+  \label{fig:oidc-code-flow}
+\end{figure}
+
+\begin{enumerate}
+  \item Initial login. Preparation for redirect to the eID provider.
+  \item Redirection to the eID provider.
+  \item Authentication. Users log in with the chosen authentication scheme (ID card, Mobile-ID, Smart-ID, eIDAS).
+  \item Redirection back to the Auth server.
+  \item Browsing session verification. Cryptographically check if the request came from the same browser. This step is required to protect against CSRF attacks.
+  \item Token acquisition. The Auth server exchanges the received code for an identity token containing the user's information.
+  \item Signature verification. Verify the authenticity and validity of the received token. \todo{why tho???}
+\end{enumerate}
 
 \subsubsection{Trust Anchor}
+
+
+
 \subsubsection{Pricing}
 \subsubsection{Security Analysis}
 
