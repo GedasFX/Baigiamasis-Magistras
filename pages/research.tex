@@ -753,24 +753,72 @@ For the authorize URL generation is best to look at chapter 4.1 of TARA document
   \item {response\_type}: the only flow supported by TARA/eeID is code flow, so this value can only be code.
   \item {nonce}: although not required, it protects against authorization code injection attacks and should be used whenever possible \cite{ietf-oauth-security-topics-19}.
   \item {ui\_locales, acr\_values}: these fields are non-standard, and most if not all libraries will not support them out of the box. For most use cases, these values can be left empty.
-  \item {code\_challenge, code\_verifier}: Proof Key for Code Exchange (PKCE) is not supported, nonce should be used in its place.
+  \item {code\_challenge, code\_verifier}: Proof Key for Code Exchange (PKCE) is not supported, {nonce} should be used in its place.
   \item {response\_mode}: not supported, therefore only response mode of {query} can be used.
-  \item {nonce, state}: when using nonce, it is theoretically possible to not use the state property, however the value of nonce is copied over to the identity token, and therefore developers should avoid making a long nonce value. State should be used when transfering information.
+  \item {nonce, state}: both nonce and state have the exact behavior (see Discovered Weaknesses for more information).
 \end{itemize}
 
-With this information we can extrapolate a working authorize request (see listing \ref{lst:eeid-authorize}).
+With this information, we can extrapolate a working {authorize} request (see listing \ref{lst:eeid-authorize}).
 
 \begin{lstlisting}[caption={The eeID service authorize endpoint request}, label={lst:eeid-authorize}]
-GET https://test-auth.eeid.ee/oidc/authorize?
+  GET https://test-auth.eeid.ee/oidc/authorize?
 
-client_id=oidc-b0669946-896b-4cdf-a478-a60afd5c18a5-20&
-redirect_uri=https%3A%2F%2Fauth.eid.gedas.dev%2Fsignin-tara&
-response_type=code&
-scope=openid&
-nonce=CWWLeSzn5tyu3XCSUTIz_BQJgnFxu7US&
-state=J5BpaPNynnbhZCWmDlCZc5QWznVyIfebYGkZ3...
+  client_id=oidc-b0669946-896b-4cdf-a478-a60afd5c18a5-20&
+  redirect_uri=https%3A%2F%2Fauth.eid.gedas.dev%2Fsignin-tara&
+  response_type=code&
+  scope=openid&
+  nonce=CWWLeSzn5tyu3XCSUTIz_BQJgnFxu7US&
+  state=J5BpaPNynnbhZCWmDlCZc5QWznVyIfebYGkZ3...
 \end{lstlisting}
 
+Before redirecting the user to the {authorize} endpoint, it is important to bind the nonce and the state to the user agent session. We accomplish this by attaching an encrypted cookie to the response which the user agent will save before gets redirected.
+
+\subparagraph{Authorize and Second login}
+
+When the user agent redirects the user to the eeID service authentication page, they can chose any option for authentication. This process is not relevant to the thesis.
+
+\subparagraph{Callback: verify state}
+
+After the user finishes authentication with the eeID service, they are redirected to the redirect\_url defined in the request with particular query parameters (see listing \ref{lst:eeid-authorize-callback}). Note the inclusion of nonce, as this value should not be here \cite{okta-oidc-spec}, and we will ignore it for the rest of the section (see Discovered Weaknesses).
+
+\begin{lstlisting}[caption={The eeID service authorize redirect response}, label={lst:eeid-authorize-callback}]
+  GET https://auth.eid.gedas.dev/signin-tara?
+  
+  code=OC-106-2hUkp91Z2acDYJF7PUFjDoTJKkHncVYl&
+  nonce=CWWLeSzn5tyu3XCSUTIz_BQJgnFxu7US&
+  state=J5BpaPNynnbhZCWmDlCZc5QWznVyIfebYGkZ3...
+\end{lstlisting}
+
+The first step the server has to do is to verify if the state received in the callback matches the one stored in the user agent session. If it does not, it was a possible CSRF attack, and the process should end here.
+
+\subparagraph{Callback: acquire token}
+
+Once the authorization server that the state matches the user agent session, it is safe to exchange the received code for an identity token. See listing \ref{lst:eeid-token} for a request example.
+
+\begin{lstlisting}[caption={The eeID service token request}, label={lst:eeid-token}]
+  POST /oidc/token HTTP/1.1
+  Host: tara.ria.ee
+  Content-Type: application/x-www-form-urlencoded
+  Authorization: Basic b2lkYy1iMDY2OTk0Ni04OTZiLTRjZGYtYTQ3OC1hN-jBhZmQ1YzE4YTUtMjA6aHR0cHM6Ly95b3V0dS5iZS9kUXc0dzlXZ1hjUQ==
+
+  grant_type=authorization_code&
+  code=OC-106-2hUkp91Z2acDYJF7PUFjDoTJKkHncVYl&
+  redirect_uri=https%3A%2F%2Fauth.eid.gedas.dev%2Fsignin-tara
+\end{lstlisting}
+
+The inclusion of redirect\_uri here may be confusing. It is required as per the OAuth2 spec (section 4.1.3) \cite{rfc6749} and prevents open redirection attacks when using wildcards. The eeID service does not appear to allow them, so the inclusion of this value is redundant; however, if it were excluded, the protocol would no longer be OpenID Connect compliant.
+
+\subparagraph{Callback: verify token}
+
+In the unlikely event the token endpoint request failed, it could mean a sophisticated replay attack could have taken place. If an access token was already issued for that code, it must be immediately revoked. Another way for the request to fail would be if the client or user agent took too long to be redirected. If the token endpoint returns a faulty result, the authentication process should stop.
+
+If the token endpoint returns the identity token successfully, the user should validate its authenticity. If the nonce parameter was used in the first request, the server should verify that nonce in the user agent session matches the one in the id\_token. The rest of the verification should be done as described in the TARA documentation \cite{tara-technical}.
+
+\TODO{I have no clue about the benefit of performing additional verification. The token was received within a secure backchannel, and the nonce matches, meaning the user created the request. If the server makes the user agent session in a way so that no one other than the server itself can tamper, why bother verifying the rest?}
+
+\subparagraph{Issue access token}
+
+After the server verifies the identity token, issue a new access token with the necessary information from the identity token. Most common solution would be to create a new cookie and attach it to the response.
 
 
 \subsubsection{Discovered Weaknesses}
@@ -811,6 +859,8 @@ The nonce property is part of the OpenID Connect specification, and its primary 
 If we look at the data flow diagram, we see that both state and nonce have each other's properties. After the user agent returns to the callback URL, both {nonce} and {state} are returned when only {state} is required. After the company's authentication server establishes a backchannel and redeems the code for an id\_token, this token again contains both {nonce} and {state}, when only {nonce} is required.
 
 In the security analysis performed last year, the author suggested removing the nonce parameter from the protocol \cite{tara-security-arnis}. We disagree with this approach and would suggest removing the state parameter from the id\_token response. Removing the nonce parameter and having no support for PKCE would break OIDC compliant libraries' ability to mitigate authorization code injection attacks.
+
+\paragraph{Wrong claims in the OpenID Connect discovery endpoint} The discovery endpoint provides all information about possible requests and responses. Data listed there does not match the documentation. For example, in the discovery endpoint for eeID (\url{https://auth.eeid.ee/oidc/.well-known/openid-configuration}), claims like gender are present, even though this claim can never appear. On the flip side, claim profile\_attributes, as described in the documentation is missing from the discovery document.
 
 \begin{figure}
   \centering
