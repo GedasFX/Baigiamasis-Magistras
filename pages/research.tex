@@ -733,19 +733,11 @@ This thesis will use Microsoft's official ASP.NET Core library \cite{ms-auth-oid
 
 \paragraph{Manual integration} If for any reason use of libraries is not available or acceptable, developers can integrate the OpenID Connect protocol themselves. They do not have to integrate the whole protocol, just the code flow. For reference, we will use the source code from the {.NET} library \cite{ms-auth-oidc-src} and the TARA documentation \cite{tara-technical}. The steps listed will be as seen in figure \ref{fig:oidc-code-flow}.
 
-% \item Initial login. Preparation for redirect to the eID provider.
-% \item Redirection to the eID provider.
-% \item Authentication. Users log in with the chosen authentication scheme (ID card, Mobile-ID, Smart-ID, eIDAS).
-% \item Redirection back to the Auth server.
-% \item Browsing session verification. Cryptographically check if the request came from the same browser. This step is required to protect against CSRF attacks.
-% \item Token acquisition. The Auth server exchanges the received code for an identity token containing the user's information.
-% \item Signature verification. Verify the authenticity and validity of the received token. \todo{why tho???}
-
 \subparagraph{Login}
 
 This step is all about user agent session binding and {authorize URL} generation. This is a multipart section so each part will be split into its own paragraph.
 
-For the authorize URL generation is best to look at chapter 4.1 of TARA documentation \cite{tara-technical}. There are, however, some notes to keep in mind when integrating the eeID service:
+For the {authorize} endpoint URL generation is best to look at chapter 4.1 of TARA documentation \cite{tara-technical}. There are, however, some notes to keep in mind when integrating the eeID service:
 
 \begin{itemize}
   \item \url{https://auth.eeid.ee/oidc/.well-known/openid-configuration} contains all of the necessary information to realize which endpoints to use and what values are currently accepted.
