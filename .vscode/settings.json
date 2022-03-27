@@ -40,6 +40,7 @@
         "OCSP",
         "OIDC",
         "Paršovs",
+        "PKCE",
         "QSCD",
         "QTSP",
         "SAMEORIGIN",

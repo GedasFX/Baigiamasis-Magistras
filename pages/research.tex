@@ -711,7 +711,67 @@ Issue resolved via operational security. Mitigation measures are sufficient.
 
 Mitigation measures are sufficient on modern browsers.
 
-\subsubsection{Implementation}
+\subsubsection{Integration}
+
+The best way to integrate the eeID service would be to use already existing OpenID Connect implementation options. Cloud hosting giants Amazon Web Services and Microsoft Azure offer an easy way to incorporate an OIDC provider (see figures \ref{fig:addoidc-aws}, \ref{fig:addoidc-azure}). Alternatively, there are many officially certified services and libraries developers can use \cite{oidc-certified}.
+
+This thesis will use Microsoft's official ASP.NET Core library \cite{ms-auth-oidc-src}.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{eeid/addoidc-aws}
+  \caption{Adding OpenID Connect provider to Amazon Web Services}
+  \label{fig:addoidc-aws}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{eeid/addoidc-azure}
+  \caption{Adding OpenID Connect provider to Microsoft Azure}
+  \label{fig:addoidc-azure}
+\end{figure}
+
+\paragraph{Manual integration} If for any reason use of libraries is not available or acceptable, developers can integrate the OpenID Connect protocol themselves. They do not have to integrate the whole protocol, just the code flow. For reference, we will use the source code from the {.NET} library \cite{ms-auth-oidc-src} and the TARA documentation \cite{tara-technical}. The steps listed will be as seen in figure \ref{fig:oidc-code-flow}.
+
+% \item Initial login. Preparation for redirect to the eID provider.
+% \item Redirection to the eID provider.
+% \item Authentication. Users log in with the chosen authentication scheme (ID card, Mobile-ID, Smart-ID, eIDAS).
+% \item Redirection back to the Auth server.
+% \item Browsing session verification. Cryptographically check if the request came from the same browser. This step is required to protect against CSRF attacks.
+% \item Token acquisition. The Auth server exchanges the received code for an identity token containing the user's information.
+% \item Signature verification. Verify the authenticity and validity of the received token. \todo{why tho???}
+
+\subparagraph{Login}
+
+This step is all about user agent session binding and {authorize URL} generation. This is a multipart section so each part will be split into its own paragraph.
+
+For the authorize URL generation is best to look at chapter 4.1 of TARA documentation \cite{tara-technical}. There are, however, some notes to keep in mind when integrating the eeID service:
+
+\begin{itemize}
+  \item \url{https://auth.eeid.ee/oidc/.well-known/openid-configuration} contains all of the necessary information to realize which endpoints to use and what values are currently accepted.
+  \item \url{https://test-auth.eeid.ee/oidc/.well-known/openid-configuration} contains the configuration for the eeID test environment.
+  \item {response\_type}: the only flow supported by TARA/eeID is code flow, so this value can only be code.
+  \item {nonce}: although not required, it protects against authorization code injection attacks and should be used whenever possible \cite{ietf-oauth-security-topics-19}.
+  \item {ui\_locales, acr\_values}: these fields are non-standard, and most if not all libraries will not support them out of the box. For most use cases, these values can be left empty.
+  \item {code\_challenge, code\_verifier}: Proof Key for Code Exchange (PKCE) is not supported, nonce should be used in its place.
+  \item {response\_mode}: not supported, therefore only response mode of {query} can be used.
+  \item {nonce, state}: when using nonce, it is theoretically possible to not use the state property, however the value of nonce is copied over to the identity token, and therefore developers should avoid making a long nonce value. State should be used when transfering information.
+\end{itemize}
+
+With this information we can extrapolate a working authorize request (see listing \ref{lst:eeid-authorize}).
+
+\begin{lstlisting}[caption={The eeID service authorize endpoint request}, label={lst:eeid-authorize}]
+GET https://test-auth.eeid.ee/oidc/authorize?
+
+client_id=oidc-b0669946-896b-4cdf-a478-a60afd5c18a5-20&
+redirect_uri=https%3A%2F%2Fauth.eid.gedas.dev%2Fsignin-tara&
+response_type=code&
+scope=openid&
+nonce=CWWLeSzn5tyu3XCSUTIz_BQJgnFxu7US&
+state=J5BpaPNynnbhZCWmDlCZc5QWznVyIfebYGkZ3...
+\end{lstlisting}
+
+
 
 \subsubsection{Discovered Weaknesses}
 
@@ -721,14 +781,14 @@ In the TARA Technical Specification \cite{tara-technical}, the identity token ha
 
 When looking at the id token response, it has a property at\_hash with the value of {X0MVjwrmMQs/IBzfU2osvw==}. This value is supposed to be base64url encoded. Instead, it is a regular base64 string. The Demo REST Client example provided by the same authors \cite{tara-demorest} correctly converts the base64 value into the base64url encoded value, which leads us to believe that there is a mistake in the documentation and or implementation. If it was following the specifications of the TARA documentation and not OIDC spec, it should have no reason to do so.
 
-The eeID service is following the TARA documentation, and because of that, the at\_hash uses base64. An issue arises when the using OpenID Connect libraries (see listing \ref{lst:ms-oidc-at-hash}).
+The eeID service follows the TARA documentation, and because of that, the at\_hash uses base64. An issue arises when the using OpenID Connect libraries (see listing \ref{lst:ms-oidc-at-hash}).
 
 \begin{lstlisting}[caption={Microsoft.IdentityModel.Protocols.OpenIdConnect fails to validate at\_hash}, label={lst:ms-oidc-at-hash}]
   IDX21348: Validating the 'at_hash' failed, see inner exception.
   IDX21300: The hash claim: 'UtsKV8+hA/bB0EE/xR9cCQ==' in the id_token did not validate with against: 'AT-95-VU6Y2LZjrNrVCdhlEaCxG6Gpzt0RsE-Z', algorithm: 'RS256'.
 \end{lstlisting}
 
-If we compute the hash manually, we see precisely why the verification failure happens (see listing \ref{lst:athash-manual}). The same transcoding behavior is seen on the TARA Demo Client \cite{tara-demorest}.
+If we compute the hash manually, we see precisely why the verification failure happens (see listing \ref{lst:athash-manual}). The implementation expects a different string than was provided. The same transcoding behavior is seen on the TARA Demo Client \cite{tara-demorest}.
 
 \begin{lstlisting}[caption={Verifying at\_hash manually}, label={lst:athash-manual}, language={bash}]
   user@localhost:~$ access_token="AT-95-VU6Y2LZjrNrVCdhlEaCxG6Gpzt0RsE-Z"
@@ -739,6 +799,37 @@ If we compute the hash manually, we see precisely why the verification failure h
 \end{lstlisting}
 
 The implication of this discovery means that all working clients who use eeID have incorrect OpenID connect implementation. This issue affects only those who use the correct OpenID Connect implementation libraries.
+
+\paragraph{Confusing state and nonce behavior}
+
+Nowhere in the OpenID Connect specification mentions that state should be transferred over to the id\_token. TARA confused the purposes of state and nonce properties, extended the behavior to cover each other, and, by extension, made one of the properties obsolete.
+
+The state property is part of the underlying OAuth2.0 specification, where it is an "opaque value used by the client to maintain state between the request and callback" \cite{rfc6749}. The primary security feature is to prevent CSRF attacks \cite{rfc6749,ietf-oauth-security-topics-19}.
+
+The nonce property is part of the OpenID Connect specification, and its primary purpose is to prevent replay attacks when using implicit or hybrid flows \cite{oidc}. Later, researchers discovered that it also protects against authorization code injection attacks with the code flow. Interestingly, this also protected against CSRF attacks making the state property obsolete. The disadvantage of using {nonce} as a state parameter is that it directly influences the size of the id\_token, which should be kept as small as possible. Reasons for keeping this token as small as possible is that developers could use send them in request headers to their resource servers \cite{rfc7519}. The only issue is that these tokens expire after 40 seconds and cannot be refreshed \cite{tara-technical}, making this approach impractical.
+
+If we look at the data flow diagram, we see that both state and nonce have each other's properties. After the user agent returns to the callback URL, both {nonce} and {state} are returned when only {state} is required. After the company's authentication server establishes a backchannel and redeems the code for an id\_token, this token again contains both {nonce} and {state}, when only {nonce} is required.
+
+In the security analysis performed last year, the author suggested removing the nonce parameter from the protocol \cite{tara-security-arnis}. We disagree with this approach and would suggest removing the state parameter from the id\_token response. Removing the nonce parameter and having no support for PKCE would break OIDC compliant libraries' ability to mitigate authorization code injection attacks.
+
+\begin{figure}
+  \centering
+  \begin{sequencediagram}
+    \newthread{A}{User Agent}{}
+    \newinst[3]{B}{AuthServer}{}
+    \newinst[3]{C}{TARA/eeID}{}
+
+    \begin{call}{A}{1. login()}{B}{3xx Redirect}\end{call}
+    \begin{call}{A}{2. authorize() [client\_id, redirect\_uri, response\_type, scope, nonce, state]}{C}{Auth Page}\end{call}
+    \begin{call}{A}{3. login()}{C}{3xx Redirect + [code, \textcolor{red}{nonce}, state]}\end{call}
+
+    \begin{call}{A}{4. loginCallback()}{B}{Auth token}
+      \begin{call}{B}{6. token() [client\_id, client\_secret, redirect\_uri, grant\_type, code]}{C}{id\_token \{ nonce, \textcolor{red}{state}, \dots \}}\end{call}
+    \end{call}
+  \end{sequencediagram}
+  \caption{OIDC code flow used in TARA/eeID}
+  \label{fig:oidc-code-flow}
+\end{figure}
 
 \subsection{Case Study: Web eID}
 
