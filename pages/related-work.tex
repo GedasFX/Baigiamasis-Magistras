@@ -4,7 +4,7 @@
 
 In 2008, researcher Siddhartha Arora investigated different uses of eID in Europe \cite{ARORA200846}.
 
-The technical report was published at the time when the eID technology was still in its infancy, and the concept of eID was tied to it being linked to a physical ID card.
+The technical report was published when the eID technology was still in its infancy, and the concept of eID was tied to it being linked to a physical ID card.
 
 Paper references that eID cards offer three forms of information security functionality, each with an increasing level of security provisions: identification, authentication, and signature (see table \ref{tab:formsofinfosecurity}). In this table, A is prover and B is verifier.
 
@@ -20,13 +20,13 @@ Paper references that eID cards offer three forms of information security functi
     \end{center}
 \end{table}
 
-The idea of splitting functionality into identification, authentication, and signature can be verified today in Estonian \cite{ee-id-tech}, and Lithuanian \cite{lt-id-howtouse} ID cards. In these cards, there are two certificates — one for client authentication and the second for digital signature.
+The idea of splitting functionality into identification, authentication, and signature can be traced to today's Estonian \cite{ee-id-tech}, and Lithuanian \cite{lt-id-howtouse} ID cards. In these cards, there are two certificates — one for client authentication and the second for digital signature.
 
 These authentication and identification certificates are not encrypted, and can anyone with the correct tools can read them from the ID card. Signed documents also have a copy of the certificate attached. These certificates identify a person, but due to ease of replication, the recipient should not trust the sender's certificate because there are no guarantees that the certificate belongs to the sender.
 
 The authentication and signing certificates require their respective keys to perform asymmetric cryptographic operations. In theory, it is possible to sign documents with the authentication certificate; however, the verification software will reject such signatures because the certificate's purposes would not include a digital signature.
 
-Another thing the paper touches on is the possibility of having multiple eID schemes. The author spotlights Austria as they wanted to have various sources of eID, not limit themselves only to one card. Having multiple authentication methods was a novel concept at the time. Many countries followed suit, and in Estonia, there are three primary sources of eID. In France, a source of eID doesn't even come from an ID card \cite{eidas-notify-france}.
+Another topic the paper touches on is the possibility of having multiple eID schemes. The author spotlights Austria as they want to have various sources of eID, not limit themselves only to one card. Having multiple authentication methods was a novel concept at the time. Many countries followed suit, and in Estonia, there are three primary sources of eID. In France, a source of eID doesn't even come from an ID card \cite{eidas-notify-france}.
 
 The paper's conclusion emphasizes the importance of the eID itself, not ID cards. The EU took this path when implementing the legislation for eIDAS, which allowed easier integration of infrastructure member states already had in place.
 
@@ -36,9 +36,9 @@ This paper explores what information the Austrian government stores on the issue
 
 Paper presented an interesting legal issue - Austria does not allow a person identifying code (CRR number) to be "used directly in e-Government applications due to legal data protection restrictions." The solution required Austria to create SourcePIN, a framework to develop different personal identifying numbers for each service trying to access it while hiding the original code \cite{ZWATTENDORFER201635,austria-eid-presentation}.
 
-A big concern authors express is that everything goes through one single source of trust, which does not scale well. If many people wanted to use the system, it would quickly become a bottleneck. Moving many essential components to the public cloud can alleviate the problem.
+Authors express a big concern that everything goes through one single source of trust, which does not scale well. If many people wanted to use the system, it would quickly become a bottleneck. Moving many essential components to the public cloud can alleviate the problem.
 
-The paper's main contribution to this thesis is to remind that even though technological barriers are crumbling, there might still be legal obstacles to overcome. Austria is currently not part of the eIDAS node network, and it would be an excellent further research topic to investigate how Austria's eIDAS node operates.
+The paper's main contribution to this thesis is to remind us that even though technological barriers are crumbling, there might still be legal obstacles to overcome. Austria is currently not part of the eIDAS node network, and it would be an excellent further research topic to investigate how Austria's eIDAS node operates.
 
 \subsection{Secure cross-cloud single sign-on (SSO) using eIDs}
 
@@ -52,7 +52,7 @@ Researchers found that one SAML protocol, however similar they may be, is not co
 
 \subsection{EID @ Cloud: integración de la identificación electrónica en plataformas europeas en la nube de acuerdo con el reglamento eIDAS.}
 
-This paper talks about integrating a new eIDAS node with the private sector in mind \cite{guerola2019eid}. The eID@Cloud research initiative has proven it possible to allow private citizens to integrate this system to authenticate persons. Possible does not mean ready for use and outlines some issues that need addressing.
+This paper talks about integrating a new eIDAS node with the private sector in mind \cite{guerola2019eid}. The eID@Cloud research initiative has proven it possible to allow private citizens to integrate this system to authenticate persons. Researchers emphasize that it does not mean ready for use and outline some issues that need addressing.
 
 Even though the eIDAS node infrastructure brings apparent benefits to the citizens, the public, private entities, and the service vendors, there are still caveats that slow the final integration of the EU digital identity platform. The project eiD@cloud shines light upon these barriers:
 
@@ -70,7 +70,7 @@ The eID@Cloud was a great project testing the implementation and readiness for p
 This final research \cite{Martin2019303} was performed at a similar time to the eID@cloud \cite{guerola2019eid}, but in different countries. LEPS researchers 
 have implemented an eIDAS node for private customers. However, they also provided market analysis.
 
-The market analysis targeted four main categories of e-service providers:
+The market analysis targeted four main categories of e-service providers, who would be interested in integrating eID authentication:
 
 \begin{enumerate}
     \item Organizations that need or want to migrate from the existing identity and access management (IAM) solution. This could apply to organizations that have scaled out their internal or tailor-made IAM solutions or organizations that already use partially external or third-party e-identification or authentication services but are looking for a higher level of assurance (LoA).
@@ -81,11 +81,11 @@ The market analysis targeted four main categories of e-service providers:
 
 In the case of the thesis, the targeted e-service providers are of the first category - organizations wishing to improve IAM solutions to include a higher level of assurance.
 
-The researchers recommend using an approach like LEPS to integrate eID authentication rather than creating an eIDAS node. The primary reason for avoiding node creation would be the cost-effectiveness of implementation, as these adopters "are unlikely to have the know-how, resources, and capacity to implement eIDAS connectivity." "Many organizations do not have resources for eID service implementation and operation internally was already exploited by social networks." The targeted benefit is the "easy way to integrate highly scalable, yet low assurance, eID services."
+The researchers recommend using an approach like LEPS to integrate eID authentication rather than creating an eIDAS node. The primary reason for avoiding node creation would be the cost-effectiveness of implementation. These adopters "are unlikely to have the know-how, resources, and capacity to implement eIDAS connectivity." "Many organizations do not have resources for eID service implementation and operation internally was already exploited by social networks." The targeted benefit is the "easy way to integrate highly scalable, yet low assurance, eID services."
 
-LEPS is a similar service to Estonia's eeID.
+LEPS is a service similar to Estonia's eeID.
 
-\subsection{Federated Identity Architecture of the European eID System}\todo{Does this belong in related work? This paper is de-facto required background}
+\subsection{Federated Identity Architecture of the European eID System}
 
 The authors of this paper describe the current situation in the identity management landscape \cite{federated-europe-identity}. The researchers provide all the necessary background information to understand the implementation details of any eID authentication system design.
 
@@ -93,7 +93,7 @@ The authors of this paper describe the current situation in the identity managem
 
 The first significant contribution relates to explaining different ways of authenticating persons.
 
-Any authentication method is based on something user knows (password, pin code, answer to security question), is (biometrics - eyes, fingerprints), or has (physical device - key card, USB device) \cite{o2003comparing}. Any other method would leave the person without agency over the authentication process.
+Any authentication method is based on something the user knows (password, pin code, answer to security question), is (biometrics - eyes, fingerprints), or has (physical device - key card, USB device) \cite{o2003comparing}. Any other method would leave the person without agency over the authentication process.
 
 An emphasis is put on the importance of mixing and matching these authentication schemes to increase the system's security.
 
@@ -103,7 +103,7 @@ The second helpful point of the paper is the description of different identity m
 
 The three main paradigms as network, service, or user-centric. The network-centric approach gathers all identities into one place, usually known as a "Domain Controller." The service-centric method would create a new identity for each service, leading to high duplication. The user-centric paradigm makes the user prove their own identity. Europe's eID solution does not favor any of the paradigms allowing identity providers to innovate \cite{eelaw-idcard,eeid,dokobit}.
 
-There are also three authentication models: isolated, centralized, and federated. Unlike paradigms, where any of them is fair game, Europe's identity providers can use only the federated one. The isolated model requires all services to hold a copy of every identity in the EU. The centralized model is suitable for having a central place for looking up identity in a country, and it is an excellent solution for high-profile agencies. The federated system has the advantage of scaling well horizontally and not requiring to keep an index of all citizens it would like to serve, which is a tremendous advantage in the area of GDPR.
+There are also three authentication models: isolated, centralized, and federated. Unlike paradigms, where any of them is fair game, Europe's identity providers can use only the federated one. The isolated model requires all services to hold a copy of every identity in the EU. The centralized model is suitable for having a central place for looking up identity in a country, and it is an excellent solution for high-profile agencies. The federated system can scale well horizontally (adding more servers would increase the network capacity) and not require keeping an index of all citizens it would like to serve, which is a tremendous advantage when considering the GDPR requirements.
 
 \subsubsection{Authentication protocols and services}
 
