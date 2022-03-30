@@ -140,43 +140,41 @@ When using an intermediary such as TARA (eeID) or Dokobit, the new eID provider 
 
 The eIDAS regulation uses three assurance levels: low, substantial, and high. These levels refer to the degree of confidence about the claimed or asserted identity of a person \cite{eulaw-eidas}. These assurance levels map to levels 2-4 of ISO 29115 \cite{iso29115}.
 
-Not all authentication methods are equal. In the simplest case, {username and password} authentication is significantly weaker than {username and password} with multi-factor authentication (MFA) enabled. The eIDAS framework takes this concept and builds on it in two unique ways \cite{eulaw-eidas-loa}.
+Not all authentication methods are equal. In the simplest case, the {username and password} authentication method is significantly weaker than {username and password} with multi-factor authentication (MFA) enabled. The eIDAS framework takes this concept and builds on it in two unique ways to construct a level of assurance (LoA) \cite{eulaw-eidas-loa}.
 
-The first part of determining the eIDAS assurance level is related to the registration process. The legislation distinguishes different enrollment options, such as registering on an online self-service or going to the police office to receive a physical item. The levels of assurance over the person's identity are significantly different and warrant different LoA.
+The first part of determining the eIDAS assurance level is related to the registration process. The legislation distinguishes different enrollment options, such as registering on an online self-service or going to the police office to receive a physical item. The levels of assurance over the person's identity are significantly different and warrant different assurance ratings.
 
-The second part of determining the schemes LoA is analyzing the authentication process. {Username and password} is less secure than {username and password} with MFA enabled, and both are less secure than a physical cryptographic authentication device. The game's name here is to make the user harder to impersonate. LoA maps as you would expect - the higher the security level, the higher the level of assurance.
+The second part of determining the schemes LoA is analyzing the authentication process. {Username and password} is less secure than {username and password} with MFA enabled, and both are less secure than a physical cryptographic authentication device. The game's name here is to make the user harder to impersonate. LoA maps as one would expect - the higher the security level, the higher the level of assurance.
 
 Companies should investigate the data they are protecting and then see what level of assurance they would need. In most use cases, the assurance level of substantial will be more than enough.
 
 \subsection{GDPR}
 
-When dealing with eID, sensitive personal data processing is required. Two years after the EU enacted the eIDAS legislation, the parliament issued new legislation to consolidate all previous privacy laws \cite{eulaw-gdpr}.
+When dealing with eID, sensitive personal data processing is unavoidable. Two years after the EU enacted the eIDAS legislation, the EU parliament issued new legislation to consolidate all previous privacy laws \cite{eulaw-gdpr}.
 
-In GDPR, companies must be aware of key terminology. Interested parties can find a complete list of definitions in article 4 of the regulation. Below you can see a list of the most critical keywords in the context of eID authentication.
+In GDPR, companies must be aware of key terminology. Interested parties can find a complete list of definitions in article 4 of the regulation. The thesis will go over only the most critical keywords and concepts.
 
-\paragraph{Personal data} The eID solutions in scope all provide the following personal information: full name, serial number (national id), and the country of origin.
+\paragraph{Personal data} The eID solutions in scope all provide the following personal information: full name, serial number (national id), and country of origin.
 
 \paragraph{Processing} The minimal amount required to process information is to store uniquely identifying information that would link an eID to an internal id code. At the very least, this action involves collecting, storing, and retrieving personal data.
 
-\paragraph{Processor and Controller} In the minimal case, no third parties are involved, and the controller, the processor, and recipient are the same entity.
+\paragraph{Processor and Controller} In the minimal case, no third parties are involved, and the controller, the processor, and the recipient are the same entity.
 
 \subsection{Threats}
-
-\TODO{There has to be a source with the extensive list, all protocols I checked look the same, but I can't seem to find a post saying yes, you need to do this.}
 
 \begin{figure}
     \centering
     \begin{sequencediagram}
-        \newthread{A}{Natural Person}{}
+        \newthread{A}{Person}{}
         \newinst[1]{B}{Relying Party}{}
-        \newinst[1]{C}{QSCD Interface}{}
-        \newinst[2]{D}{QSCD}{}
+        \newinst[1]{C}{eID Provider}{}
+        \newinst[2]{D}{eID Tool}{}
 
-        \begin{call}{A}{authenticate()}{B}{Auth token}
-            \begin{call}{B}{authenticate()}{C}{Certificate + authenticity proof}
+        \begin{call}{A}{authenticate()}{B}{Success}
+            \begin{call}{B}{authenticate()}{C}{Identity + Authenticity proof}
                 \begin{sdblock}{Block}{Outside of RP control}
-                    \begin{call}{C}{getCertificate()}{D}{Client Authentication certificate}\end{call}
-                    \begin{call}{C}{signChallenge()}{D}{Signed challenge}
+                    \begin{call}{C}{getIdentity()}{D}{Identity}\end{call}
+                    \begin{call}{C}{proveIdentity()}{D}{Authenticity proof}
                         \begin{call}{D}{enterPin()}{A}{PIN}\end{call}
                     \end{call}
                 \end{sdblock}
@@ -189,17 +187,13 @@ In GDPR, companies must be aware of key terminology. Interested parties can find
     \label{fig:eid-auth-flow-seq}
 \end{figure}
 
-In the sequence diagram (see figure \ref{fig:eid-auth-flow-seq}), we see a high-level overview of any eID authentication solution. In the authentication protocol, the relying party (company implementing eID sign-in) entirely depends on the QSCD interface, which acts as a trust anchor. A communication channel exists between the relying party and the interface. We can categorize the channel type into two groups:
+In the sequence diagram (see figure \ref{fig:eid-auth-flow-seq}), we see a generalized high-level overview of any eID authentication solution. In the authentication protocol, the relying party (company implementing eID sign-in) entirely depends on the eID Provider, which acts as a trust anchor. A communication channel exists between the relying party and the interface, which can be categorized into two groups:
 
 \begin{enumerate}
     \item trusted, where the sender can reasonably guarantee that adversaries are unable to change the data in transit (Smart-ID, TARA, Dokobit);
-    \item untrusted, where there is a reasonable possibility for data to be tampered with in transit (Web eID).
+    \item untrusted, where there is a significant possibility for data to be tampered with in transit (Web eID).
 \end{enumerate}
 
-Trusted communications generally operate using an encrypted backchannel, where untrusted ones require the client to send data from the QSCD interface. Because the client sends the data, this becomes an untrusted channel, and the relying party must perform additional certificate verification.
+Trusted communications commonly operate using an encrypted backchannel, whereas untrusted ones require the client to send data from the QSCD interface. Because the untrusted client sends the data, this becomes an untrusted channel, and the relying party must perform additional verification.
 
-Failure to encrypt and establish the authenticity of the interface in a trusted backchannel or not validating data in an untrusted channel allows adversaries to perform man-in-the-middle attacks.
-
-\TODO{Limitations: For the scope of the thesis, only two security aspects will be analyzed: the network communication between the natural person and the interface and the certificate authenticity guarantees. Security analysis of QSCD and its communications with the interface will not be analyzed.}
-
-\TODO{Further research? Limitations: proper analysis of what companies would like to see in a solution for more accessible bullet points}
+Failure to encrypt and establish the authenticity of the eID provider in a trusted backchannel or not validating data in an untrusted channel allows adversaries to perform man-in-the-middle attacks.
