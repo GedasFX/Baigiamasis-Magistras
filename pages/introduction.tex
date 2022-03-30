@@ -4,37 +4,37 @@
 
 With the emergence of COVID-19, work from home has rapidly grown in popularity. It has been especially noticeable in the IT industry. This phenomenon has led some businesses to transition to operate fully remote \cite{ozimek2020future}, allowing for potential customers, clients, and employees to operate with the companies' IT systems from all around the globe.
 
-Identity verification is a significant roadblock when establishing a remote work policy. In some managerial businesses, such as logistics, it is essential to assure the authenticity of persons signing in to perform their duties. This security requirement is essential for those dealing with contracts, where one input can cost thousands of euros in losses. Traditionally, as work was always on-premises, it was easy to verify the identity with the help of an identity document. With the constraints of operations being fully remote, companies no longer have the luxury to perform such a check.
+Identity verification is a significant roadblock when establishing a remote work policy. In some managerial businesses, such as logistics, it is essential to assure the authenticity of persons logging in to perform their duties. This security requirement is essential for those dealing with contracts, where one input can cost thousands. Traditionally, as work was always on-premises, it was easy to verify the identity with the help of an identity document. With the constraints imposed by fully remote operations, companies no longer have the luxury to perform such a check.
 
-Establishing identity online for potential employees and clients is not the only use case for digital identity. Organizations such as the British Council employ privacy undermining practices. As part of registration to the IELTS exam, they require their customers to submit a photocopy of their identity document for verification purposes \cite{ielts-howtoregister}. This process is a significant privacy concern since anyone could replicate the uploaded document. Having no agency over their documents is of great concern for the end-users, making them reluctant to use the company services. Replacing the document upload with a digital signature check is a more secure and trustworthy way of performing business.
+Establishing identity online for potential employees and clients is not the only use case for digital identity. Organizations such as the British Council employ privacy undermining practices. As part of the registration process for the IELTS exam, they require their customers to submit a photocopy of their identity document for verification purposes \cite{ielts-howtoregister}. This process is a significant privacy concern since anyone could replicate the uploaded document. Having no agency over their documents is of great concern for the end-users, making them reluctant to use the company services. Replacing the document upload with a digital signature check is more secure and less privacy undermining way of performing business.
 
-After the EU introduced the eIDAS regulation, an alternative method for identity verification became available. All EU member states are mandated to implement an eID solution in their country and recognize other countries' eID solutions \cite{eulaw-eidas}. Each eID solution guarantees some degree of authenticity, from substantial to high, allowing for verifying a persons' identity with trustworthy means.
+After the EU introduced the eIDAS regulation, an alternative method for identity verification became available \cite{eulaw-eidas}. All EU member states are mandated to implement an eID solution in their country and recognize other countries' eID solutions. Each eID solution guarantees some degree of authenticity, from substantial to high, allowing for verification of a persons' identity via trustworthy means.
 
-Particular risks exist that businesses must be aware of before integrating an eID authentication service. There are no comprehensive resources outlining the obstacles and costs of implementing eID authentication in the private sector. Unknown risks are an excellent deterrent for innovation and make companies reluctant to use new technologies. Proper research into this subject may lead companies to take risks associated with implementing new technology and kickstart the mainstream adoption of eIDs in the private sector. 
+Particular risks exist that businesses must be aware of before integrating an eID authentication service. There are no comprehensive resources outlining the obstacles and costs of implementing eID authentication in the private sector at this point in time. Unknown risks are an excellent deterrent to innovation, making companies reluctant to use new technologies. Proper research into this subject may lead companies to take risks associated with implementing new technology and kickstart the mainstream adoption of eIDs in the private sector. 
 
 \subsection{Research Problem}
 
-The main goal of the thesis is to investigate if the advantages provided by eIDs are sufficient enough to outweigh the risks associated with adopting new technology in the free market and shine a light on the costs associated with implementation. From this goal, the extracted research question is as follows: 
+The main goal of the thesis is to investigate what options companies have if they wish to integrate eID authentication into their day-to-day businesses and if the advantages provided by eIDs are sufficient to outweigh the risks associated with adopting new technology. From this goal, the extracted research question is as follows: 
 
 \textbf{What is the best eID authentication option available for an Estonian EU targeting enterprise for use in their Web-based Single Sign-On (SSO)?}
-\todo{Maybe it would be good to change to "is the market ready"}
 
-The research question can be refined further into additional sub-questions:
+To help answer this question, we would need to refine it into additional sub-questions:
 
 \begin{itemize}
     \item What advantages do eIDs provide?
-    \item How should an authentication scheme change to support eID?
+    \item How should an existing authentication scheme change to support eID?
     \item What privacy considerations must companies take when processing user data?
     \item What are the different eID authentication providers available to Estonia's private sector?
     \begin{itemize}
-        \item What risks does the eID provider transfer away from the consumer company?
+        \item How complicated is the solution to integrate?
+        \item What risks does the eID provider add or take away from the consumer company?
         \item What is the market reach (in countries) of a given solution?
-        \item Where are the weak points in the protocol used? How should a company assess them?
+        \item Where are the weak points in the protocol used, and how should the relying company address them?
         \item How expensive is the solution to operate?
     \end{itemize}
 \end{itemize}
 
-With these questions answered, it should be possible for any company to understand the risks and benefits of any given solution eID solution.
+With these questions answered, it would be possible for any company to understand the risks and benefits of any eID solution and have a framework to compare them.
 
 \subsection{Scope and goal}
 
@@ -44,7 +44,9 @@ There will be some assumptions about the company wishing to implement eID authen
 
 \paragraph{Company is committed to getting some form of eID authentication system in place} This means market research was done, and the management found that it is favorable to invest in eID authentication, as the users would adopt this authentication mechanism.
 
-\paragraph{The eID provider must be accessible by an Estonian company} Other countries may also provide eID solutions. However, for the scope of the thesis, only solutions available to Estonian citizens and companies will be considered.
+This thesis is only interested in the technological aspect of eID integration. Any legal, political, social or any other obstacles, if covered, will only be tangential.
+
+\paragraph{The eID provider must be accessible by an Estonian company} Other countries are also capable of providing eID solutions. However, for the scope of the thesis, only solutions originating from or heavily invested in Estonia will be considered.
 
 % ###### Preparation:
 
@@ -97,20 +99,18 @@ There will be some assumptions about the company wishing to implement eID authen
 
 \subsection{Contribution}
 
-The thesis aims to fill the research gap for the use of eID in the private sector. There is some research about connecting eIDAS nodes. However, the focus was on connecting eIDAS nodes of other countries and not connecting customers to the eIDAS infrastructure, which is mainly off-limits.
+The thesis aims to fill the research gap on the use of eID in the private sector and provide a framework for researchers or people in managerial positions to compare different eID authentication providers.
 
 The thesis contains the following contributions:
 
 \begin{enumerate}
     \item enumeration of eID service providers in Estonia;
     \item analysis of personal data storage under GDPR for use on authentication;
-    \item comparison of the different flavors of eID service providers;
-    \item assessment of various data transfer protocols eID service providers use;
-    \item display of example on how a company could implement an eID service into an SSO;
-    \item disclose a vulnerability in Dokobit's identity gateway;
-    \item feedback on the usability complexity for eeID project;
+    \item comparison of the different approaches eID service providers can take for integrating cross-border authentication;
+    \item assessment of various data transfer protocols in use for eID authentication;
+    \item display of example on how a company could integrate an eID service into an SSO;
+    \item security assessment and disclose a vulnerabilities in analyzed eID authentication providers;
 \end{enumerate}
-
 
 % #### Research methods
 
@@ -118,7 +118,8 @@ The thesis contains the following contributions:
 
 % Validation process would be reproducing the steps outlined in the Scope chapter. Most of the comparison points are publicly available, and the complexity analysis would need to follow the same steps, as outlined in the framework.
 
-\paragraph{Structure of work}
+\subsection{Structure of work}
+
 The document will consist of the following main chapters:
 
 \TODO{ISO standard to pick trust level for if companies even need it}
