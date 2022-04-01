@@ -4,6 +4,10 @@
 
 \subsection{System architecture}
 
+In this section, we will look at the current and desired states of our company's systems before and after integrating an eID provider. We will also declare common terminology used in the case studies, referring to the same server with the same name everywhere.
+
+For namesake's clarity, the company wishing to integrate eID authentication is a physical exercise data tracking enterprise, \textbf{WorkAuth}.
+
 \subsubsection{System overview}
 
 \begin{figure}
@@ -16,20 +20,20 @@
 
 \paragraph{Initial state}
 
-In figure \ref{fig:sys-highlevel} we see a high-level overview of a system we are trying to integrate eID authentication. This system consists of the following components:
+In figure \ref{fig:sys-highlevel} we see a high-level overview of a system where we are trying to integrate eID authentication. This system consists of the following components:
 
 \begin{enumerate}
-  \item AuthServer - the company's SSO; acts as a central authority for identity. Issued OIDC id tokens, which contain user ID, their roles, and claims.
-  \item SuperApp - a resource server with access control enabled. It uses id tokens issued by AuthServer and verifies them using asymmetric cryptography.
-  \item User store - a data store containing user login information - usernames, password hashes, other PII.
-  \item Actor - a physical person accessing the resources in the system.
+  \item AuthServer. The company's SSO. Acts as a central authority for identity. This server issues OIDC id tokens, which contain user ID numbers, roles, and claims. It is the primary access control mechanism.
+  \item SuperApp. A resource server with access control enabled. It uses OIDC id tokens issued by AuthServer and verifies them using cryptography or other means. It contains the data the company is trying to protect with stricter access control.
+  \item User store. A data store containing user log-in information - usernames, password hashes, other Personally Identifiable Information (PII).
+  \item Actor. A person accessing the resources in the system. Typically can be anyone, including computers; however, in our thesis's scope, we will limit ourselves to only natural persons holding an eID.
 \end{enumerate}
 
 \paragraph{Desired state}
 
-The company wishes to implement eID authentication. Since the authentication is not done locally but is delegated to some remote service or device, the protocol can be treated as an external federated sign-in. Frameworks such as ASP.NET Identity have special helpful tools to handle external identity providers.
+The company WorkAuth wishes to implement eID authentication. Since the authentication is not done locally but is delegated to some remote service or device, the protocol can be treated as an external federated log-in. Application development frameworks such as ASP.NET Identity have helpful tools to handle external identity providers.
 
-With the inclusion of an external eID provider, we can see the new system architecture in figure \ref{fig:sys-highlevel-witheid}.
+With the inclusion of an external eID provider, we can compose the new system architecture to be akin to figure \ref{fig:sys-highlevel-witheid}. In this figure we can see two significant additions:
 
 \begin{figure}
   \centering
@@ -38,20 +42,18 @@ With the inclusion of an external eID provider, we can see the new system archit
   \label{fig:sys-highlevel-witheid}
 \end{figure}
 
-We can see two significant additions:
-
 \begin{enumerate}
-  \item eID provider - a gateway to obtain someone's eID. It can be any eID source like Dokobit, TARA, Smart-ID, ID card.
-  \item Remote key store - it is a storage for unique identifiers provided by the eID provider.
+  \item {eID provider}. It is WorkAuth's gateway to obtain someone's eID. It can be any eID source such as Dokobit, TARA, Smart-ID, or an ID card.
+  \item {Remote key store}. Storage for unique identifiers provided by the eID provider.
 \end{enumerate}
 
-The primary purpose of the remote key store is to link the user ID used in the internal system with the unique identifier provided by the eID provider. Because the unique identifier can change or the same physical person can have multiple eIDs \cite{eidas-saml}, it is required to allow numerous eIDs to map to a single internal ID.
+The primary purpose of the remote key store is to link the user ID used in the internal system with the unique identifier given by the eID provider. Because the unique identifier can change or the same physical person can have multiple eIDs \cite{eidas-saml}, companies should foresee cases where numerous eIDs could map to a single internal ID.
 
-The key store is represented with the addition of a red lock. Depending on the country, the data stored there may be subject to strict privacy regulations. Companies should consider implementing strict access control for this part of the infrastructure.
+In the diagram (figure \ref{fig:sys-highlevel-witheid}), the key store has a red lock next to its icon. Depending on the country, the data stored there may be subject to strict privacy regulations. Companies must consider implementing strict access control for this part of the infrastructure.
 
 \paragraph{Final state}
 
-The end goal for the scope of this thesis is to implement three eID providers into the architecture. For normal companies, it would make sense to implement multiple in case they would like to get more coverage. Additionally, they could register non eID providers, such as Google or Microsoft social logins. The final high-level overview of the system can be seen in figure \ref{fig:sys-highlevel-final}.
+The end goal for the scope of this thesis is to implement three eID providers into the architecture. For regular companies, it would make sense to implement multiple only if they would like to get more coverage. Additionally, they could register non eID providers, such as Google or Microsoft social log-ins; however, we will not cover this in the thesis. The final high-level overview of the system can be seen in figure \ref{fig:sys-highlevel-final}.
 
 \begin{figure}
   \centering
@@ -66,7 +68,7 @@ For validation of the architecture, we will consider two use cases.
 
 The first one (see figure \ref{fig:sysprocess-a}) is concerned about accessing a protected resource with a token issued by the AuthServer. This use case validates the base state of the system.
 
-The second use case (see figure \ref{fig:sysprocess-b}) is also concerned about accessing a protected resource, but only those, who authenticate with a higher level of assurance, like eID, can access it. This use case validates the successful implementation of eID authentication and access control.
+The second use case (see figure \ref{fig:sysprocess-b}) is also concerned about accessing a protected resource, but only those, who authenticate with a higher level of assurance, like an eID solution, would be able to access it. This use case validates the successful implementation of eID authentication and access control.
 
 \begin{figure}
   \centering
@@ -104,15 +106,19 @@ The second use case (see figure \ref{fig:sysprocess-b}) is also concerned about 
 
 \subsubsection{Linking eID to an internal user ID}
 
-There will be a need to uniquely link an identity to an internal account in the company SSO. The security requirement, in this case, is not to allow other users to access the same account. For this goal, companies must use one or more person-identifying properties.
+\TODO{Possible mess? Suggestions wanted.}
 
-When using a passport as a reference, it has the following identifiers: (issuer) country code, document number, surname, given name, personal code, citizenship, date of birth, date of issue, date of expiry, and authority. In these cases, it is easy to use the personal code for identifying a person as it is unlikely to change - people change names, documents expire; authorities and date of birth do not narrow it down nearly enough.
+There will be a need to uniquely link an identity to an internal account in the company SSO server. The security requirement, in this case, is not to allow other users to access the same account. For this goal, companies must use one or more person-identifying properties.
 
-Implementers will hit a roadblock when checking a passport of Ireland - additionally, it has a place of birth but, more importantly, no personal identification code. In this case, the next best unique identifier would be to use the document number and update the account with a new number when the document eventually expires and is replaced.
+Using Estonia's passport as a reference, we see that it has the following identifiers: (issuer) country code, document number, surname, given name, personal code, citizenship, date of birth, document date of issue, expiry, and authority. In these cases, it is easy to use the {personal code} for identifying a person as it is unlikely to change - people change names, documents expire. Document authority information and date of birth do not narrow it down nearly enough. The use of a personal number seems like an obvious choice.
 
-In the world of digital identity, the eIDAS node network must provide a unique identifier for all requests \cite{eidas-saml}. Having a standardized way of obtaining an identifier is good news. All countries who wish to connect to the eIDAS network would have to expose some code to identify a person uniquely, removing the burden from the software architects to analyze what identifier they should use.
+Unfortunately, not all countries have personal numbers. If we look at Ireland's passport, we would be unable to find such a code. The lack of an id number shows one of the many challenges eID authentication adopters will face. If the data on the passport is all we would have, the next best unique identifier for linking users would be to use the document number. It is cumbersome and would require users to update the account with a new number when the document eventually expires and is replaced. Still, no other option satisfies the security condition requiring an eID to link only to the correct user as effectively as this one.
 
-In the eIDAS node network, the unique identifier remains "unchanged for the lifetime of the account" \cite{eidas-saml}. Unfortunately, it does not mean that identifiers cannot change; the account associated with that identifier cannot change. If an identifier were to change when "the user's digital identity is replaced or repaired," relying parties should treat the newly obtained identifier as a completely new identity.
+Fortunately, there is hope to avoid ambiguity in the digital world. European Telecommunications Standards Institute has identified the issue of countries having different people accounting systems and proposed a prefix system to account for it \cite{etsi-pno-numbering}. In their system, each ID code consists of a three-character identity type reference, followed by a two-character country code, a dash (-), and then the code unique in the country. Identity references include passport numbers (PAS), personal numbers (PNO), tax references (TIN), or even custom ones ({XX:}). Example of Estonian identity number under this system - {PNOEE-30303039914}.
+
+If we look at the eIDAS node network, its architecture does not have strong opinions on how an ID should look, as long as it has a country code and a unique code inside the country. How countries achieve uniqueness is not of concern.
+
+The eIDAS node architecture solves another issue of what to do if a person's identifier changes. A unique identifier remains "unchanged for the lifetime of the account" \cite{eidas-saml}. If an identifier were to change when "the user's digital identity is replaced or repaired," relying parties should treat the newly obtained identifier as a completely new identity.
 
 \paragraph{eIDAS Unique Identifier Structure} In eIDAS SAML Attribute Profile, an identifier code is defined as:
 \begin{enumerate}
@@ -121,7 +127,7 @@ In the eIDAS node network, the unique identifier remains "unchanged for the life
   \item The third part is a combination of readable characters. This uniquely identifies the identity asserted in the country of origin but does not necessarily reveal any discernible correspondence with the subject's actual identifier (for example, username, fiscal number etc).
 \end{enumerate}
 
-Example: ES/AT/02635542Y (Spanish eIDNumber for an Austrian SP).
+Example: ES/AT/02635542Y (Spanish eID Number for an Austrian SP).
 
 \paragraph{Summary} Using eIDAS Unique Identifier structure as a base, we can see that it is enough to uniquely identify a digital identity in eIDAS with the country of origin, country of destination, and a set of characters to identify that person in the origin country. The destination country will always be the same in our company's case. To uniquely identify a person, we will only need its origin country and a unique identifier a member state must provide.
 
@@ -611,7 +617,7 @@ The underlying data transfer protocol used by eeID is OpenID Connect code flow \
 \end{figure}
 
 \begin{enumerate}
-  \item Initial login. Preparation for redirect to the eID provider.
+  \item Initial log-in. Preparation for redirect to the eID provider.
   \item Redirection to the eID provider.
   \item Authentication. Users log in with the chosen authentication scheme (ID card, Mobile-ID, Smart-ID, eIDAS).
   \item Redirection back to the Auth server.
@@ -765,7 +771,7 @@ With this information, we can extrapolate a working {authorize} request (see lis
 
 Before redirecting the user to the {authorize} endpoint, it is important to bind the nonce and the state to the user agent session. We accomplish this by attaching an encrypted cookie to the response which the user agent will save before gets redirected.
 
-\subparagraph{Authorize and Second login}
+\subparagraph{Authorize and Second log-in}
 
 When the user agent redirects the user to the eeID service authentication page, they can chose any option for authentication. This process is not relevant to the thesis.
 
@@ -1000,7 +1006,7 @@ After the user signs the nonce challenge and sends their certificate, the server
 
 In the implementation example, these measures were addressed by:
 \begin{enumerate}
-  \item the back end endpoint for login is decorated with ValidateAntiForgeryToken Attribute. This attribute instructs the ASP.NET API to ignore requests not containing a CSRF token \cite{msdocs-anti-request-forgery}. A JavaScript application can only access the protected endpoints by providing RequestVerificationToken header (see listing \ref{lst:web-eid-challenge-ui});
+  \item the back end endpoint for log-in is decorated with ValidateAntiForgeryToken Attribute. This attribute instructs the ASP.NET API to ignore requests not containing a CSRF token \cite{msdocs-anti-request-forgery}. A JavaScript application can only access the protected endpoints by providing RequestVerificationToken header (see listing \ref{lst:web-eid-challenge-ui});
   \item the application tries to extract the challenge nonce from the browsing session. The process would succeed if the session cookie were not modified. After the extraction, the application checks the nonce cache to verify if the challenge is still active. Cache hit means the nonce has not expired, and no previous authentication attempt was performed. Remove the challenge nonce from all stores.
   \item The API calls a standalone validation service to verify the nonce and certificate (see below).
   \item Application populates the ASP.NET identity management system with the fields from the certificate: serial number, given name, surname, country. An identity session cookie is sent to the client.
