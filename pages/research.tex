@@ -1,10 +1,10 @@
-\section{Research}
+\section{Architecture Definition}
 
 \TODO{Redo the validation sections into 1) security requirements, 2) security requirement compliance by eID provider, 3) security requirement compliance by developers}
 
 \subsection{System architecture}
 
-In this section, we will look at the current and desired states of our company's systems before and after integrating an eID provider. We will also declare common terminology used in the case studies, referring to the same server with the same name everywhere.
+This section will look at the current and desired states of our company's systems before and after integrating an eID provider. We will also declare common terminology used in the case studies, referring to the same server with the same name everywhere.
 
 For namesake's clarity, the company wishing to integrate eID authentication is a physical exercise data tracking enterprise, \textbf{WorkAuth}.
 
@@ -23,7 +23,7 @@ For namesake's clarity, the company wishing to integrate eID authentication is a
 In figure \ref{fig:sys-highlevel} we see a high-level overview of a system where we are trying to integrate eID authentication. This system consists of the following components:
 
 \begin{enumerate}
-  \item AuthServer. The company's SSO. Acts as a central authority for identity. This server issues OIDC id tokens, which contain user ID numbers, roles, and claims. It is the primary access control mechanism.
+  \item AuthServer. The company's SSO. Acts as a central authority for identity. This server issues OIDC id tokens containing user ID numbers, roles, and claims. It is the primary access control mechanism.
   \item SuperApp. A resource server with access control enabled. It uses OIDC id tokens issued by AuthServer and verifies them using cryptography or other means. It contains the data the company is trying to protect with stricter access control.
   \item User store. A data store containing user log-in information - usernames, password hashes, other Personally Identifiable Information (PII).
   \item Actor. A person accessing the resources in the system. Typically can be anyone, including computers; however, in our thesis's scope, we will limit ourselves to only natural persons holding an eID.
@@ -122,32 +122,30 @@ The eIDAS node architecture solves another issue of what to do if a person's ide
 
 \paragraph{eIDAS Unique Identifier Structure} In eIDAS SAML Attribute Profile, an identifier code is defined as:
 \begin{enumerate}
-  \item The first part is the Nationality Code of the identifier. This is one of the ISO 3166-1 alpha-2 codes, followed by a slash ("/")).
-  \item The second part is the Nationality Code of the destination country or international organization. This is one of the ISO 3166-1 alpha-2 codes, followed by a slash ("/").
-  \item The third part is a combination of readable characters. This uniquely identifies the identity asserted in the country of origin but does not necessarily reveal any discernible correspondence with the subject's actual identifier (for example, username, fiscal number etc).
+  \item The first part is the Nationality Code of the identifier. Value is an ISO 3166-1 alpha-2 code, followed by a slash ("/")).
+  \item The second part is the Nationality Code of the destination country or international organization. Value is an ISO 3166-1 alpha-2 code, followed by a slash ("/").
+  \item The third part is a combination of readable characters. This sequence of characters uniquely identifies the identity asserted in the country of origin but does not necessarily reveal any discernible correspondence with the subject's actual identifier (for example, username, fiscal number, etc.).
 \end{enumerate}
 
 Example: ES/AT/02635542Y (Spanish eID Number for an Austrian SP).
 
-\paragraph{Summary} Using eIDAS Unique Identifier structure as a base, we can see that it is enough to uniquely identify a digital identity in eIDAS with the country of origin, country of destination, and a set of characters to identify that person in the origin country. The destination country will always be the same in our company's case. To uniquely identify a person, we will only need its origin country and a unique identifier a member state must provide.
+\paragraph{Summary} Using the eIDAS Unique Identifier structure as a base, we can see that it is enough to uniquely identify a digital identity in eIDAS with the country of origin, country of destination, and a set of characters to identify that person in the origin country. The destination country will always be the same in our company's case. To uniquely identify a person, we will only need its origin country and a unique identifier a member state must provide.
 
 For this thesis, identifiers will be marked as "{\{ISO 3166-1 alpha-2\}}/{\{Code provided by country\}}". Unique identifier examples: EE/38001085718, LT/49003111045, SE/870314-2391.
 
 \subsubsection{Privacy Policy}
 
-The company wishing to implement eID authentication will have to deal with personal information as described by GDPR \cite{eulaw-gdpr}. Before going live with an eID solution, companies must first consult a legal professional for advice.
+A company wishing to implement eID authentication will have to deal with personal information as described by GDPR \cite{eulaw-gdpr}. Before going live with an eID solution, they must conduct a legal audit for compliance.
 
 A privacy policy is a legal document and is way outside of the scope of a technical implementation thesis. However, it is still important to understand the basics. For this goal, two privacy policies will be analyzed: Web eID \cite{legal-webeid-privacypolicy} and Dokobit \cite{legal-dokobit-privacypolicy}.
 
-From the cursory analysis of the two policies, there are three fundamental aspects our company needs to address: what data is processed, with whom the company shares the data, and what is the retention policy.
+From the cursory analysis of the two policies, there are three fundamental aspects our company needs to address: what data is processed, with whom the company shares the data, and what is the retention policy. An actual privacy policy varies drastically from case to case.
 
-Based on the privacy policies of Web eID and Dokobit, we constructed a rudimentary privacy policy for the use of the test application environment. A copy of the text can be found in the thesis' appendices.
-
-Further research can be done to outline better the GDPR requirements needed to process a person's eID.
+Based on the privacy policies of Web eID and Dokobit, we constructed a rudimentary privacy policy for the use of the test application environment. The thesis appendix contains a copy of the text.
 
 \subsection{Weaknesses in the architecture}
 
-All systems come with points of compromise. It is best to be aware of these weak points and harden against them early on rather than after a cyber incident. The weaknesses can be grouped into two parts: eID provider dependent and local.
+When analyzing the weaknesses of WorkAuth's internal systems, it is good to understand their cause. Some vulnerabilities can appear due to existing issues, faulty implementation, or deeply rooted issues in the architecture itself. In this chapter, we will address these categories.
 
 \paragraph{eID provider dependant weaknesses}
 
@@ -155,32 +153,29 @@ These threats come from one common issue: trusting an eID service provider when 
 
 \begin{enumerate}
   \item relying party trusts an input from an insecure channel;
-  \item relying party does not perform the necessary validation;
+  \item relying party does not perform the necessary validation mandated by the protocol;
   \item weakness in the architecture of transport protocol;
   \item eID provider itself gets compromised;
 \end{enumerate}
 
-These points will be addressed on a case-by-case basis for each of the eID providers in the study.
+The thesis will address these points on a case-by-case basis for each eID provider in the study.
 
 \paragraph{Local weaknesses}
 
-In figure \ref{fig:sys-highlevel-witheid}, four components are not linked to a particular eID: AuthServer, SuperApp, application store, user store, and remote key store. We can identify weaknesses for those parts here. Each weakness was analyzed through the lens of CIA security analysis.
-
+In figure \ref{fig:sys-highlevel-witheid}, four system components are not linked to a particular eID: AuthServer, SuperApp, application store, user store, and remote key store. We can identify weaknesses for those parts here. We will analyze each weakness through the lens of CIA security analysis.
 
 \subsubsection{SuperApp}
 
-These two assets have similar weaknesses, with the only difference being the way users authenticate themselves. More in-depth analysis on authentication for the AuthServer can be seen on the
-
-\paragraph{[CI] Users can see and or edit data normally forbidden to access} This issue is usually created by one of two causes:
+\paragraph{[CI] Users can see and or edit data normally forbidden to access} This issue is created by one of the following:
 
 \begin{enumerate}
-  \item access control measures are disabled or do not protect resources;
+  \item access control measures are disabled on a specific resource;
   \item OIDC token validation is disabled or misconfigured;
 \end{enumerate}
 
 The first cause has a trivial fix - developers have likely forgotten to enable the data access guard on the endpoint. It is unlikely that all authorization rules break.
 
-In the case of the second cause, some corners were likely cut in the ID token validation process. When validating a token, the process has to match the one described in the OIDC spec \cite{oidc} exactly. This process consists of three major parts:
+In the case of the second cause, some corners were likely to be cut in the ID token validation process. When validating a token, the process has to match the one described in the OIDC spec \cite{oidc} exactly. This process consists of three major parts:
 
 \begin{enumerate}
   \item check if the token's crypto algorithm is as expected;
@@ -199,40 +194,35 @@ Developers usually need not worry about the process, as most frameworks have ado
 
 The first case is a common availability issue, meaning the server is suffering a denial of service attack. We will not cover the mitigation of this form of availability threat in the scope of the thesis.
 
-A likely cause for this issue is the manually configured OIDC properties on the relying party. If possible, developers should never configure the properties manually and use the well-known metadata endpoint instead. A metadata endpoint usually looks like this - \url{https://auth.mycompany.org/.well-known/openid-configuration}.
-
+A likely cause for the second part of this issue is the manually configured OIDC properties on the relying party. If possible, developers should never configure the properties manually and use the well-known metadata endpoint instead. A metadata endpoint usually looks like this - \url{https://auth.mycompany.org/.well-known/openid-configuration}.
 
 \subsubsection{AuthServer}
 
 All of the points that apply to SuperApp also apply to AuthServer. However, there is a critical use case that is worth mentioning explicitly.
 
-\paragraph{[CI] Users can see used eID schemes and add new ones with unsafe sign-in}
+\paragraph{[CI] Users can see used eID schemes and add new ones with unsafe log-in}
 
-As per requirements, users must assign multiple identity providers to their accounts. When adding a new external scheme, the currently signed-in user must have the same privilege level as the scheme they are trying to add. This countermeasure is for the event an adversary gains access to their account; they wouldn't be able to elevate their privileges by adding their eID scheme and signing in with it.
+As per usability requirements, users must be able to assign multiple identity providers to their accounts. When adding a new external scheme, the currently logged-in user must have the same privilege level as the scheme they are trying to add. This countermeasure is in place if an adversary gains access to their account; they wouldn't be able to elevate their privileges by adding their eID scheme and signing in with it.
 
-With this requirement in place, registration with an email and password becomes less valuable, as those accounts could never add an eID afterward. An exception to this rule can occur if a user has no eID schemes registered.
-
-This problem is solved by having a company policy to verify the user's first added eID manually. Without this verification, an adversary can register a new account with their real eID and access the data anyway.
+With this requirement in place, registration with an email and password becomes less valuable, as those accounts could never add an eID afterward. Companies can enact an exception to this security requirement for the first eID scheme a user would add. However, a better solution would be to have a company policy to verify the user's first added eID manually.
 
 \subsubsection{Data stores}
 
-All three data stores have the exact issues between them. For the sake of brevity, they will be grouped under the umbrella of \textit{data store}.
+All three data stores have the exact issues between them. For the sake of brevity, we will group them under the umbrella of \textit{data store}.
 
 \paragraph{[CI] Users have a less secure way of accessing the data store}
 
-The system is as secure as its weakest link. If users have direct access to the database while bypassing the eID authentication check, the security and assurance guarantees are worthless.
+The system is as secure as its weakest link. If users or developers have direct access to the database while bypassing the eID authentication check, the security and assurance guarantees are worthless.
 
-If there are alternative ways of accessing the database, companies must implement proper access rules that would be as secure as the one's eIDs provide. How that can be achieved depends on what data storage option is being used. The best option would be to close down external access to the data stores completely.
+If there are alternative ways of accessing the database, companies must implement proper access rules that would be as secure as the one's eIDs provide. How companies can achieve that depends on what data storage options they use. The best option would be to completely close down external or internal access to the data stores.
 
-\paragraph{[CI] Man-in-the-middle attacks} While uncommon, some data stores are vulnerable to MitM attacks \cite{sql-server-auth-mitm}. Although the best course of action would be to move the data storage server away from the general internet and make it accessible only on the local network or VPN, that is not always enough. For maximum security, companies must implement the recommended MitM prevention techniques \cite{sql-server-enable-tls}.
+\paragraph{[CI] Man-in-the-middle attacks} While uncommon, some data stores are vulnerable to MitM attacks \cite{sql-server-auth-mitm}. Although the best course of action would be to move the data storage server away from the internet and make it accessible only on the local network or via a VPN. However, in cases where an attacker has access to the internal network, even that is not enough. For maximum security, companies must implement the recommended MitM prevention techniques \cite{sql-server-enable-tls}.
 
 \paragraph{[A] Data is destroyed or lost}
 
 Ransomware attacks and accidental database corruptions can happen, so offline remote backups are a must.
 
-One must not forget to satisfy the requirement of not allowing for easier access to data even here. These backups must be protected from unauthorized access.
-
-One approach to solving this would be to use encryption; keys should only be available after authenticating with an eID scheme. One equally secure alternative would be to use something like the encryption and decryption functionality of Estonia's ID cards.
+An interesting issue arises when companies should treat backups to the same security standards as live databases. One approach to ensuring data integrity and confidentiality would be encryption; keys should only be available after authenticating with an eID scheme. One equally secure alternative would be to use something like the encryption and decryption functionality of Estonia's ID cards.
 
 \subsection{Case Study: Dokobit}
 
