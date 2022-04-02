@@ -313,7 +313,7 @@ After the server verifies the identity token, issue a new access token with the 
 
 \subsection{Discovered Weaknesses}
 
-\paragraph{Incorrect implementation of at\_hash}
+\subsubsection{Incorrect implementation of at\_hash}
 
 In the TARA Technical Specification \cite{tara-technical}, the identity token has at\_hash value that is not according to the OIDC spec \cite{oidc}.
 
@@ -340,7 +340,7 @@ The implication of this discovery means that all working clients who use eeID ha
 
 The reason for the incorrect implementation stems from backward compatibility \cite{tara-non-oidc-compliant}.
 
-\paragraph{Confusing state and nonce behavior}
+\subsubsection{Confusing state and nonce behavior}
 
 Nowhere in the OpenID Connect specification mentions that state should be transferred over to the id\_token. TARA confused the purposes of state and nonce properties, extended the behavior to cover each other, and, by extension, made one of the properties obsolete.
 
@@ -352,7 +352,7 @@ If we look at the data flow diagram (see figure \ref{fig:oidc-code-flow-wrong}),
 
 In the security analysis performed last year, a researcher suggested removing the nonce parameter from the protocol \cite{tara-security-arnis}. We disagree with this approach and would suggest removing the state parameter from the id\_token response. Removing the nonce parameter and having no support for PKCE would break OIDC compliant libraries' ability to mitigate authorization code injection attacks.
 
-\paragraph{Wrong claims in the OpenID Connect discovery endpoint} The discovery endpoint provides all information about possible requests and responses. The data listed there does not match the documentation. For example, in the discovery endpoint for eeID (\url{https://auth.eeid.ee/oidc/.well-known/openid-configuration}), claims like gender are present, even though this claim can never appear. On the flip side, the claim profile\_attributes, as described in the documentation, is missing from the discovery document. \todo{should I include token and .well-known response example here?}
+\subsubsection{Wrong claims in the OpenID Connect discovery endpoint} The discovery endpoint provides all information about possible requests and responses. The data listed there does not match the documentation. For example, in the discovery endpoint for eeID (\url{https://auth.eeid.ee/oidc/.well-known/openid-configuration}), claims like gender are present, even though this claim can never appear. On the flip side, the claim profile\_attributes, as described in the documentation, is missing from the discovery document. \todo{should I include token and .well-known response example here?}
 
 \begin{figure}
   \centering

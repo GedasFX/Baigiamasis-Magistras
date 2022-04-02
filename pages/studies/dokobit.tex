@@ -251,7 +251,7 @@ Mitigation measures are sufficient on almost all browsers released in the last t
 
 \begin{figure}
   \centering
-  \includegraphics[scale=0.7]{eeid/frameoptions}
+  \includegraphics[scale=0.7]{dokobit/frameoptions}
   \caption{Response headers browsers receive when opening the eeID service's login page}
   \label{fig:dokobit-responseheaders}
 \end{figure}
@@ -382,21 +382,51 @@ After completing these steps, the final code will be resilient to CSRF attacks.
 
 \subsection{Discovered weaknesses}
 
-When analyzing and implementing the protocol, two weaknesses were discovered that developers should be aware of and mitigate.
+\subsubsection{API key transferred via query parameters}
 
 \subsubsection{CSRF on the authorize endpoint}
 
-Developers can mitigate this session token injection and CSRF attack by binding the Dokobit session to the browsing session. When the user returns from Dokobit Identity Gateway, the return URL will have the session token attached in the path. If the authentication server can verify that the same browser has sent the session token and created the session, it would be possible to eliminate this attack.
+When performing a session token injection attack, relying parties can successfully protect themselves by binding the Dokobit's session token to the user agent session. Unfortunately, this does not prevent attackers from injecting their session tokens into victims' computers.
 
-It is possible to eliminate this attack using encrypted cookies with the session\_token attached (see listings \ref{lst:dokobit-challenge}, \ref{lst:dokobit-handleremote}).
-
-
-The Dokobit Identity Gateway protocol is simple and resilient to most forms of attacks out of the box. However, developers should make sure to enforce session binding. Adversaries can perform this attack by going through the following steps:
+From the attacker's point of view, they can exploit this exploit can be achieved by performing these steps \cite{video-exploitdokobit}:
 
 \begin{enumerate}
-  \item Adversary establishes an authentication session with the WorkAuth's server and, by extension, Dokobit. They receive a Dokobit session\_token.
-  \item Victim establishes an authentication session with authentication session.
-  \item Adversary tricks the user into using their session or injects their session token by other means.
-  \item Victim authenticates on Dokobit with adversary's session token.
-  \item Adversary finishes the session and successfully impersonates the victim.
+  \item Establish session with identity server and Dokobit;
+  \item Trick the user into opening the link issued by Dokobit (phishing works);
+  \item After the user authenticates, but before gets redirected, reload the page;
+  \item If an attacker manages to achieve it in time, they receive that person's access;
 \end{enumerate}
+
+A video exists showing a live demonstration of how this attack appears for both attacker and victim \cite{video-exploitdokobit}.
+
+\paragraph{The underlying issue}
+
+At its core, this exploit is possible because of three issues: 
+
+\begin{enumerate}
+  \item The attacker knows the response session token. Because all requests are correlated with the same session token, the attacker already knows the redirect URL.
+  \item Nothing is binding the authentication and redirect processes.
+  \item Requests automatically redirect the user to the final endpoint after authentication if the session token was not yet consumed.
+\end{enumerate}
+
+The third point is fascinating, as it glues issues 1 and 2 together. We can see how it connects these issues by looking at an authentication example (see figure \ref{fig:dokobit-vuln-csrf}).
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.7]{dokobit/vuln_csrf}
+  \caption{Waterfall of Dokobit Smart-ID authentication}
+  \label{fig:dokobit-vuln-csrf}
+\end{figure}
+
+We need to look at the waterfall diagram of the requests Identity Gateway makes to see why this attack works. The first request ({smartid}) starts a background task to authenticate with Smart-ID. Second and third requests ({status}) check on that background job and complete the request after it does. Notably, the checks are done with a delay, meaning there could be some amount of time (around one second) when the authentication process is finished, but the browser is not aware of it.
+
+When the page is refreshed, status checks are done immediately, so if an attacker managed to refresh the page in the short 1-second window, they would steal the session. Ironically, if the WorkAuth developers were diligent enough to prevent CSRF attacks, in the server's eyes, the victim would be seen as an attacker, and their request would be rejected, giving even more time for attackers to exchange the token.
+
+There may be some band-aid solutions for this exploit, but we see only one true fix: bind the Smart-ID (and other) authentication schemes to the current request or make it synchronous. Regular CSRF countermeasures are sufficient (generating a token on the page and using it to the end).
+
+\paragraph{Disclosure}
+
+\begin{itemize}
+  \item Mar 21, 2022: Informed Dokobit CIRT about the exploit.
+  \item Mar 27, 2022: Dokobit CIRT acknowledged the issue and started to work on a fix.
+\end{itemize}
