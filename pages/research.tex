@@ -4,7 +4,7 @@
 
 \subsection{System architecture}
 
-This section will look at the current and desired states of our company's systems before and after integrating an eID provider. We will also declare common terminology used in the case studies, referring to the same server with the same name everywhere.
+This section will look at our company's systems' current and desired states before and after integrating an eID provider. We will also declare common terminology used in the case studies, referring to the same server with the same name everywhere.
 
 For namesake's clarity, the company wishing to integrate eID authentication is a physical exercise data tracking enterprise, \textbf{WorkAuth}.
 
@@ -154,15 +154,15 @@ These threats come from one common issue: trusting an eID service provider when 
 \begin{enumerate}
   \item relying party trusts an input from an insecure channel;
   \item relying party does not perform the necessary validation mandated by the protocol;
-  \item weakness in the architecture of transport protocol;
+  \item inherent weakness in the architecture of the used transport protocol;
   \item eID provider itself gets compromised;
 \end{enumerate}
 
-The thesis will address these points on a case-by-case basis for each eID provider in the study.
+The thesis will address these points on a case-by-case basis for each eID provider in the study. We will address each of these points in the case studies' respective chapters.
 
 \paragraph{Local weaknesses}
 
-In figure \ref{fig:sys-highlevel-witheid}, four system components are not linked to a particular eID: AuthServer, SuperApp, application store, user store, and remote key store. We can identify weaknesses for those parts here. We will analyze each weakness through the lens of CIA security analysis.
+In figure \ref{fig:sys-highlevel-witheid}, four system components are not linked to a particular eID: AuthServer, SuperApp, application store, user store, and remote key store. We can identify weaknesses in those parts in this section. We will analyze each weakness through the lens of CIA security analysis.
 
 \subsubsection{SuperApp}
 
