@@ -1,16 +1,16 @@
 \section{Case Study: Web eID}
 
-\subsubsection{About}
+\subsection{About}
 
-Released in the Summer of 2021 \cite{ria-webeid} and having undergone significant changes in January of 2022, this eID framework allows users to authenticate and sign documents using their smart cards.
+Released in the Summer of 2021 \cite{ria-webeid} and having undergone significant changes in January of 2022, this eID framework allows users to authenticate and sign documents using their country's smart cards.
 
-Functionally this framework is split into three parts: software the user needs to install on their computer, a javascript library that acts as a data intermediary, and the certificate validation library for the back-end.
+Functionally this framework is split into three parts: software the user needs to install on their computer, a javascript library that acts as a data transfer intermediary, and the certificate validation library for the back-end.
 
 The software users need to install is similar to the one various countries' governments issue. The significant difference is that this software supports more than one countries' eID solutions. Supported countries include Estonia, Latvia, Lithuania, and Finland \cite{ria-webeid}.
 
 This service is built by the Estonian Information System Authority, responsible for TARA, Estonia's public sector gateway. No publicly available audit certification is available at the time of writing \todo{is this true?}.
 
-\subsubsection{Data Flow}
+\subsection{Data Flow}
 
 Figure \ref{fig:web-eid-authentication} displays the high-level overview of the complete flow of data within the Web eID framework. A detailed explanation of the steps can be found on the technical specification page \cite{ria-webeid-systemarchitecture}. Companies implementing the framework should only consider the browser and the server application (steps 1-3 and 13-17).
 
@@ -21,37 +21,35 @@ Figure \ref{fig:web-eid-authentication} displays the high-level overview of the 
   \label{fig:web-eid-authentication}
 \end{figure}
 
-\subsubsection{Trust Anchor}
+\TODO{Steps 1-3 ... Steps 13-17}
+
+\subsection{Trust Anchor}
 
 Unlike Dokobit and eeID, Web eID does not provide any guarantees about the trustworthiness of a certificate. It is, however, not out of malice and reminds developers by sending the certificate in a field called "unverifiedCertificate" \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}.
 
 The relying party must verify the certificate and challenge themselves by checking the origin, certificate expiry, trust chain, OCSP response, and the challenge. This validation structure makes the trust anchor technological and highly dependent on the implementation correctness by the developers.
 
-\todo{Discuss how we can never trust developers without proper supervision}
+\subsection{Pricing}
 
-\subsubsection{Pricing}
+The Web eID authentication service is free of charge, as the only external validation, OCSP \cite{rfc6960} requests, are free to use. When creating digital signatures, the timestamping service may require payment \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}, however the focus is only on the authentication.
 
-The Web eID authentication service is free of charge, as the only external validation, OCSP \cite{rfc6960} requests are free to use. When creating digital signatures, the timestamping service may require payment \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}.
+\subsection{Security Requirements}
 
-\subsubsection{Security Analysis}
+Web eID is almost entirely an offline protocol; therefore, the IETF guidelines document \cite{ietf-oauth-security-topics-19} used for eeID, and Dokobit is not applicable here. Instead, we will solely rely on the implementation details provided by RIA \cite{ria-webeid-systemarchitecture}.
 
-\paragraph{Actors}
-
-The actors in the figure \ref{fig:eid-auth-flow-seq} assume the roles of: QSCD Interface - web-eid.js \cite{ria-webeid-source-web-eid-js}, web-eid-app \cite{ria-webeid-source-web-eid-app}; QSCD - Smart cards of Estonia, Latvia, Lithuania, and Finland \cite{ria-webeid}.
-
-Even though distributed by the same website, id.ee, this interface is separate from the official id.ee software Estonian citizens use to sign and verify documents. "In the future, the final version of Web eID will be added into the ID-software installation package, available for the users the website on www.id.ee" \cite{ria-webeid}. Owners of other countries' smart cards will still have to download the special software from id.ee.
+The second version of the protocol (having accounted for the feedback of Arnis Paršovs \cite{arnis-report-webeid}) will be analyzed.
 
 \paragraph{Communication channel}
 
-The Web eID framework uses an insecure channel for communications, so developers must take caution and verify received data when implementing the framework. This channel is susceptible to man-in-the-middle attacks done by the client.
+The Web eID framework is the only one covered by this thesis that uses an insecure communication channel. Developers must take caution and verify received data when implementing the framework. This channel is highly susceptible to man-in-the-middle, forgery, or other attacks done by the user.
 
-Unlike in the cases of Dokobit and eeID, the risk of impersonation is not transferred to the eID service provider.
+Unlike in the cases of Dokobit and eeID, the risk of impersonation is not transferred to the eID service provider. However, a higher degree of certainty is provided, as only the client can be malicious. The underlying trust anchor, cryptography, is unlikely to be nefarious.
 
-\paragraph{Validation requiements}
+\subsection{Integration}
 
 For each protocol implementation step, developers will have to fulfill certain guarantees before the system goes into production.
 
-\subparagraph{Steps 1-3}
+\subsubsection{Preparation}
 
 Building the challenge nonce. The goal of these steps is to create the challenge the user will have to sign with their private key. There are a couple of guarantees the application must provide:
 \begin{enumerate}
@@ -112,7 +110,7 @@ public IActionResult GetChallenge()
 </script>
 \end{lstlisting}
 
-\subparagraph{Steps 13-17}
+\subsubsection{Validation}
 
 After the user signs the nonce challenge and sends their certificate, the server must verify its authenticity. The application must perform all of the following before allowing the user to sign in:
 
@@ -127,7 +125,7 @@ In the implementation example, these measures were addressed by:
 \begin{enumerate}
   \item the back end endpoint for log-in is decorated with ValidateAntiForgeryToken Attribute. This attribute instructs the ASP.NET API to ignore requests not containing a CSRF token \cite{msdocs-anti-request-forgery}. A JavaScript application can only access the protected endpoints by providing RequestVerificationToken header (see listing \ref{lst:web-eid-challenge-ui});
   \item the application tries to extract the challenge nonce from the browsing session. The process would succeed if the session cookie were not modified. After the extraction, the application checks the nonce cache to verify if the challenge is still active. Cache hit means the nonce has not expired, and no previous authentication attempt was performed. Remove the challenge nonce from all stores.
-  \item The API calls a standalone validation service to verify the nonce and certificate (see below).
+  \item The API calls a standalone validation service to verify the nonce and certificate (see certificate and nonce verification paragraph below).
   \item Application populates the ASP.NET identity management system with the fields from the certificate: serial number, given name, surname, country. An identity session cookie is sent to the client.
 \end{enumerate}
 
@@ -161,13 +159,11 @@ public async Task<IActionResult> Login([FromBody] WebIdAuthTokenResponse token)
 }
 \end{lstlisting}
 
-\subparagraph{Certificate and nonce verification}
+\subsubsection{Certificate and nonce verification}
 
 This step is the most complicated in the entire validation process. To prevent any issues with incorrect implementation, the framework maintainers recommend using their library for validation \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}. Libraries can come with security vulnerabilities, and developers are reluctant to update their used version; however, it is still more favorable to creating vulnerabilities from misconfiguration \cite{9240619}.
 
 The eu.webeid.security Java package performs most of the certificate validation: expiry, purpose, policy, OCSP \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}. Developers will only have to configure the CA and host validation. Configuration is handled by providing a set of trusted CA certificates for trust chain verification and the hostname for challenge nonces (see listing \ref{lst:web-eid-java-lib}).
-
-\todo{This library does favor EE cards a lot more, even having hardcoded some Mobile ID policies. Not sure if it is worth mentioning.}
 
 \begin{lstlisting}[caption={Web eID Login Endpoint}, label={lst:web-eid-java-lib}]
 public class AuthTokenValidatorService {
@@ -208,9 +204,9 @@ public class AuthTokenValidatorService {
 }
 \end{lstlisting}
 
-The token validation service described in listing \ref{lst:web-eid-java-lib} requires the maintainers to set the origin URL in the form of an environment variable and to populate the folder {/certs} with trusted CA certificates.
+The token validation service described in listing \ref{lst:web-eid-java-lib} requires WorkAuth maintainers to set the origin URL in the form of an environment variable and to populate the folder {/certs} with trusted CA certificates.
 
-Origin URL can be obtained by checking the {window.origin} JavaScript variable in the page containing the sign-in button.
+Origin URL can be obtained by checking the {window.origin} JavaScript variable in the page containing the log-in button.
 
 For the CA certificate set, the company can get an up-to-date list of trusted certificates at the EU Trust Services Dashboard \cite{eu-trustservices}. The issue with this list is that it contains all trust certificates for various scopes. In our case, we should limit the search to the extent of QCert for ESig. In the case of Estonia and Lithuania, only three entities are certified to issue certificates for QSCD (see figure \ref{fig:eu-tsp-list}). It is in stark contrast to Spain's 31 \cite{eu-trustservices}. It is possible to further narrow down to only certificate generation services for qualified certificates (CA/QC).
 
@@ -232,26 +228,14 @@ In the case of Estonia's single TSP, we can see that only 3 CA are currently ope
 
 An alternative way to obtain certificates would be to go to the government authority of each country responsible for the distribution of certificates. This action requires prior knowledge of who is responsible for issuing certificates and their purposes.
 
-In Lithuania's case, it is the Ministry of the Interior \cite{eid-lt-ministryofinterior-certificates} who issue two certificates (A and B) every couple of years. As of early 2022, four certificates are active, and all will be added to the trusted CA list.
+In Lithuania's case, it is the Ministry of the Interior \cite{eid-lt-ministryofinterior-certificates} who issues two certificates every couple of years. As of early 2022, four certificates are active, and all will be added to the trusted CA list.
 
 In Estonia's case, SK ID Solutions manages the CA certificates \cite{eid-ee-skid-certificates}. Of the three certificates found on the EU Trust Services Dashboard, only two are relevant to us, the 2015 and 2018 ones, as the 2016 one has its purpose for use in Smart-ID, which the Web eID framework does not support.
 
-The final list of certificates to support Lithuania and Estonia include four certificates from Lithuania's Ministry of the Interior and two certificates issued by SK ID Solutions for a total of six. It is essential to keep track of these certificates as each one of them can act as a point of compromise and must be monitored in the event they are revoked for security \cite{roca-vulnerability-lessons-learned} or other issues.
+The final count of certificates is six. Four certificates are required to support Lithuania and two for Estonia. It is essential to keep track of these certificates as each one of them can act as a point of compromise and must be monitored in the event they are revoked for security \cite{roca-vulnerability-lessons-learned} or other issues.
 
-\TODO{Discussion: suggest how the certificates are way too challenging to obtain for a casual company and may lead to additional vulnerabilities}
-\TODO{Discussion: phishing attacks if the company establishes policy to add certificates if they cannot sign in with their card}
-
-\subparagraph{Exposing the service}
+\paragraph{Exposing the service}
 
 With the certificate validation service configured, it is now required to link it to the Web API. If the company orients around using microservices, this service can be just that. All that the validation service requires is to expose an endpoint that accepts a nonce and a token from the javascript library and returns a validation result.
 
-Companies must take proper measures to protect such service from adversaries as it acts as a fundamental trust anchor. Developers should take steps outlined in assume breach \todo{citation missing} to mitigate the risk of misuse, with the use of TLS and other countermeasures.
-
-\paragraph{Transport protocol}
-
-Researcher Arnis Paršovs published a security analysis of the protocol v1 in October of 2021 \cite{arnis-report-webeid}. Developers behind the Web eID framework acknowledged the weaknesses and addressed them in v2 \cite{ria-webeid-systemarchitecture}, which will be used in the scope of the thesis. At the time of writing, independent researchers and auditors have not yet performed security analysis for this version.
-
-The protocol is two asynchronous JavaScript calls to an API endpoint, which exists on the same website; the user does not need to leave the page. No redirects or third parties are involved; therefore, the analysis of a redirect-based protocol is not applicable in this scenario.
-
-\TODO{Related research about legal person documents?}
-\TODO{Complete alternative, using your own issued certificates?}
+Companies must take proper measures to protect such service from adversaries as it acts as a fundamental trust anchor. Developers should take steps outlined in assume breach \todo{citation missing} to mitigate the risk of misuse with the use of TLS and other countermeasures.
