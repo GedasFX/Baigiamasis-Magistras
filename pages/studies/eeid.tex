@@ -84,7 +84,7 @@ The developer does not have to implement internal state management to verify tha
 \paragraph{Insufficient Redirect URI Validation}
 
 \begin{itemize}
-  \item Changes in the registered OIDC application undergo manual verification by eeID employees.
+  \item Changes in the registered OIDC application undergo manual verification by eeID employees and do not allow for wildcards.
 \end{itemize}
 
 The manual verification process is sufficient to mitigate this attack; it is impossible to test if countermeasures exist on the client registration interface used by the eeID service employees. Mitigation measures provided by the eID provider are adequate.
@@ -103,7 +103,7 @@ The eeID service does not leak credentials to third parties anywhere on their lo
   \centering
   \includegraphics[scale=0.6]{eeid/leakviareferrer}
   \caption{The eeID service does not use resources outside of their domain in the authentication flow}
-  \label{fig:eeid-leakviabrowser}
+  \label{fig:eeid-leakviareferrer}
 \end{figure}
 
 \paragraph{Credential Leakage via Browser History}
@@ -113,13 +113,13 @@ The eeID service does not leak credentials to third parties anywhere on their lo
   \item The {form post} response mode is not supported. Not required, but it would prevent this form of attack completely.
 \end{itemize}
 
- It is possible for attackers to obtain authorization code, nonce, and state from the browser history, however for them to be able to use them, the relying party must be susceptible to CSRF attacks. Mitigation measures are sufficient only when CSRF mitigation is in place.
+ Attackers can obtain authorization code, nonce, and state from the browser history (see figure \ref{fig:eeid-leakviahistory}); however, for them to be able to use codes, the relying party must be susceptible to CSRF attacks. Mitigation measures are sufficient only when CSRF mitigation is in place.
 
 \begin{figure}
   \centering
   \includegraphics[scale=0.6]{eeid/leakviahistory}
   \caption{Authorization code is leaked inside the browser history when using eeID authentication}
-  \label{fig:eeid-leakviareferrer}
+  \label{fig:eeid-leakviahistory}
 \end{figure}
 
 \paragraph{Authorization Code Injection and Cross-Site Request Forgery}
@@ -311,7 +311,7 @@ If the token endpoint returns the identity token successfully, the user should v
 
 After the server verifies the identity token, issue a new access token with the necessary information from the identity token. The most common solution would be to create a new cookie and attach it to the response.
 
-\subsubsection{Discovered Weaknesses}
+\subsection{Discovered Weaknesses}
 
 \paragraph{Incorrect implementation of at\_hash}
 
