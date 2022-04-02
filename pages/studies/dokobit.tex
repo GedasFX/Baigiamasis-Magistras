@@ -384,6 +384,28 @@ After completing these steps, the final code will be resilient to CSRF attacks.
 
 \subsubsection{API key transferred via query parameters}
 
+Dokobit Identity Gateway requires {relying parties} to send access tokens (API keys) via query parameters. When looking at the OAuth2.0 security best practices document \cite{ietf-oauth-security-topics-19}, under section 4.3.2, we can see that it may lead to Credential Leakage via Browser History.
+
+No browser is involved when using the API key. It does not mean no traces are left anywhere, though. Companies frequently use application and network logging solutions to detect outages. Some logging solutions may be a bit overzealous when deciding what they should be allowed to log.
+
+I will use .NET 6 Web API and Application Insights to provide a concrete example. All dependency calls will be tracked and logged to Application Insights log storage on MS Azure with an out-of-the-box configuration. The data of dependency calls include the request path + query. The inclusion of query parameters would make the application leak the Dokobit API key by accident to Azure services (see figure \ref{fig:dokobit-vuln-query}). Improper access rules (allowing developers to troubleshoot issues in the application) would allow people with access to read the API key.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{dokobit/vuln_appinsights}
+  \caption{Example of data that would be sent to MS Azure Application Insights}
+  \label{fig:dokobit-vuln-query}
+\end{figure}
+
+The impact of this attack appears to be insignificant, as it would only allow users to obtain the user's personal information, something an attacker could do with their API key. The only other benefit would be sabotage by adding high usage costs to WorkAuth by rapidly forging requests and going around any rate limits the relying party imposes.
+
+\paragraph{Disclosure}
+
+\begin{itemize}
+  \item Mar 02, 2022: Informed Dokobit CIRT about the exploit.
+  \item Mar 13, 2022: Dokobit CIRT acknowledged the issue, but deemed not worth fixing.
+\end{itemize}
+
 \subsubsection{CSRF on the authorize endpoint}
 
 When performing a session token injection attack, relying parties can successfully protect themselves by binding the Dokobit's session token to the user agent session. Unfortunately, this does not prevent attackers from injecting their session tokens into victims' computers.
