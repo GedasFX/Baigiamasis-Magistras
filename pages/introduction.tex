@@ -10,11 +10,11 @@ Establishing identity online for potential employees and clients is not the only
 
 After the EU introduced the eIDAS regulation, an alternative method for identity verification became available \cite{eulaw-eidas}. All EU member states are mandated to implement an eID solution in their country and recognize other countries' eID solutions. Each eID solution guarantees some degree of authenticity, from substantial to high, allowing for verification of a persons' identity via trustworthy means.
 
-Particular risks exist that businesses must be aware of before integrating an eID authentication service. There are no comprehensive resources outlining the obstacles and costs of implementing eID authentication in the private sector at this point in time. Unknown risks are an excellent deterrent to innovation, making companies reluctant to use new technologies. Proper research into this subject may lead companies to take risks associated with implementing new technology and kickstart the mainstream adoption of eIDs in the private sector. 
+Particular risks exist that businesses must be aware of before integrating an eID authentication service. There are no comprehensive resources outlining the obstacles and costs of implementing eID authentication in the private sector at this point in time. Unknown risks are an excellent deterrent to innovation, making companies reluctant to use new technologies. Proper research into this subject may lead companies to take risks associated with implementing new technology and kickstart the mainstream adoption of eIDs in the private sector.
 
 \subsection{Research Problem}
 
-The main goal of the thesis is to investigate what options companies have if they wish to integrate eID authentication into their day-to-day businesses and if the advantages provided by eIDs are sufficient to outweigh the risks associated with adopting new technology. From this goal, the extracted research question is as follows: 
+The main goal of the thesis is to investigate what options companies have if they wish to integrate eID authentication into their day-to-day businesses and if the advantages provided by eIDs are sufficient to outweigh the risks associated with adopting new technology. From this goal, the extracted research question is as follows:
 
 \textbf{What is the best eID authentication option available for an Estonian EU targeting enterprise for use in their Web-based Single Sign-On (SSO)?}
 
@@ -25,13 +25,13 @@ To help answer this question, we would need to refine it into additional sub-que
     \item How should an existing authentication scheme change to support eID?
     \item What privacy considerations must companies take when processing user data?
     \item What are the different eID authentication providers available to Estonia's private sector?
-    \begin{itemize}
-        \item How complicated is the solution to integrate?
-        \item What risks does the eID provider add or take away from the consumer company?
-        \item What is the market reach (in countries) of a given solution?
-        \item Where are the weak points in the protocol used, and how should the relying company address them?
-        \item How expensive is the solution to operate?
-    \end{itemize}
+          \begin{itemize}
+              \item How complicated is the solution to integrate?
+              \item What risks does the eID provider add or take away from the consumer company?
+              \item What is the market reach (in countries) of a given solution?
+              \item Where are the weak points in the protocol used, and how should the relying company address them?
+              \item How expensive is the solution to operate?
+          \end{itemize}
 \end{itemize}
 
 With these questions answered, it would be possible for any company to understand the risks and benefits of any eID solution and have a framework to compare them.
@@ -109,7 +109,7 @@ The thesis contains the following contributions:
     \item comparison of the different approaches eID service providers can take for integrating cross-border authentication;
     \item assessment of various data transfer protocols in use for eID authentication;
     \item display of example on how a company could integrate an eID service into an SSO;
-    \item security assessment and disclose a vulnerabilities in analyzed eID authentication providers;
+    \item security assessment and disclosure of weaknesses in analyzed eID authentication providers;
 \end{enumerate}
 
 % #### Research methods
@@ -120,13 +120,10 @@ The thesis contains the following contributions:
 
 \subsection{Structure of work}
 
-The document will consist of the following main chapters:
+The thesis will consist of the following main chapters:
 
-\TODO{ISO standard to pick trust level for if companies even need it}
-\TODO{What are different options in eIDAS, e.g. what is a QESSD}
-\TODO{What are the differences between primary services and middlemen, advantages disadvantages}
-\TODO{What are the weakpoints in the company structrue}
-\TODO{What is the research model?}
-\TODO{Findings about ID Card, Dokobit, and eeID}
-\TODO{Non web-based SSO?}
-\TODO{Ponder about the advantages of middleware pseudominization? Say instead of personal code you get some arbitrary ID that matters only in the system}
+\paragraph{Section 2: Background} This chapter contains literature relevant to understanding the terminology and concepts used later in the thesis. Additionally, it contains a list of currently available eID providers in Estonia.
+\paragraph{Section 3: Related Work} This chapter covers similar topics covered by the thesis. These studies may be done with different technologies or in different countries.
+\paragraph{Section 4: Architecture Definition} When integrating an eID provider into an existing system, one must first know how the system is composed. Here we provide a schema and process overview and address inherent weaknesses in the base system.
+\paragraph{Section 5-7: Case Studies} These sections look at data flow, trust, pricing, security requirements, integration specifics, and discovered weaknesses for each provider in the thesis (eeID, Dokobit, Web eID). These sections also spotlight the advantages and disadvantages of each provider.
+\paragraph{Section 8: Discussion} This section discusses other factors that would affect companies' decisions to integrate eID providers and attempts to answer the underlying question of which eID provider (if any) a company should integrate. This section was done in part with the help of a CTO of a logistics company.
