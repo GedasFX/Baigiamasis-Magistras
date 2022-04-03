@@ -1,27 +1,86 @@
 \section*{III. Questionnaire}
 \addcontentsline{toc}{subsection}{III. Questionnaire}
 
-The interview's goal is to understand better the reasons for the poor adoption of eIDs in the private sector. This interview was conducted with the CTO of a multinational logistics company.
+This interview's goal is to understand better the reasons for the poor adoption of eIDs in the private sector.
+
+This interview was conducted with the CTO of a multinational logistics company.
 
 \begin{enumerate}
     \item With electronic key cards, users can authenticate themselves using a piece of hardware, say a card or a USB stick. This authentication method is often more secure than the usual username and password approach. Are you and the company in general aware of this?
+    
+    \textbf{Ashot: yes, fully aware. But you have to keep hardware always with you, besides that it can be lost or stolen. That's why MFA is a preferred way for authentications and it get global adoption.}
     \item I would describe an eID scheme as something like your id card, but digitally. There are three main schemes in Estonia: ID cards, Mobile-ID, and Smart-ID. Are you familiar with at least one of them?
-    \item With the eIDAS regulation, these three eID schemes can create digital signatures, with the legal value of a handwritten signature. Do you have a place in the company where you print a document, sign it, scan it and upload it? Would you switch to a solution that would avoid this process?
+    
+    \textbf{Ashot: yes, all of them. Using Mobile-ID and Smart-ID all the time, Smart-ID is somehow more user-friendly. ID card - exceptional cases.}
+    \item With the eIDAS regulation, these three eID schemes can create digital signatures with the legal value of a handwritten signature. Do you have a place in the company where you print a document, sign it, scan it and upload it? Would you switch to a solution that would avoid this process?
+    
+    \textbf{Ashot: don’t forget that eID is a workable solution in Baltics, but most of the European countries are not so much advanced. In Switzerland I have to print every document and sign it offline. Even the TAX declaration.. this is nightmare}
     \item Without disclosing the worth of transactions floating around the company, would the security benefits of the eID schemes benefit company enough for you to switch to using them?
-    \item Authentication and signing usually come hand in hand, but if you were to have the ability to choose, assuming authentication and signing both costs equally as much to implement, would you rather spend the resources on authentication or digital signing? SEB Bank used to or still allows for transactions under 50€ to be done without signatures, only authentication. Would you at that point no longer consider the authentication method entirely?
+    
+    \textbf{Ashot: absolutely yes}
+    \item Authentication and signing usually come hand in hand, but if you were to have the ability to choose, assuming authentication and signing both cost equally as much to implement, would you rather spend the resources on authentication or digital signing? SEB Bank used to or still allows for transactions under 50€ to be done without signatures, only authentication. Would you, at that point, no longer consider the authentication method entirely?
+    
+    \textbf{Ashot: investment in this case would make sense into signature}
     \item Your company deals a lot with automation. Would you be comfortable automating the use of digital signatures in your company's name, or would you rather still have a person at the end manually reviewing and signing documents?
+    
+    \textbf{Ashot: absolutely yes - digital signature}
     \item Say a human mistake occurs: a person mistakenly signs a document they shouldn't have, and the company faces losses. It would be easy to track who made a mistake with digital signatures. What would your company do in that case?
+    
+    \textbf{Ashot: human mistakes can occur in both manual and digital scenarios. To avoid such issues the automated process can help to propose for signature only valid documents. If this process still fails, then second pair of eyes could be a solution. But in all cases it should be digital signature as a part of digital process}
     \item I have four different authentication options a company can take. Assume you would have to pick one of the four and explain the main reasons for your choice.
     
     The first option uses the primary eIDAS network of Europe to authenticate themselves to any EU public sector service. For example, a Lithuanian citizen can use their eID to sign into Estonia's banks. This network's security is held to the highest standards. Some discrepancies appear because of the criteria, such as Estonians being unable to sign in via Smart-ID to foreign websites. It is significant as a lot of people use Smart-ID. Do you think it is an acceptable solution for you?
 
+    \textbf{Ashot: acceptable, but I will look for additional solutions to have better coverage}
+
     The second option would use a company in the middle whose sole responsibility would be to federate the sign-in process. Like the first authentication method, you can also sign in from many more European countries, but this time without using the eIDAS network. A clear advantage over the first one is the more lax security requirements, allowing other authentication methods such as Smart-ID. Keep in mind that this authentication method is still highly trustworthy. Would you consider the ability to reach a broader audience at the cost of not using the official infrastructure a risk worth taking?
+
+    \textbf{Ashot: it should be highly trusted middleware, but yes this is acceptable. Such solutions already exist for payments for example}
 
     The third option puts a lot more risk on the company and allows for only a narrow market band. I am talking about smart cards and how a company could accept one, but the server should never trust the certificate a card sends. This approach is challenging to integrate and susceptible to many attacks; however, its advantage is that it is free to operate. If we ignore the personnel costs for maintaining the trust certificates, that is. Would no operational fees be convincing enough to pick this option?
 
+    \textbf{Ashot: I would search for other solution with better coverage}
+
     The last option is similar to the third about the challenging implementations and the narrow market band. This time you will not have the advantage of free operational costs. However, you will still benefit from not having an intermediary company. This option would be if you integrated with Smart-ID directly. Is having an intermediary company of concern to you?
 
+    \textbf{Ashot: no concerns if they can gain trust and also would be great to see support on the government/official level for such provider}
+
+    \textbf{Ashot: I would chose the second option as it can bring mass adoptions. But should be supported by government/officials}
+
     \item What is an acceptable price for a single successful authentication? The business model of options 1, 2, and 4 is to charge an amount per authentication. Let's aim for around 10 000 authentications per month; how much do you think is acceptable to spend on such a number? Would 500€ per month be acceptable?
+    
+    \textbf{Ashot: users are already used to have such services close to “free of charge”. how much is the owner of the business ready to pay for this? Not a lot. 10k authentications per month is around 300-400 active users. So this adds additional costs more than 1 EUR per user.
+    Here would make sense S/M/L/Enterprise packages with different price tags}
     \item Options 2-4 also create digital signatures; the first cannot. Does your opinion change at all about which solution you would pick?
+    
+    \textbf{Ashot: I stay with the largest coverage }
     \item An alternative to using government-issued eID solutions, you can also issue them yourself at a highly reduced price and trust factor. This solution is still more secure than the username+password approach. If you were to change how the company performs authentication, would you switch to the internal system, eID scheme, or not switch at all, and why?
+    
+    \textbf{Ashot: in case of internal IT solution - I could use internal ID system as I can verify all accounts. In case of public solution with a global coverage - you need something more official. We have an example of our partner - \url{https://www.farmerconnect.com/products} who is trying to introduce Farmer ID, but you need local presence and strict verification rules. This concept is close to failure}
+\end{enumerate}
+
+After we received the initial answers, we asked more questions based on the feedback:
+
+\begin{enumerate}
+    \item Signatures >> Authentication. Between the two, authentication is just not as useful, as it helps with confidentiality, whereas signing has legal status. If a solution does not offer signing functionality you would not even consider it.
+    
+    \textbf{Ashot: we are using B2C today for auth, right? So one can exist without another. But I guess in scope of this project you signature is a must.}
+
+    \item Trust. The solution must be supported by government/officials. Is ISO/IEC 20001:2013 certification sufficient? \url{https://www.dokobit.com/docs/compliance/Dokobit-iso27001-certificate.pdf}
+    
+    \textbf{Ashot:not really. Such certificate is a minimum requirement. I would like to see that government portals, or banks are adopting this solution. This provides sufficient trust into the solution. Also you cannot just sign the document with the homemade tool. It should be legal in the country so you have to deal with local authorities. Otherwise your signature does not worth a penny.}
+
+    \item Scope. The solution should have a large market reach, so you would focus on 3rd party service providers, rather than the primary trust sources like Smart-ID (SK ID Solutions)
+    
+    \textbf{Ashot: Either there should be a global standard and solutions will support interoperability (e.g. I would be able to use smart-ID in Switzerland ), or there should be an independent service provider which will get support from local authorities. Like the middleware solution for credit cards (I don't remember the name)}
+
+    \item {Pricing. It does have a significant impact, but it is not as important as first 3. Say if there was an option to skip authentication - use your own solution, and use the eID service provider for signatures only. The cost of a digital signature by using them costs around 30ct per signature. This would be around 1500 signatures per month at 500 eur. Is this a more appealing offer?}
+    
+    \textbf{Ashot: who is the target group? Is it a bank to offer this for own customers? Then it is too expensive for them I would say. Is it a business owner? Today they open PDF and apply PNG of signature into the file free of charge. Would they be ready to pay 500 for 1500 signatures - maybe, but most probably they will try to cut some costs here. Is it government? Then they have huge volumes, so it is too expensive (but they can use this an argument for green-environment)}
+
+
+    \item Assuming we have signatures as 100\% required feature, what impact, in your opinion, does the Authentication support/Trust/Scope/Pricing have in relation to one another? For example it can be 10\%/50\%/30\%/10\%. Maybe there are additional deal breakers?
+    
+    \textbf{Ashot: You cannot have signature without passing the authentication, right? So it is included in the package by default. So between Trust/Scope/Pricing I would say 40/30/30. In this case Trust also means that it is legally accepted and if I go to court - they will accept this signature.
+    Also important easy-to use and friendliness, and plug-n-play approach. It should be also available on all possible devices.}
 \end{enumerate}
