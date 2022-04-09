@@ -440,16 +440,34 @@ The third point is fascinating, as it glues issues 1 and 2 together. We can see 
   \label{fig:dokobit-vuln-csrf}
 \end{figure}
 
-We need to look at the waterfall diagram of the requests Identity Gateway makes to see why this attack works. The first request ({smartid}) starts a background task to authenticate with Smart-ID. Second and third requests ({status}) check on that background job and complete the request after it does. Notably, the checks are done with a delay, meaning there could be some amount of time (around one second) when the authentication process is finished, but the browser is not aware of it.
+We need to look at the waterfall diagram of Identity Gateway's requests to see why this attack works. The first request ({smartid}) starts a background task to authenticate with Smart-ID. Second and third requests ({status}) check on that background job and complete the request after it does. Notably, the checks are done with a delay, meaning there could be some amount of time (around one second) when the authentication process is finished, but the browser is not aware of it.
 
 When the page is refreshed, status checks are done immediately, so if an attacker managed to refresh the page in the short 1-second window, they would steal the session. Ironically, if the WorkAuth developers were diligent enough to prevent CSRF attacks, in the server's eyes, the victim would be seen as an attacker, and their request would be rejected, giving even more time for attackers to exchange the token.
 
-There may be some band-aid solutions for this exploit, but we see only one true fix: bind the Smart-ID (and other) authentication schemes to the current request or make it synchronous. Regular CSRF countermeasures are sufficient (generating a token on the page and using it to the end).
+\paragraph{The fix}
+
+On Apr 11, 2022, Dokobit developers fixed the issue by blocking all subsequent requests to the {authorize} endpoint. This fix prevents attackers from abusing the automatic redirect feature. It would leave us with an attack vector where an attacker would target the callback endpoint. Because Dokobit allows customizing redirect URLs, creating an opaque challenge passed in the query parameters is possible, eliminating this exploit. 
+
+Figures \ref{fig:dokobit-vuln-csrf-fix-a} and \ref{fig:dokobit-vuln-csrf-fix-b} illustrate how the page looks after the fix was deployed. A page reload is treated as a subsequent visit. As an unwanted side-effect, if a user accidentally reloads the page, they would not be able to authenticate and would need to create a new session.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.52]{dokobit/vuln_csrf_fix_a}
+  \caption{Authorization page as seen on the first visit}
+  \label{fig:dokobit-vuln-csrf-fix-a}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.52]{dokobit/vuln_csrf_fix_b}
+  \caption{Authorization page as seen on subsequent visits}
+  \label{fig:dokobit-vuln-csrf-fix-b}
+\end{figure}
 
 \paragraph{Disclosure}
 
 \begin{itemize}
   \item Mar 21, 2022: Informed Dokobit CIRT about the exploit.
   \item Mar 27, 2022: Dokobit CIRT acknowledged the issue and started to work on a fix.
-  \item \TODO{Update on Dokobit CIRT issue}
+  \item Apr 11, 2022: Dokobit has fixed the issue.
 \end{itemize}
