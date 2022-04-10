@@ -1,12 +1,10 @@
 \section{Case Study: Dokobit}
 
-\subsection{About}
+\subsection{Background}
 
 Dokobit \cite{dokobit}, trademark and subsidiary of Estina \cite{euipo-dokobit}, offers two products: Document Signing Portal and API solutions.
 
 The first product, the Document Signing Portal, was released in 2014 \cite{dokobit-aboutus}. The primary purpose of this solution is to allow users to upload documents and digitally sign them online.
-
-Estina has acquired the DigiDoc portal (\url{https://digidoc.ee}) from SK ID Solutions in 2016 \cite{sk-digidocacquired} which had the exact purpose. This portal should not be confused with the similarly named DigiDoc4 client Estonians commonly use to sign documents \cite{ria-idee}.
 
 The second product, API solutions, targets businesses in a variety of scopes: signature collection, signing, identification, sealing, and TSP monitoring \cite{dokobit}. In the thesis, we will only consider the Identification service.
 
@@ -18,7 +16,7 @@ In 2021, the Norwegian electronic identity solutions provider company Signicat A
 
 \paragraph{Dokobit Identification Service}
 
-Identification service supports two distinct data flows: Gateway and API. The core difference between them is that the Gateway uses a prebuilt UI on their server. In contrast, the API requires the companies to develop their UI and have their server communicate with Dokobit servers instead. This difference only affects the user experience.
+Identification service supports two distinct data flows: Gateway and API. The core difference is that the Gateway uses a prebuilt UI hosted on Dokobit servers. In contrast, the API requires the companies to develop their UI and have their server communicate with Dokobit servers instead. This difference only affects the user experience.
 
 The main advantage of Identity Gateway over Identity API is the added brand trust. A study finds that users "associate higher security feelings with a higher level of brand trust" \cite{ha2004factors}. If an organization has not matured yet as a brand (such as a recent startup), it will make more sense for them to choose Identity Gateway over API. On the contrary, if they are a large, highly trusted organization, such as a bank, it would make more sense to use Identity API and have all user interactions happen on the same domain.
 
@@ -26,11 +24,11 @@ For this thesis, we will only analyze the Identity Gateway.
 
 \subparagraph{Embed or Redirect}
 
-Identity Gateway comes in two primary user flows: embedded and redirect-based.
+Identity Gateway comes in two user flows: embedded and redirect-based.
 
-In embedded flow, users could stay on the website, authenticate in a pop-up window, and update the website view accordingly after finishing the authentication process. Embedded flow has the advantage of not requiring the users to leave the website, which is helpful to preserve user data in complex forms.
+In embedded flow, users could stay on the website, authenticate in a pop-up window or frame, and update the website view accordingly after finishing the authentication process. This flow has the advantage of not requiring the users to leave the website, which is helpful to preserve user data in complex forms.
 
-In redirect-based flow, users are sent to an external website, perform authentication, and redirected back to the company website, in a flow similar to OAuth2.0.
+In redirect-based flow, users are sent to an external website, perform authentication, and redirected back to the company website, similarly to OAuth2.0.
 
 Ultimately, experts consider the embedded flow to be the weaker of the two methods \cite{auth0-universal-vs-embedded} for two main reasons:
 
@@ -41,9 +39,11 @@ Ultimately, experts consider the embedded flow to be the weaker of the two metho
 
 When using federated log-in for Native Apps, "best current practice requires that native apps MUST NOT use embedded user-agents to perform authorization requests" \cite{rfc8252}. This practice means that companies who have a mobile app or would consider having one in the future mustn't use the embedded flow.
 
+For this thesis, we will only analyze the Redirect flow.
+
 \subsection{Data Flow}
 
-This section will analyze Dokobit Identity Gateway, redirect-based user flow. The general overview of which can be seen in figure \ref{fig:dokobit-identitygw-redirect}. We can group the authentication process into three parts: establishing a session with Dokobit, user authentication with an eID provider, and user information retrieval.
+This section will analyze Dokobit Identity Gateway, redirect-based user flow. The general overview of which can be seen in Figure \ref{fig:dokobit-identitygw-redirect}. We can group the authentication process into three parts: establishing a session with Dokobit, user authentication with an eID provider, and user information retrieval.
 
 \begin{figure}
   \centering
@@ -121,11 +121,9 @@ Sample HTTP request data can be seen in listing \ref{lst:dokobit-handleremote-ht
 
 \subsection{Trust Anchor}
 
-Dokobit assumes the role of being the trust anchor. This means that it also acts as a single point of failure. Should Dokobit become compromised, all applications using Dokobit will become susceptible to impersonation. On the flip side, there is only one system company developers need to implement, meaning that it would be harder for adversaries to break into the system via external means.
+Dokobit assumes the role of being the trust anchor. This role means that it also acts as a single point of failure. Should Dokobit become compromised, all applications using Dokobit will become susceptible to impersonation. On the flip side, there is only one system company developers need to implement, meaning it would be harder for adversaries to break into the system via external means.
 
-Companies should consider the risks when using a provider capable of dictating who the person is, as no integrity checks are supported in the protocol.
-
-From a technical aspect, these risks aren't much different from those applicable to the eeID service.
+Dokobit additionally provides the user's certificate from authentication, allowing companies to have local certificate validation to protect themselves if the identity provider gets compromised. This presence of the certificate makes this protocol potentially more secure than eeID.
 
 \subsection{Pricing}
 
@@ -156,7 +154,7 @@ Assuming the company's users authenticate around 25 times per month, the monthly
 
 \subsection{Security Requirements}
 
-Of the three case studies analyzed in the thesis, Dokobit Identity Gateway was the only one that did not provide any validation requirements to the relying party, only a single integration example \cite{dokobit-idgw-docs}. This flow, however, is very similar to the one used by the eeID service and will be analyzed with the same best practices document \cite{ietf-oauth-security-topics-19}.
+Of the three case studies analyzed in the thesis, Dokobit Identity Gateway was the only one that did not provide any request validation requirements to the relying party, only a single integration example \cite{dokobit-idgw-docs}. This flow, however, is very similar to the one used by the eeID service and will be analyzed by using the same framework \cite{ietf-oauth-security-topics-19}.
 
 \paragraph{Communication channel}
 
@@ -170,7 +168,7 @@ The Dokobit identity gateway uses a secure communication channel, encrypted end-
   \item Identity Gateway will reject the second GET request with the session id.
 \end{itemize}
 
-The developer does not have to implement state management to verify that a given session token was used only once. Mitigation measures are sufficient.
+The developer does not have to implement state management to verify that a given session token was used only once, as Dokobit will reject subsequent requests. Mitigation measures are sufficient.
 
 \paragraph{Insufficient Redirect URI Validation}
 
@@ -180,7 +178,7 @@ The developer does not have to implement state management to verify that a given
   \item The redirect URL is never validated on the Dokobit servers, as it was never registered as a client. Each redirect URL is generated for one-time use.
 \end{itemize}
 
-Adversaries cannot influence the redirect URI. If companies use a static redirect URL, mitigation measures are sufficient.
+Attackers cannot influence the redirect URI. If companies use a static length redirect URI, the mitigation measures are sufficient.
 
 \subparagraph{Credential Leakage via Referrer Headers}
 
@@ -189,7 +187,7 @@ Adversaries cannot influence the redirect URI. If companies use a static redirec
   \item The company is required not to have any third-party resources on the authentication and redirect pages.
 \end{itemize}
 
-Dokobit does not leak credentials via Referrer Headers. The developers should not embed third-party resources in the critical authentication pages (all resources used in their service are from their domain, see figure \ref{fig:dokobit-leakviareferrer}). Mitigation measures are sufficient.
+Dokobit does not leak credentials via Referrer Headers (all resources used in their service are from their domain, as seen in Figure \ref{fig:dokobit-leakviareferrer}). The developers of relying parties must also not embed third-party resources in the critical authentication pages.
 
 \begin{figure}
   \centering
@@ -204,7 +202,7 @@ Dokobit does not leak credentials via Referrer Headers. The developers should no
   \item Session ids are stored in browser history (see figure \ref{fig:dokobit-leakviahistory}); however, they are single-use only and are immune to replay attacks.
 \end{itemize}
 
-The only thing adversaries could extract from the browser history is a used-up session-id, which does not provide much value with sufficient CSRF measures. Mitigation measures are adequate.
+The only thing adversaries could extract from the browser history is a used-up session-id, which does not provide much value with sufficient CSRF countermeasures.
 
 \begin{figure}
   \centering
@@ -218,36 +216,22 @@ The only thing adversaries could extract from the browser history is a used-up s
 Adversaries would perform the injection and CSRF attacks identically.
 
 \begin{itemize}
-  \item The protocol does not protect against session token injection attacks.
-  \item The protocol also adds more attack surfaces by issuing the session token before the user signs in, allowing the adversary to obtain or inject it before and after the user performs authentication.
-  \item It is possible to mitigate adversaries stealing a victim's session.
-  \item \textbf{It is impossible to mitigate adversaries injecting their session} (phishing).
+  \item The protocol protects from session token injection attacks by not allowing multiple requests to the {authorize} endpoint.
+  \item It is impossible to steal a victim's or inject their session when the relying party has placed sufficient countermeasures.
 \end{itemize}
 
-Identity Gateway protocol does not have security measures built-in against session token injection or CSRF attacks. It is possible to prevent adversaries from being able to redeem the victim's session. However, there is \textbf{no possible way to prevent adversaries from injecting their Dokobit session}.
+The countermeasure against CSRF hinges on the fact that attackers do not know the final redirect URL. After the user agent returns to the callback URL, it may have a nonce value attached, generated during the initial request. If the query parameters match, the HTTP request is likely legitimate.
 
-From the attacker's point of view, they can exploit this vulnerability by performing these steps \cite{video-exploitdokobit}:
-
-\begin{enumerate}
-  \item Establish session with identity server and Dokobit;
-  \item Trick the user into opening the link issued by Dokobit;
-  \item After the user authenticates, but before gets redirected, reload the page;
-  \item If an adversary managed to do it in time, they receive that person's access;
-\end{enumerate}
-
-The only way to mitigate this attack for the user will be to make the authentication server invalidate the authenticated session if a request presents the same session\_id. Thankfully, it is easy to detect if the server has consumed the session token already, as Dokobit would reject additional HTTP requests, as described in replay attack mitigation.
-
-Mitigation measures are \textbf{weak}, as the Dokobit's internal log-in page is susceptible to CSRF attacks, and developers should be ready to implement authentication session revocation.
+Dokobit provides \textbf{sufficient} tools to protect against CSRF attacks, and it is up to the relying party to integrate final mitigation measures.
 
 \subparagraph{Clickjacking}
 
 \begin{itemize}
   \item Dokobit auth page does not use Content-Security-Policy. However, it does use header X-Frame-Option: {SAMEORIGIN} (see figure \ref{fig:dokobit-responseheaders}).
-  \item The sameorigin feature is used in conjunction with CORS to support embedded flow, however it would be better if Frame Options were outright disabled.
-  \item Relying party should integrate this or a similar countermeasure.
+  \item The {SAMEORIGIN} feature is used in conjunction with CORS to support embedded flow; however, it would be better if X-Frame-Option was set to {NONE}.
 \end{itemize}
 
-Mitigation measures are sufficient on almost all browsers released in the last ten years \cite{caniuse-xframeoptions}.
+Mitigation measures are sufficient on almost all browsers released in the last ten years \cite{caniuse-xframeoptions}. The relying party should also place these headers on their log-in flow pages.
 
 \begin{figure}
   \centering
@@ -258,15 +242,15 @@ Mitigation measures are sufficient on almost all browsers released in the last t
 
 \subsubsection{Validation requirements for the relying party}
 
-In the previous section, we saw the security features of the protocol. The relying party should implement validation and reject requests for some of the features if those validations do not match. This section will contain all of the features the RP needs to address.
+In the previous section, we saw the security features of the protocol. The relying party should implement validation and reject requests for some features if those validations do not match. This section will contain all of the features the RP needs to address.
 
 \paragraph{Misconfiguration Attacks}
 
 \subparagraph{Incorrect URL specified}
 
-The relying party should make sure to use the correct Dokobit Identity Gateway endpoints. For test environment the URL is \url{https://id-sandbox.dokobit.com}, and for production - \url{https://id.dokobit.com}. A connection with a malicious party could be established when using the incorrect URL.
+The relying party must use the correct Dokobit Identity Gateway endpoints. For test environment the URL is \url{https://id-sandbox.dokobit.com}, and for production - \url{https://id.dokobit.com}. A connection with a malicious party could be established when using the incorrect URL.
 
-Developers should make sure these values are not easily editable (such as placed in environment variables) by anyone. Best they should be hardcoded in the application.
+Developers should make sure these values are not easily editable (such as placed in environment variables) by anyone. Best, they are hardcoded in the application.
 
 \subparagraph{Weak TLS configuration}
 
@@ -274,17 +258,17 @@ TLS is the primary defense mechanism against MitM attacks when connecting to the
 
 \paragraph{Session Token Injection and Cross-Site Request Forgery}
 
-Like in the eeID service, the primary validation user has to implement is protection against CSRF and code injection. Developers can accomplish this by binding the dokobit session\_id to the user agent session.
+Like in the eeID service, the primary validation user has to implement is protection against CSRF and code injection. Developers can bind the Dokobit session\_id to the user agent session.
 
 \subparagraph{Attack description}
 
-For reference to how the mitigation works, we will use the figure \ref{fig:dokobit-identitygw-redirect}. We will provide two examples for the countermeasure: without and with session binding.
+For reference to how the mitigation works, we will use the figure \ref{fig:dokobit-identitygw-redirect}. We will provide three examples for the countermeasure: without and with session binding, using a nonce.
 
-Our attack exists right before the final redirect (right before step 5 in the figure \ref{fig:dokobit-identitygw-redirect}). Unlike in the case with eeID, this protocol has multiple places where an attacker can extract the session\_id as it is generated before the user is redirected, and not after they complete the authentication process. Regardless, an attacker cares about tokens that have been authenticated, but not consumed, which puts us right before step 5.
+Our attack exists right before the final redirect (right before step 5 in the figure \ref{fig:dokobit-identitygw-redirect}). Unlike in the case with eeID, this protocol has multiple places where an attacker can extract the session\_id as it is generated before the user is redirected and not after they complete the authentication process. Regardless, an attacker cares only about tokens that have been authenticated but not consumed, which puts us right before step 5.
 
 \subparagraph{Attack \#1 - No binding}
 
-When a subsequent request is made to the authorization endpoint, if the session\_id was authenticated, Dokobit will automatically redirect the user to WorkAuth's identity server and finish the process. Without user agent binding, it is trivial to establish a session.
+If the application uses static or a predictable redirect URI, attackers can forge it to contain a session token inside the query parameters. Without user agent binding, it is trivial to establish a session.
 
 \subparagraph{Attack \#2 - With user agent binding}
 
@@ -293,6 +277,14 @@ Before WorkAuth's server redirects the user agent to Dokobit's authorization end
 We run the first attack per usual, interrupting the flow in the same place. When the attacker tries to authenticate, the server will successfully decrypt the cookie value. However, the server will fail to match the session\_id and detect the attack.
 
 Because everything is bound to the same session\_id, this one cookie is sufficient to mitigate against both CSRF and code injection attacks.
+
+\subparagraph{Attack \#3 - With user agent binding and unpredictable URL}
+
+When generating a redirect URL, the application creates a secure fixed-length random nonce and appends it to the query parameters of the return URL. For example, if the return URL were \url{https://my.app/callback}, now it would be \url{https://my.app/callback?nonce=0c723a}. This nonce will be bound to the user agent session.
+
+With a predictable URL, attackers can still perform session token injection attacks. Suppose the attackers convinced a victim to use their session and subsequently blocked their access to WorkAuth servers after successful authentication. In that case, they could use the predictable redirect URL to finish the authentication process.
+
+Including a nonce or any other kind of randomness in the authentication process requires attackers to guess the final URL, preventing them from consuming the session token given sufficiently high randomness.
 
 \subsection{Integration}
 
@@ -304,7 +296,7 @@ The first code block (listing \ref{lst:dokobit-challenge}) has three main parts:
 
 \begin{enumerate}
   \item establish a session with Dokobit as described in listing \ref{lst:dokobit-challenge-http};
-  \item append an \textbf{encrypted} session cookie which would bind the browser to that specific Dokobit session (this cookie stores the encrypted session\_token);
+  \item append an \textbf{encrypted} session cookie which would bind the browser to that specific Dokobit session (this cookie stores the encrypted session\_token and nonce);
   \item redirect the user to the authorization endpoint;
 \end{enumerate}
 
@@ -316,15 +308,17 @@ The first code block (listing \ref{lst:dokobit-challenge}) has three main parts:
           properties.RedirectUri = OriginalPathBase + OriginalPath + Request.QueryString;
 
       // [2] Establish session with Dokobit
-      var body = JsonSerializer.Serialize(new { return_url = BuildRedirectUri(Options.CallbackPath) });
+      var nonce = Convert.ToBase64String(RandomNumberGenerator.GetBytes(24)).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+      var body = JsonSerializer.Serialize(new { return_url = QueryHelpers.AddQueryString(BuildRedirectUri(Options.CallbackPath), "nonce", nonce) });
       var response = await ExecuteRequestAsync(HttpMethod.Post, "/api/authentication/create", body);
       response.EnsureSuccessStatusCode();
 
       using var sessionResponse = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync(Context.RequestAborted));
       var root = sessionResponse.RootElement;
 
-      // Save session token to encrypted cookie properties
+      // Save session token and nonce to encrypted cookie properties
       properties.Items["session_token"] = root.GetString("session_token");
+      properties.Items["nonce"] = nonce;
 
       Response.Cookies.Append(Options.StateCookie.Name!, Options.StateDataFormat.Protect(properties), Options.StateCookie.Build(Context, Clock.UtcNow));
       var redirectContext = new RedirectContext<DokobitOptions>(Context, Scheme, Options, properties, root.GetString("url")!);
@@ -339,10 +333,8 @@ After the user authenticates and returns, the next code block gets executed (lis
 \begin{enumerate}
   \item try to decrypt the cookie data - if decryption fails, it was likely tampered with, and the application cannot proceed with the authentication;
   \item try to obtain the session token from query parameters - it should always exist if the request was not tampered with;
-  \item verify that the session\_token received from cookie and query parameters match - this prevents attackers from stealing session tokens;
+  \item verify that the session\_token and nonce received from cookie and query parameters match - this prevents attackers from injecting session tokens;
   \item redeem the session\_token and receive user data as described in listing \ref{lst:dokobit-handleremote-http};
-  \item clean up the used cookies;
-  \item issue an access token or a new session for use in the company;
 \end{enumerate}
 
 \begin{lstlisting}[caption={Handling access token creation}, label={lst:dokobit-handleremote}]
@@ -354,13 +346,14 @@ After the user authenticates and returns, the next code block gets executed (lis
       if (properties == null)
           return HandleRequestResult.Fail("Invalid state");
   
-      // Verify if session token received matches the one we initially saved
+      // Verify if session token and nonce received matches the one we initially saved
       var sessionToken = Request.Query["session_token"];
-      if (StringValues.IsNullOrEmpty(sessionToken))
-          return HandleRequestResult.Fail("Missing session_token", properties);
-  
       if (properties.Items["session_token"] != sessionToken)
           return HandleRequestResult.Fail("Unexpected session_token received", properties);
+
+      var nonce = Request.Query["nonce"];
+      if (properties.Items["nonce"] != nonce)
+          return HandleRequestResult.Fail("Unexpected nonce received", properties);
   
       // [6] Validation successful, obtain user identity
       var response = await ExecuteRequestAsync(HttpMethod.Get, $"/api/authentication/{sessionToken}/status");
@@ -378,7 +371,7 @@ After the user authenticates and returns, the next code block gets executed (lis
   }
 \end{lstlisting}
 
-After completing these steps, the final code will be resilient to CSRF attacks.
+After completing these steps, the final code will be resilient to CSRF and session token injection attacks.
 
 \subsection{Discovered weaknesses}
 
@@ -386,7 +379,7 @@ After completing these steps, the final code will be resilient to CSRF attacks.
 
 Dokobit Identity Gateway requires {relying parties} to send access tokens (API keys) via query parameters. When looking at the OAuth2.0 security best practices document \cite{ietf-oauth-security-topics-19}, under section 4.3.2, we can see that it may lead to Credential Leakage via Browser History.
 
-No browser is involved when using the API key. It does not mean no traces are left anywhere, though. Companies frequently use application and network logging solutions to detect outages. Some logging solutions may be a bit overzealous when deciding what they should be allowed to log.
+No browser is involved when using the API key. However, it does not mean no traces are left anywhere, though. Companies frequently use application and network logging solutions to detect outages. Some logging solutions may be a bit overzealous when deciding what they should be allowed to log.
 
 I will use .NET 6 Web API and Application Insights to provide a concrete example. All dependency calls will be tracked and logged to Application Insights log storage on MS Azure with an out-of-the-box configuration. The data of dependency calls include the request path + query. The inclusion of query parameters would make the application leak the Dokobit API key by accident to Azure services (see figure \ref{fig:dokobit-vuln-query}). Improper access rules (allowing developers to troubleshoot issues in the application) would allow people with access to read the API key.
 
@@ -397,13 +390,13 @@ I will use .NET 6 Web API and Application Insights to provide a concrete example
   \label{fig:dokobit-vuln-query}
 \end{figure}
 
-The impact of this attack appears to be insignificant, as it would only allow users to obtain the user's personal information, something an attacker could do with their API key. The only other benefit would be sabotage by adding high usage costs to WorkAuth by rapidly forging requests and going around any rate limits the relying party imposes.
+The impact of this attack appears to be insignificant, as it would only allow users to obtain the user's personal information, something an attacker could do with their own API key. The only other benefit would be sabotage by adding high usage costs to WorkAuth by rapidly forging requests and going around any rate limits the relying party may impose.
 
 \paragraph{Disclosure}
 
 \begin{itemize}
   \item Mar 02, 2022: Informed Dokobit CIRT about the exploit.
-  \item Mar 13, 2022: Dokobit CIRT acknowledged the issue, but deemed not worth fixing.
+  \item Mar 13, 2022: Dokobit CIRT acknowledged the issue but decided against taking any action.
 \end{itemize}
 
 \subsubsection{CSRF on the authorize endpoint}
@@ -431,8 +424,6 @@ At its core, this exploit is possible because of three issues:
   \item Requests automatically redirect the user to the final endpoint after authentication if the session token was not yet consumed.
 \end{enumerate}
 
-The third point is fascinating, as it glues issues 1 and 2 together. We can see how it connects these issues by looking at an authentication example (see figure \ref{fig:dokobit-vuln-csrf}).
-
 \begin{figure}
   \centering
   \includegraphics[scale=0.7]{dokobit/vuln_csrf}
@@ -440,15 +431,15 @@ The third point is fascinating, as it glues issues 1 and 2 together. We can see 
   \label{fig:dokobit-vuln-csrf}
 \end{figure}
 
-We need to look at the waterfall diagram of Identity Gateway's requests to see why this attack works. The first request ({smartid}) starts a background task to authenticate with Smart-ID. Second and third requests ({status}) check on that background job and complete the request after it does. Notably, the checks are done with a delay, meaning there could be some amount of time (around one second) when the authentication process is finished, but the browser is not aware of it.
+We need to look at the waterfall diagram of Identity Gateway's requests (see Figure \ref{fig:dokobit-vuln-csrf}) to see why this attack works. The first request ({smartid}) starts a background task to authenticate with Smart-ID. Second and third requests ({status}) check on that background job and complete the request after it does. Notably, the checks are done with a delay, meaning there could be some amount of time (around one second) when the authentication process is finished, but the browser is not yet aware of it.
 
-When the page is refreshed, status checks are done immediately, so if an attacker managed to refresh the page in the short 1-second window, they would steal the session. Ironically, if the WorkAuth developers were diligent enough to prevent CSRF attacks, in the server's eyes, the victim would be seen as an attacker, and their request would be rejected, giving even more time for attackers to exchange the token.
+When a user refreshes the page, status checks are performed immediately, so if an attacker refreshed the page in the short one-second window, they would manage to steal the session. Ironically, if the WorkAuth developers were diligent enough to prevent CSRF attacks, in the server's eyes, the victim would be seen as an attacker, and their request would be rejected, giving even more time for attackers to exchange the token.
 
 \paragraph{The fix}
 
-On Apr 11, 2022, Dokobit developers fixed the issue by blocking all subsequent requests to the {authorize} endpoint. This fix prevents attackers from abusing the automatic redirect feature. It would leave us with an attack vector where an attacker would target the callback endpoint. Because Dokobit allows customizing redirect URLs, creating an opaque challenge passed in the query parameters is possible, eliminating this exploit. 
+On Apr 11, 2022, Dokobit developers fixed the issue by allowing only one HTTP request to the {authorize} endpoint. This fix prevents attackers from abusing the automatic redirect feature, eliminating this exploit. 
 
-Figures \ref{fig:dokobit-vuln-csrf-fix-a} and \ref{fig:dokobit-vuln-csrf-fix-b} illustrate how the page looks after the fix was deployed. A page reload is treated as a subsequent visit. As an unwanted side-effect, if a user accidentally reloads the page, they would not be able to authenticate and would need to create a new session.
+Figures \ref{fig:dokobit-vuln-csrf-fix-a} and \ref{fig:dokobit-vuln-csrf-fix-b} illustrate how the page looks after the fix was deployed.
 
 \begin{figure}
   \centering
