@@ -22,7 +22,6 @@ To help answer this question, we would need to refine it into additional sub-que
 
 \begin{enumerate}
     \item What are the prerequisites for a given architecture to be able to support eID solutions?
-    \item Are there any legal considerations companies must be aware of before integration?
     \item What are the different eID authentication solutions available to Estonia's private sector?
     \item How do various eID providers compare based on the following questions:
           \begin{enumerate}
@@ -30,20 +29,78 @@ To help answer this question, we would need to refine it into additional sub-que
               \item How large is its market reach (in countries)?
               \item How expensive is it to operate?
               \item Does it inconvenience the end users any more than the regular eID providers would?
-              \item How complicated is it to integrate and maintain?
-              \item Is the authentication protocol protected against common protocol attacks?
+              \item How complicated is it to integrate?
+              \item How complicated is it to maintain?
+              \item Is the eID authentication solution provider protected against common protocol attacks?
+              \item Is the integration manual comprehensive enough to protect the relying company against common protocol attacks?
           \end{enumerate}
 \end{enumerate}
 
-From the initial question, the word "best" is ambiguous. This part was further narrowed down into six questions (4a-f) to help clear it up. These criteria were chosen based on the feedback provided by a CTO of a logistics company. We provide the full interview in the appendix \todo{Appendix no.}.
+From the initial question, the word "best" is ambiguous. This part was further narrowed down into six questions (3a-h) to help clear it up. These criteria were chosen based on the feedback provided by a CTO of a logistics company. We provide the full interview in the appendix \todo{Appendix no.}.
 
-\subsection{Research Methods}
+\subsection{Research Method}
 
 In the previous section, we outlined the questions we aim to answer in this thesis. In this section we will describe how we will obtain the data necessary to answer the questions.
 
-\paragraph{Question 1: What are the prerequisites for a given architecture to be able to support eID solutions?}
+\paragraph{Question 1: What are the prerequisites for a given architecture to be able to support eID solutions?}\noindent
 
+The aim of this question is to identify which systems are capable of supporting eID solution integration. The validation can be done with a simple experiment of integrating any eID solution. If successful the tried system is capable of supporting eID.
 
+\paragraph{Question 2: What are the different eID authentication solutions available to Estonia's private sector?}\noindent
+
+The goal of this question is to enumerate already existing solutions the private could integrate today. To our knowledge, there is no compiled list of solutions available.
+
+To answer this question we will construct a list from the various scattered sources of information. The final list is likely not to be exhaustive.
+
+\paragraph{Question 3: How do various eID providers compare?}\noindent
+
+Each of the following questions will be answered on a case study basis, by analyzing some eID solutions in-depth.
+
+\subparagraph{Question 3a: How trustworthy is it to process sensitive information?}\noindent
+
+Trust is ultimately a highly subjective topic. To help companies make an informed decision, the aim will be to inform who the provider is (is it a government institution or a private company), and provide any records of auditing if they exist.
+
+All information required to answer this question will be obtained from existing literature.
+
+\subparagraph{Question 3bc: How large is its market reach? How expensive is it to operate?}\noindent
+
+The company in question is a for profit organization, so it is in their interest to know what audience they can reach and how expensive is it to do so. Fortunately the analyzed eID solution providers are also for-profit and list their price sheets publicly. Market reach is a major selling point for them, so that information is also available.
+
+The information existing in literature is sufficient to answer these two questions.
+
+\subparagraph{Question 3d: Does it inconvenience the end users any more than the regular eID providers would?}\noindent
+
+Our company wishes to not inconvenience the users any more than they need to, so if there are additional hurdles users would need to overcome when accessing a website (such as requiring to install additional software) the company would like to avoid it.
+
+In our case, "additional software" does not include software used to access the government services of the issuer country. For example, a software solution distributed by the Spanish government and is capable of accessing Spanish public services using Spanish ID cards does not fall under additional software. In contrast if the solution was created distributed by some other country and is not capable of accessing Spanish public services using Spanish cards will fall under additional software.
+
+This information would be obtained by integrating a solution and verifying it works, or from literature.
+
+\subparagraph{Question 3e: How complicated is it to integrate?}\noindent
+
+This question aims to answer how many development resources a company would need to invest to add the ability for users to log in with their eID. Additionally we also ask how difficult would the solution to maintain after the active development process is finished.
+
+An intuitive metric to measure integration complexity would be to track the time taken to finish integration for each of the solutions. The main issue with this approach is that it favors the solutions integrated last as the developer would obtain the necessary skills to solve issues from prior solutions. Giving this task to multiple developers to work on is also not great as the skill level between them varies too greatly.
+
+Instead the measure we have chosen is to track the inconsistencies between the real data provided by the eID solution provider and the documentation. In the best case scenario there should be no ambiguity or contradictions. The higher the number of inconsistencies, the lower the score for integration.
+
+\subparagraph{Question 3f: How complicated is it to maintain?}\noindent
+
+The maintenance part of this question will track the amount of moving parts the client company must add to support the solution. The larger the amount in quantity and the more complicated they are, the lower the maintainability score will be.
+
+The answer for this question will be provided in relative terms.
+
+\subparagraph{Question 3g: Is the eID authentication solution provider protected against common protocol attacks?}\noindent
+
+Each of the eID authentication solutions will be subjected to the Internet Engineering Task Force (IETF) guide on the best practices to protect against attacks on the OAuth2.0 \cite{ietf-oauth-security-topics-19}. OAuth2.0 \cite{rfc6749} is a popular federated authentication framework. While the analyzed eID solutions may not necessarily use OAuth2.0, all HTTP and browser based attacks have very similar issues and it is easy to draw parallels between the authentication frameworks.
+
+The IETF guide provides a list of attacks and countermeasures against these attacks, and the eID authentication provider must be resilient against all of them. Failure to meet all of the criteria would deem the solution unsafe to use.
+
+\subparagraph{Question 3e: Is the integration manual comprehensive enough to protect the relying company against common protocol attacks?}\noindent
+
+For an authentication protocol to be secure, both the identity provider and relying party must take measures to harden it. To answer the question if the manual provides sufficient instructions to mitigate attacks, we will integrate the eID solution with the provided specifications and verify if the final result is resilient against attacks by using the same IETF document as used to answer question 3g.
+
+Failure to provide sufficient instructions to mitigate against all attacks would negatively impact the score for integration.
 
 \subsection{Scope}
 
