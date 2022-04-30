@@ -14,88 +14,47 @@ Particular risks exist that businesses must be aware of before integrating an eI
 
 \subsection{Research Problem}
 
-The main goal of the thesis is to investigate what options companies have if they wish to integrate eID authentication into their day-to-day businesses and if the advantages provided by eIDs are sufficient to outweigh the risks associated with adopting new technology. From this goal, the extracted research question is as follows:
+The main goal of the thesis is to investigate what options companies have if they wish to integrate eID authentication into their day-to-day businesses and the steps they would need to take to adopt the technology. From this goal, the extracted research question is as follows:
 
-\textbf{What is the best eID authentication option available for an Estonian EU targeting enterprise for use in their Web-based Single Sign-On (SSO)?}
+\textbf{What is the best eID authentication solution available to an Estonian EU targeting enterprise?}
 
 To help answer this question, we would need to refine it into additional sub-questions:
 
-\begin{itemize}
-    \item What advantages do eIDs provide?
-    \item How should an existing authentication scheme change to support eID?
-    \item What privacy considerations must companies take when processing user data?
-    \item What are the different eID authentication providers available to Estonia's private sector?
-          \begin{itemize}
-              \item How complicated is the solution to integrate?
-              \item What risks does the eID provider add or take away from the consumer company?
-              \item What is the market reach (in countries) of a given solution?
-              \item Where are the weak points in the protocol used, and how should the relying company address them?
-              \item How expensive is the solution to operate?
-          \end{itemize}
-\end{itemize}
+\begin{enumerate}
+    \item What are the prerequisites for a given architecture to be able to support eID solutions?
+    \item Are there any legal considerations companies must be aware of before integration?
+    \item What are the different eID authentication solutions available to Estonia's private sector?
+    \item How do various eID providers compare based on the following questions:
+          \begin{enumerate}
+              \item How trustworthy is it to process sensitive information?
+              \item How large is its market reach (in countries)?
+              \item How expensive is it to operate?
+              \item Does it inconvenience the end users any more than the regular eID providers would?
+              \item How complicated is it to integrate and maintain?
+              \item Is the authentication protocol protected against common protocol attacks?
+          \end{enumerate}
+\end{enumerate}
 
-With these questions answered, it would be possible for any company to understand the risks and benefits of any eID solution and have a framework to compare them.
+From the initial question, the word "best" is ambiguous. This part was further narrowed down into six questions (4a-f) to help clear it up. These criteria were chosen based on the feedback provided by a CTO of a logistics company. We provide the full interview in the appendix \todo{Appendix no.}.
 
-\subsection{Scope and goal}
+\subsection{Research Methods}
 
-There will be some assumptions about the company wishing to implement eID authentication in the thesis.
+In the previous section, we outlined the questions we aim to answer in this thesis. In this section we will describe how we will obtain the data necessary to answer the questions.
 
-\paragraph{Company already uses an HTTP-based SSO (in the cloud or on-premises)} Non-HTTP-based SSOs or other esoteric authentication systems will not be considered.
+\paragraph{Question 1: What are the prerequisites for a given architecture to be able to support eID solutions?}
 
-\paragraph{Company is committed to getting some form of eID authentication system in place} This means market research was done, and the management found that it is favorable to invest in eID authentication, as the users would adopt this authentication mechanism.
 
-This thesis is only interested in the technological aspect of eID integration. Any legal, political, social or any other obstacles, if covered, will only be tangential.
 
-\paragraph{The eID provider must be accessible by an Estonian company} Other countries are also capable of providing eID solutions. However, for the scope of the thesis, only solutions originating from or heavily invested in Estonia will be considered.
+\subsection{Scope}
 
-% ###### Preparation:
+To not cover every possible scenario, we will be making a couple of assumptions about the company wishing to implement eID authentication in the thesis.
 
-% 1. Create a list of all commercially available eID providers;
+\paragraph{Company already uses an HTTP-based SSO (in the cloud or on-premises)} When analyzing an eID solution for integration complexity, we will only consider using an HTTP-based SSO. We chose to support only a single local identity provider to eliminate as many variables as possible, as all analyzed solutions would have to fit into a similar structure.
 
-%    > [Literature review] There is a list of services using Estonian eID solutions by the UT. Some entries in that list are eID providers themselves. Task is to filter out all providers.
+\paragraph{Company is committed to getting some form of eID authentication system in place} This means they did the market research, and management found it favorable to invest in eID authentication. Analyzing which companies would benefit from eID authentication or if they should invest in the first place is outside the thesis's scope.
 
-% 2. Create an SSO Auth server;
+\paragraph{The eID provider must be accessible by an Estonian company} Other countries also provide eID solutions. However, for the scope of the thesis, only solutions originating from or heavily invested in Estonia will be considered.
 
-%    > This task is the preparation task for the actual research. The server allows users to log in with username/password, and should be able to support federated login identity providers.
-%    >
-%    > For the purpose of this research, Microsoft Azure AD B2C will be used.
-
-% 3. Create a dummy Single Page Application (SPA) website;
-
-%    > The website can be used as a client to the SSO Auth server. In the website there should be a button to sign in with username/password. There also needs to be another section for signing in with eID (does nothing at this stage).
-%    >
-%    > For the purpose of this research, a Next.JS React SPA, deployed at Vercel will be used.
-
-% ###### Analysis (for each of the eID providers):
-
-% 1. Perform market reach of the eID provider;
-
-%    > [Literature review] Calculate the amount of market gained by implementing the authentication method. Measure in countries/population. 
-
-% 2. Analyze the validity of signature;
-
-%    > [Literature review] Investigate the signature authenticity guarantees, and what obligations/measures provider has taken to provide the service. In the case of root trust providers, they are under high levels of scrutiny, required by eIDAS. In case of forwarding, they may have insurance, certifications. Specify them.
-
-% 3. Investigate the contractual requirements;
-
-%    > Most eID service providers require payment for operational use of their service. Investigate and note all monetary costs.
-
-% 4. Integrate an eID provider into SSO server;
-
-% > Measure the complexity of development. Write a summary, no more than 1 paragraph in length describing noteworthy oddities and challenges faced in implementing. Provide a short summary of practical implementation steps.
-% >
-% > If there will be extra maintenance challenges discovered also note them down. It is now assumed to be that maintenance costs are similar and per system basis (implementing 2 providers would double the relative cost).
-
-% ###### Results:
-
-% Compare options:
-
-% > Comparison will be done on the following variables: 
-% >
-% > 1. Market reach (in countries)
-% > 2. Trust level
-% > 3. Operational cost (fixed, variable)
-% > 4. Implementation complexity
 
 \subsection{Contribution}
 
