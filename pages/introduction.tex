@@ -38,6 +38,17 @@ To help answer this question, we would need to refine it into additional sub-que
 
 From the initial question, the word "best" is ambiguous. This part was further narrowed down into six questions (3a-h) to help clear it up. These criteria were chosen based on the feedback provided by a CTO of a logistics company. We provide the full interview in the appendix \todo{Appendix no.}.
 
+\paragraph{Hypothesis} To help answer the questions with no answers in literature, we have created the following hypotheses:
+
+\begin{enumerate}
+    \item The providers give clear instructions on how to integrate.
+    \item The providers give clear instructions on how to harden against attacks.
+    \item The providers themselves are not vulnerable against common protocol attacks.
+    \item The hardening instructions cover all common protocol attacks.
+\end{enumerate}
+
+These hypotheses will be verified for each of the eID solutions.
+
 \subsection{Research Method}
 
 In the previous section, we outlined the questions we aim to answer in this thesis. In this section we will describe how we will obtain the data necessary to answer the questions.
@@ -84,11 +95,11 @@ An intuitive metric to measure integration complexity would be to track the time
 
 Instead the measure we have chosen is to track the inconsistencies between the real data provided by the eID solution provider and the documentation. In the best case scenario there should be no ambiguity or contradictions. The higher the number of inconsistencies, the lower the score for integration.
 
+This question relates to hypotheses 1 and 2.
+
 \subparagraph{Question 3f: How complicated is it to maintain?}\noindent
 
 The maintenance part of this question will track the amount of moving parts the client company must add to support the solution. The larger the amount in quantity and the more complicated they are, the lower the maintainability score will be.
-
-The answer for this question will be provided in relative terms.
 
 \subparagraph{Question 3g: Is the eID authentication solution provider protected against common protocol attacks?}\noindent
 
@@ -96,11 +107,15 @@ Each of the eID authentication solutions will be subjected to the Internet Engin
 
 The IETF guide provides a list of attacks and countermeasures against these attacks, and the eID authentication provider must be resilient against all of them. Failure to meet all of the criteria would deem the solution unsafe to use.
 
+This question relates to hypothesis 3.
+
 \subparagraph{Question 3e: Is the integration manual comprehensive enough to protect the relying company against common protocol attacks?}\noindent
 
 For an authentication protocol to be secure, both the identity provider and relying party must take measures to harden it. To answer the question if the manual provides sufficient instructions to mitigate attacks, we will integrate the eID solution with the provided specifications and verify if the final result is resilient against attacks by using the same IETF document as used to answer question 3g.
 
 Failure to provide sufficient instructions to mitigate against all attacks would negatively impact the score for integration.
+
+This question relates to hypothesis 4.
 
 \subsection{Scope}
 
@@ -111,7 +126,6 @@ To not cover every possible scenario, we will be making a couple of assumptions 
 \paragraph{Company is committed to getting some form of eID authentication system in place} This means they did the market research, and management found it favorable to invest in eID authentication. Analyzing which companies would benefit from eID authentication or if they should invest in the first place is outside the thesis's scope.
 
 \paragraph{The eID provider must be accessible by an Estonian company} Other countries also provide eID solutions. However, for the scope of the thesis, only solutions originating from or heavily invested in Estonia will be considered.
-
 
 \subsection{Contribution}
 
@@ -124,17 +138,15 @@ The thesis contains the following contributions:
     \item analysis of personal data storage under GDPR for use on authentication;
     \item comparison of the different approaches eID service providers can take for integrating cross-border authentication;
     \item assessment of various data transfer protocols in use for eID authentication;
-    \item display of example on how a company could integrate an eID service into an SSO;
-    \item security assessment and disclosure of weaknesses in analyzed eID authentication providers;
+    \item security assessment and disclosure of weaknesses in analyzed eID authentication solutions;
+    \item collaboration with the Estonian Internet Foundation to help develop their eID solution;
+    \item collaboration with UAB Dokobit to help fix a discovered vulnerability in their eID solution;
+    \item release of a source code example on how to integrate eeID, Dokobit, and Web eID solutions.
 \end{enumerate}
 
-% #### Research methods
-
-% The research method would be exploratory. The idea is to compare different options, therefore discovery of options, and comparison is required. Each option will be measured by market reach, trust level, operational cost (fixed, variable), and implementation complexity. Market reach, trust level, and operation costs are part of the discovery process and are answerable by reading trough the literature. The implementation complexity analysis will use a model to assign a complexity to the documentation and the implementation process, and compare received value with other eID providers. No recommendations will be made with respect to if it is worth implementing an eID solution, as the context will be different from business to business, however some objective conclusions could still be brought out out of the comparison.
-
-% Validation process would be reproducing the steps outlined in the Scope chapter. Most of the comparison points are publicly available, and the complexity analysis would need to follow the same steps, as outlined in the framework.
-
 \subsection{Structure of work}
+
+\TODO{yes}
 
 The thesis will consist of the following main chapters:
 
