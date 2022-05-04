@@ -118,19 +118,19 @@ With this limitation, eID authentication becomes useless without proof of data i
 
 % In conclusion, it makes little sense for companies or governments to compromise their systems. The risks in doing so are astronomical in comparison to the benefits received.
 
-\subsection{Should one use eID for authentication?}
+\subsection{Alternative to eID authentication}
 
-Returning to the idea proposed in the thesis' introduction of having users register themselves with eID. After much research, the best solution was right under our noses the whole time.
+Returning to the idea proposed in the thesis' introduction of having users register themselves with eID, there might be an even better identity proof option for most companies.
 
 \paragraph{The core issue with eID authentication}
 
-In the thesis, we discussed only half of the data access flow. Secure authentication methods are essential, but one must not forget about authorization.
+In the thesis, we covered only half of the data access flow. Secure authentication methods are essential, but authorization is equally as important.
 
-The eID authentication schemes are good at ensuring that someone is Alice with a high degree of certainty. All that certainty is not helpful if Alice is not allowed to access the resources at all. Deciding which resources Alice can access requires manual role assignment by a higher authority. Automatic assignments are a security hazard.
+The eID authentication schemes are good at ensuring that someone is Alice with a high degree of certainty. All that certainty is not helpful if Alice is not allowed to access the resources in the first place. Deciding which resources Alice can access requires manual role assignment by a higher authority. Automatic assignments are a security hazard.
 
-Consider an example. A company is hiring a senior developer Bob. They expect one to register soon, and yes, a person has registered. What should the computer do? Should it assign the role of a senior? Unlikely, as there are no guarantees that Bob was the one who just registered, it could have been Charlie, who is not a senior-level developer. If we only look at the data provided by eID, we will see that it was, with an incredibly high degree of certainty, Charlie, not a senior developer.
+Consider an example. A company is hiring a senior developer Bob. They expect one to register soon, and yes, a person does register at the time they would expect. What should a computer do? Should it assign the role of a senior? Unlikely, as there are no guarantees that Bob was the one who just registered, it could have been Charlie, who is not a senior-level developer. If we only look at the data provided by eID, we will see that it was, with an incredibly high degree of certainty, Charlie, not a senior developer.
 
-Alternatively, they could manually input the data, linking the account to a national identification code before they log in. This approach would work, but it would also defeat the whole premise of trying to skip manual verification. In short, manual confirmation is required when setting up authorization rules and would be impossible to avoid.
+Alternatively, the company could assign employees to manually input the data, linking the account to a national identification code before they log in. This approach would work, but it would also defeat the whole premise of trying to skip manual verification. In essence, manual confirmation is unavoidable when setting up authorization rules.
 
 \paragraph{A more straightforward solution}
 
@@ -138,11 +138,11 @@ Instead of looking at electronic authentication, we can look at digital signatur
 
 \begin{enumerate}
     \item Company employee creates a quarantined account for a new employee and gives a personalized registration link.
-    \item The potential client or employee enters there and is presented with a file they would need to sign. The document's contents are not of concern; it could be a privacy policy or terms of service.
+    \item The potential client or employee enters there and is presented with a file they would need to sign. The document's contents are not of concern; it could be a privacy policy, terms of service, or just an empty text file.
     \item After the employee signs the document, they upload it to the website. Employees can then verify that the name and surname in the digital signature match the person they were talking with online.
     \item If the link given out in step one required them to register, this account could be taken out of quarantine, as enrollment identity was successfully verified.
 \end{enumerate}
 
-This flow fully covers the initially proposed use case for eIDs, making them unnecessary. This approach is more convenient for the user and cheaper for the company. The only disadvantage is that it does not provide high assurance that the same person logged in or that the account was not compromised. However, companies can solve this issue by establishing internal operational security.
+This flow fully covers the initially proposed use case for eIDs, making them redundant. This approach is also more convenient for the user and cheaper for the company. The only disadvantage is that it does not provide high assurance that the same person logged in or that the account was not compromised after the initial registration. However, companies can tackle this issue by hardening internal operational security.
 
-If it is still necessary to ensure high certainty after each authentication, the use of eIDs is always available.
+If it is still necessary to ensure high certainty over someone's identity after each authentication, the use of eIDs is always available.
