@@ -1,114 +1,122 @@
 \section{Discussion}
 
-\subsection{Do businesses even want eID?}
+In this section we will summarize our findings, compare the different eID solutions and discuss the practical use cases for integration.
 
-When conducting the initial investigation on what criteria we should use to compare different eID providers, we interviewed the CTO of a logistics company. The full interview can be found in the appendix. The responses about current practices were shocking but not surprising.
+\subsection{Comparison of the eID solutions}
 
-\paragraph{Authentication or Digital Signatures. What is more?}
+We have performed an in-depth integration analysis of three eID solutions - eeID, Dokobit, and Web eID. Each of these providers has some advantage over the competition.
 
-When asked if there was a choice between implementing eID authentication and qualified digital signature infrastructure, the company's focus would be on digital signature. Authentication only helps ensure the confidentiality and integrity of data and requires an additional heap of technological measures to prevent bypass. Qualified digital signatures offer an immediate benefit in the form of legally binding documents.
+\subsubsection{Business features comparison}
 
-\paragraph{Trust. What trust requirements the eID provider should fulfill for you to adopt it?}
+Table \ref{tbl:summary-comparison-business} displays a summary of each provider.
 
-When asked if ISO/IEC 20001:2013 certification is sufficient, the answer was a resounding no. This certification should be the bare minimum for the company to consider using that solution. The CTO would "like to see that government portal, or banks are adopting this solution. This provides sufficient trust into the solution". This quote supports the assumption at the start that widespread adoption is low because currently, there are no big-name adopters outside of banks and governmental agencies.
-
-\paragraph{Source. Does the eID have to come from a TSP?}
-
-The company CTO was not concerned much about the kind of eID provider is: primary or third-party. As long as other large entities the solution is trusted by other entities (governments or large companies), there is no significant difference between choosing services from an eIDAS QTSP and not. This logistics company sees no clear advantage in creating a contract with SK ID Solutions to implement Smart-ID authentication over an agreement with the Estonian Internet Foundation.
-
-One can argue that a TSP is the trusted solution by large governmental institutions; however, it comes with a problem, especially in Estonia, of poor market reach, which is also highly important.
-
-\paragraph{Market reach. How much impact does it have?}
-
-While trust and security in solution are the main deciding factors, increasing security would not attract companies to use an eID solution after it reaches a certain widespread adoption level. What will have more impact is the market reach.
-
-We have presented the interviewee four options: eeID (eIDAS), Dokobit (private company), Web eID (DIY), Smart-ID (narrow specialty TSP). With all their advantages and disadvantages, assuming all reach the trust requirement and price of operations are similar, the CTO's option was the one with the highest market reach. The reasoning behind it was saving money on implementing multiple providers, and the less company has to do, the lower the risk of something going wrong.
-
-In short, a larger market size would positively impact the decision process of choosing a particular eID provider.
-
-\paragraph{Pricing. How much is worth spending on eID solutions?}
-
-Reducing costs is one of the cornerstones of running a business. When presented with the ballpark of how much the company would have to spend to operate an eID solution, the company's CTO suggested looking at the broader market for identity management solutions. They currently use Azure for their services. The company would still need to pay Microsoft for their accounts to access the cloud platform infrastructure. Azure AD B2C is used for all other use cases, which provides identity management options the company is used to, and the operational cost is close to nothing.
-
-The issue with the eID solutions is that they are targeting a different kind of company. Still, it is not clear which industry would willingly, without regulatory requirements, choose to implement such a system. The CTO estimates that for 10 000 authentications per month, a company could reasonably support 300-400 active users. This price effectively means adding 1€ per system user to operational costs. Not many industries can afford such a luxury.
-
-\paragraph{Technological hurdles}
-
-The system is only as secure as its weakest link. The hardest part of implementing an eID solution is not integrating with an external provider but creating access controls for new or existing resources. These measures will have to be in place for all interaction methods - from user interfaces to database and backup solutions.
-
-\TODO{This feels out of place, because it is, should I put it in its own chapter?}
-
-\paragraph{Summary}
-
-Ultimately, the eID authentication solution suffers from a lack of benefits for companies. This solution deals with authentication and, by extension, access control. There is no visible advantage of using eID over a regular MFA solution from Microsoft. The company is just not dealing with data that would warrant that high level of assurance.
-
-The overall tone of the interview is that for the eID authentication to be helpful, there should be a legitimate interest to obtain the user's national ID code. There are cheaper alternatives available for those interested in only the additional security measures.
-
-\subsection{Do businesses even want digital signatures?}
-
-If there is one quote to take from the interview, it must be "today [business owners] open PDF and apply PNG of signature into the file free of charge." Part of the reason why eID authentication is not widespread is that digital signatures are not widespread.
-
-The benefits of eID in the private sector, even after the research, remain unclear. In contrast, the value provided by Qualified Electronic Signatures is obvious.
-
-The only real business value eID authentication provides - trustworthy audit logs in the case of legal disputes. Still, even then, there are no high-profile cases in court on that matter. Although, it would be harder for defendants to claim they didn't access the system when logs clearly showed. Unfortunately, even that argument collapses when you look at the trust chain - people in power can sabotage AuthServer, issue tokens in the victim's name, fabricate access records.
-
-The only thing that is legally binding is Qualified Digital Signatures. Only special approved devices can create digital signatures. There is no higher authority like AuthServer that can doctor these signatures.
-
-Unfortunately, even with the visible advantages of electronic signatures, business owners still do not use them. Having a picture of a written signature inside a PDF document remains a popular way of doing business.
-
-\subsection{Which eID provider to choose?}
-
-The three case studies were not selected at random; they represent different approaches to accessing the electronic identity. Summary of pros and cons can be seen in table \ref{tab:eid-advantages-disadvantages}.
-
-\begin{table}[h]
+\begin{table}
     \centering
-    \caption{Advantages and disadvantages of each eID solution}
-    \begin{tabular}{p{2cm} | p{2cm} | p{4.4cm} | p{4.4cm}}
-        \bf{Scheme}            & \bf{Examples}                           & \bf{Advantages}                                                                                                                                                          & \bf{Disadvantages}                                                                                                             \\
+    \begin{tabular}{ p{0.15\linewidth} | >{\raggedright}p{0.25\linewidth} | >{\raggedright}p{0.25\linewidth} | >{\raggedright}p{0.25\linewidth} p{0px}}
+                                        & \textbf{eeID}                                         & \textbf{Dokobit}                            & \textbf{Web eID}                      & \\
         \hline
-        eIDAS                  & TARA, (eeID)                            & large target audience; \newline officially supported and used by governments; \newline cheaper than implementing many individual QTSP services;                          & may not include some more popular schemes; \newline does not offer means to sign documents;                                    \\
+        \textbf{Trust}                  & government-backed third-party eID aggregation service & private third-party eID aggregation service & uses trust service providers directly & \\
         \hline
-        Third-party aggregator & Dokobit, Signicat, (eeID), (Web eID)    & large target audience; \newline includes schemes excluded from eIDAS; \newline cheaper than implementing many individual QTSP services;                                  & not officially supported by governments or legislation; \newline trust issues; \newline risk of provider ceasing operations;   \\
+        \textbf{Market reach}           & multiple schemes; one country                         & multiple schemes; multiple countries        & one common scheme; multiple countries & \\
         \hline
-        QTSP                   & ID-Card, Mobile-ID, Smart-ID, (Web eID) & highest degree of trust; \newline security audits are regulated by law; \newline support for digital signatures; \newline some options (ID card) can be free to operate; & very narrow market reach in comparison; \newline complicated to integrate; \newline operational costs can stack up quickly; \\
+        \textbf{Price}                  & (Most) Expensive                                      & Expensive                                   & Free                                  & \\
+        \hline
+        \textbf{Attack resilience}      & High                                                  & High                                        & High                                  & \\
+        \hline
+        \textbf{Integration complexity} & Easy                                                  & Easiest                                     & Very difficult                        & \\
+        \hline
+        \textbf{Platform limitations}   & None                                                  & None                                        & Requires special software             & \\
     \end{tabular}
-    \label{tab:eid-advantages-disadvantages}
+    \caption{Business features comparison of three eID solutions: eeID, Dokobit, and Web eID}
+    \label{tbl:summary-comparison-business}
 \end{table}
 
-\paragraph{Which to choose?} First, companies should decide if they need eID authentication in the first place. After that, it depends on priorities.
+\paragraph{eeID}
 
-If the highest degree of trust factor is required, a company will have no other option other than to use a QTSP.
+The eeID service is a great option to use if the target audience is the residents of Estonia. It is a service, created and maintained by one of Estonia's governmental institutions, supports all authentication schemes widely used in the target demographic, is easy to integrate. The main downside of this service is its pricing - it is by far the most expensive service of the three.
 
-If high market reach and stability are required, adequately vetted and audited eIDAS node access is likely to be the best choice.
+\paragraph{Dokobit}
 
-If the highest market reach is everything, adequately vetted third-party providers are a great choice.
+The eeID service is a great option to use if the target audience is the same as eeID or a bit more international. It is a service, created and maintained by a private company in Lithuania, supports the widest variety of authentication schemes and countries, is the easiest service to integrate. The biggest issue for companies to adopt this service, would be the to accept the risk of transferring sensitive data to a third-party private company.
 
-In short, there is no clear advantage of one option over the other, and companies should address the options available to them individually.
+\paragraph{Web eID}
 
-\subsection{Dangers with having no control over identity}
+The Web eID service is very different from the two others as it does not involve a third-party which boosts the trustworthiness significantly. Another great advantage of this solution is that it is free to use. The main limitations of this eID solutions is the comparatively weak market reach, the requirement for users to have software installed which they may not have yet, and the relatively astronomical integration complexity.
 
-As per the case with using external identity providers such as Auth0, Azure AD, or AWS Cognito, companies put a significant amount of trust when using their services. These services create access tokens, which almost always contain some form of user-id, roles, or claims.
+\subsubsection{Developement features comparison}
 
-From a technical standpoint, nothing stops these companies from creating fake access tokens skipping the whole authentication process. As far as the relying party would be concerned, these tokens would be indistinguishable from real ones. A corrupt or compromised company would need to compromise only the last step of the authentication protocol - the one that sends (and optionally signs) personal information.
+The previous section talks about business features. In this section we compare the information relevant to integration - documentation quality. Table \ref{tbl:summary-comparison-docs} displays a short comparison of the three providers.
 
-The same security concerns apply to state-issued electronic identities. We can identify three tiers of security, ordered from most to least secure:
+\begin{table}
+    \centering
+    \begin{tabular}{ >{\raggedright}p{0.25\linewidth} | >{\raggedright}p{0.2\linewidth} | >{\raggedright}p{0.2\linewidth} | >{\raggedright}p{0.2\linewidth} p{0px}}
+                                                   & \textbf{eeID}                                 & \textbf{Dokobit}     & \textbf{Web eID}         & \\
+        \hline
+        \textbf{Integration documentation clarity} & Contradictory, no code examples               & Clear, with examples & Clear, with examples     & \\
+        \hline
+        \textbf{Hardening documentation clarity}   & Exists, does not explain why to do some steps & Does not exist       & Clear, with explanations & \\
+    \end{tabular}
+    \caption{Documentation clarity comparison of three eID solutions: eeID, Dokobit, and Web eID}
+    \label{tbl:summary-comparison-docs}
+\end{table}
 
-\begin{enumerate}
-    \item Local device certificate authentication. Examples include ID cards and USB keys.
-    \item Remote device certificate authentication. Examples include Mobile-ID and Smart-ID.
-    \item Third-party authentication. Examples include eeID and Dokobit.
-\end{enumerate}
+From table \ref{tbl:summary-comparison-docs} we see that Web eID, although being the most complicated to integrate, provided by far the best documentation of all eID solutions.
 
-For example, to compromise a service relying on Dokobit, one would need to compromise any of the three listed services, as Dokobit depends on Smart-ID. With this logic, integrating Smart-ID directly is more secure as it removes a potential point of compromise.
+In contrast, Dokobit, while provided great integration instructions, did not provide any information on how to harden the security, leaving this the responsibility of the developers to figure it out on their own.
 
+The integration of eeID service has left me with more questions than answers. The documentation was thorough and did cover all of the attacks, there were some implementation design choices that left more questions than answers. At parts it felt like I was doing completely random tasks just because a book told me to. An explanation as to why some steps are required would massively benefit the readability of the documentation.
 
-\paragraph{Is the attack likely?}
+\subsubsection{Summary}
 
-Ultimately, governments should have no interest in compromising their systems. The only benefit of doing so is too contrived - they would gain the ability to frame someone in a heavily audited space to have an edge in court. There are more straightforward legal or technical methods to obtain supporting data about a person's activities.
+There is no best option when it comes to choosing an eID solution provider. Ultimately, the final decision comes on the priorities of the business.
 
-More importantly, the issue with any system is that if an interaction method exists, one should not assume that only the intended users can access it. It is not unreasonable to think that backdoors can themselves have backdoors. Thus the only 100\% safe countermeasure preventing anyone from accessing a system would be to make sure no one can.
+If the highest degree of trust factor is required, a company will have no other option other than to use a QTSP, which in our case would Web eID. Additionally, this option is likely be good for those who wish to cut costs as much as possible, as for some QTSPs the authentication operational costs are zero.
 
-In conclusion, it makes little sense for companies or governments to compromise their systems. The risks in doing so are astronomical in comparison to the benefits received.
+If the highest market reach is everything, adequately vetted third-party providers are the best choice. The largest difference between Dokobit and eeID is their market reach and, by having a larger selection of supported schemes, Dokobit has the favorable option over eeID.
+
+The only advantage eeID has over Dokobit is related to trust. It is impossible to measure trustworthiness, but if we take into account that private held companies have more freedom over their operations over government institutions, some companies would rather choose the latter, as they would perceive it as being a safer option.
+
+\subsection{System architecture prerequisites}
+
+When designing the initial system it quickly became clear that eID is a very restricting form of authentication. To illustrate this, we have two examples.
+
+\paragraph{Internal access} Imagine that a company allows employees to access to read data on the database. The employees can access the database by authenticating to it. Usually this access is achieved by performing some form of Active Directory authentication, or by simply using username and password.
+
+To adequately protect the data from confidentiality breaches, the eID authentication must be performed on the database itself, a feature that would be exceptionally difficult to integrate. As an alternative, this company would restrict access to the databases and only allows users to interface with the databases via highly audited custom built solutions.
+
+This solution now encounters a different, political, issue - is it justifiable to invest time and effort only to introduce arbitrary hurdles for employees to do their job? There are simpler solutions to deal with having stricter access control and confidential data breaches, both contractually, and technologically.
+
+\paragraph{External access}
+
+Imagine a company that lets users to open store fronts. These users can theoretically sell anything, so the government would be keen to know the identities of the sellers. To not get into legal troubles with the government, the website owners may be enticed to enable eID authentication for putting up sales listings. This way the company would have a very high degree of confidence over the identity of the user.
+
+This situation suffers from the same issue as the internal access scenario. Because the eID authentication is not performed on the database level, and it would be impossible to prove that it was, a rogue employee could frame someone by creating a listing for someone, as the access to the database is no longer restricted by eID.
+
+With this limitation, eID authentication becomes useless without proof of data integrity. Digital signatures or perhaps even a blockchain solution would be great for these cases.
+
+% \subsection{Dangers with having no control over identity}
+
+% As per the case with using external identity providers such as Auth0, Azure AD, or AWS Cognito, companies put a significant amount of trust when using their services. These services create access tokens, which almost always contain some form of user-id, roles, or claims.
+
+% From a technical standpoint, nothing stops these companies from creating fake access tokens skipping the whole authentication process. As far as the relying party would be concerned, these tokens would be indistinguishable from real ones. A corrupt or compromised company would need to compromise only the last step of the authentication protocol - the one that sends (and optionally signs) personal information.
+
+% The same security concerns apply to state-issued electronic identities. We can identify three tiers of security, ordered from most to least secure:
+
+% \begin{enumerate}
+%     \item Local device certificate authentication. Examples include ID cards and USB keys.
+%     \item Remote device certificate authentication. Examples include Mobile-ID and Smart-ID.
+%     \item Third-party authentication. Examples include eeID and Dokobit.
+% \end{enumerate}
+
+% For example, to compromise a service relying on Dokobit, one would need to compromise any of the three listed services, as Dokobit depends on Smart-ID. With this logic, integrating Smart-ID directly is more secure as it removes a potential point of compromise.
+
+% \paragraph{Is the attack likely?}
+
+% Ultimately, governments should have no interest in compromising their systems. The only benefit of doing so is too contrived - they would gain the ability to frame someone in a heavily audited space to have an edge in court. There are more straightforward legal or technical methods to obtain supporting data about a person's activities.
+
+% More importantly, the issue with any system is that if an interaction method exists, one should not assume that only the intended users can access it. It is not unreasonable to think that backdoors can themselves have backdoors. Thus the only 100\% safe countermeasure preventing anyone from accessing a system would be to make sure no one can.
+
+% In conclusion, it makes little sense for companies or governments to compromise their systems. The risks in doing so are astronomical in comparison to the benefits received.
 
 \subsection{Should one use eID for authentication?}
 
