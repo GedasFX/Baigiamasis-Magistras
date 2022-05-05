@@ -1,17 +1,21 @@
 \section{Conclusion}
 
-In the thesis, we looked into the background, legality, and extensibility of eIDs, discussed the viability of using eID as a replacement for authentication, and analyzed three different eID providers the private sector could implement.
+This thesis aims to answer the question of what is the best eID authentication solution in Estonia available to the private sector.
 
-We have shown that it is possible to integrate an eID authentication scheme into a pre-existing SSO easily. The discovered challenges with integration are protecting the data from access by other means - no reason to force users to authenticate with eID if they can access the database with {username and password}.
+To answer that question, we first compiled a list of all eID solutions available to Estonia and filtered out those who offer services to the private sector. This list included {bank link}, smart cards, Mobile-ID, Smart-ID, eeID, and Dokobit. For the in-depth analysis, we chose eeID, Dokobit, and smart cards in the form of Web eID.
 
-We have created a privacy policy for the dummy test application considering the privacy requirements imposed by GDPR.
+We investigated the architectural requirements to support eID authentication and discovered that a simple SSO server is sufficient to integrate the authentication protocol fully. However, upon further research, we found that eID authentication does not cover data confidentiality or integrity requirements if the attacker is a malicious employee. They are likely to have alternative means to access the data store, allowing them to read and tamper with data without the use of eID.
 
-We have compared three different eID providers and discovered three different ways of performing cross-border authentication: integrating each provider individually, integrating a third-party provider aggregator, or tapping into a legally governed eIDAS framework.
+We compared three eID solutions: eeID, Dokobit, and Web eID. The chosen comparison criteria were trust, market reach, price, convenience, integration and maintenance costs, security, and documentation comprehensiveness.
 
-We have discovered that all three authentication schemes have had security or integration issues in their protocols, limiting them in some tangible way.
+Web eID was the most trustworthy service and was the cheapest to operate. However, it suffered from comparatively high integration and maintenance costs alongside being most unfriendly to users and having the lowest market reach.
 
-We have interviewed a logistics company representative to gauge the acceptance of eIDs in the general public, only to discover that it is unlikely that companies will adopt this technology without drastic changes in the market.
+Dokobit was the cheaper paid option and had the highest market reach potential, spanning multiple countries. It was also the easiest to integrate of the three. The biggest issue with this service is the matter of trust - customers may not be willing to trust a private third-party company with their personal information.
 
-We have proposed an alternative to eID authentication using a similar scheme when a high certainty behind a given identity is required during enrollment only.
+The eeID service lies somewhere between the other two solutions. It is most similar to Dokobit, but it has a poorer market reach and is more expensive. The only advantage it has over Dokobit is that people may be more willing to give their information to a government institution instead of a private company.
 
-\paragraph{Summary} The ability to integrate eID in the private sector exists; however, the public acceptance of them is limited. The technical and legal challenges associated with eID authentication make it impractical to implement for almost all companies.
+The documentation analysis found that Web eID had the best and most understandable documentation, followed by eeID for unclear and contradictory parts. Lastly, Dokobit did the worst by not providing any information about the hardening process.
+
+All of the analyzed services passed the security assessment at the end of the research. Web eID and eeID did not have any issues. Dokobit had a CSRF vulnerability on their authorization endpoint, which we disclosed and they fixed.
+
+\paragraph{Summary} The ability to integrate eID in the private sector exists; however, the public acceptance of them is limited. We were unable to find any technological limitations stopping widespread adoption. Poor market adoption is likely caused by political, economic, social, or legal reasons.
