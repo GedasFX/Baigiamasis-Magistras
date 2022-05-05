@@ -1,34 +1,34 @@
 \section{Related Work}
 
-\subsection{National e-ID card schemes: A European overview}
+% \subsection{National e-ID card schemes: A European overview}
 
-In 2008, researcher Siddhartha Arora investigated different uses of eID in Europe \cite{ARORA200846}.
+% In 2008, researcher Siddhartha Arora investigated different uses of eID in Europe \cite{ARORA200846}.
 
-The technical report was published when the eID technology was still in its infancy, and the concept of eID was tied to it being linked to a physical ID card.
+% The technical report was published when the eID technology was still in its infancy, and the concept of eID was tied to it being linked to a physical ID card.
 
-Paper references that eID cards offer three forms of information security functionality, each with an increasing level of security provisions: identification, authentication, and signature (see table \ref{tab:formsofinfosecurity}). In this table, A is prover and B is verifier.
+% Paper references that eID cards offer three forms of information security functionality, each with an increasing level of security provisions: identification, authentication, and signature (see table \ref{tab:formsofinfosecurity}). In this table, A is prover and B is verifier.
 
-\begin{table}[h]
-    \begin{center}
-        \caption{Forms of information security functionality provided by eID \cite{ARORA200846, fiat1986prove}}
-        \label{tab:formsofinfosecurity}
-        \begin{tabular}{p{0.25\linewidth} | p{0.6\linewidth}}
-            Identification (I) & A can prove to B that he is A, but someone else can not prove to B that he is A. \\
-            Authentication (A) & A can prove to B that he is A, but B can not prove to someone else that he is A. \\
-            Signature (S)      & A can prove to B that he is A, but B can not prove to himself that he is A.
-        \end{tabular}
-    \end{center}
-\end{table}
+% \begin{table}[h]
+%     \begin{center}
+%         \caption{Forms of information security functionality provided by eID \cite{ARORA200846, fiat1986prove}}
+%         \label{tab:formsofinfosecurity}
+%         \begin{tabular}{p{0.25\linewidth} | p{0.6\linewidth}}
+%             Identification (I) & A can prove to B that he is A, but someone else can not prove to B that he is A. \\
+%             Authentication (A) & A can prove to B that he is A, but B can not prove to someone else that he is A. \\
+%             Signature (S)      & A can prove to B that he is A, but B can not prove to himself that he is A.
+%         \end{tabular}
+%     \end{center}
+% \end{table}
 
-The idea of splitting functionality into identification, authentication, and signature can be traced to today's Estonian \cite{ee-id-tech}, and Lithuanian \cite{lt-id-howtouse} ID cards. In these cards, there are two certificates — one for client authentication and the second for digital signature.
+% The idea of splitting functionality into identification, authentication, and signature can be traced to today's Estonian \cite{ee-id-tech}, and Lithuanian \cite{lt-id-howtouse} ID cards. In these cards, there are two certificates — one for client authentication and the second for digital signature.
 
-These authentication and identification certificates are not encrypted, and can anyone with the correct tools can read them from the ID card. Signed documents also have a copy of the certificate attached. These certificates identify a person, but due to ease of replication, the recipient should not trust the sender's certificate because there are no guarantees that the certificate belongs to the sender.
+% These authentication and identification certificates are not encrypted, and can anyone with the correct tools can read them from the ID card. Signed documents also have a copy of the certificate attached. These certificates identify a person, but due to ease of replication, the recipient should not trust the sender's certificate because there are no guarantees that the certificate belongs to the sender.
 
-The authentication and signing certificates require their respective keys to perform asymmetric cryptographic operations. In theory, it is possible to sign documents with the authentication certificate; however, the verification software will reject such signatures because the certificate's purposes would not include a digital signature.
+% The authentication and signing certificates require their respective keys to perform asymmetric cryptographic operations. In theory, it is possible to sign documents with the authentication certificate; however, the verification software will reject such signatures because the certificate's purposes would not include a digital signature.
 
-Another topic the paper touches on is the possibility of having multiple eID schemes. The author spotlights Austria as they want to have various sources of eID, not limit themselves only to one card. Having multiple authentication methods was a novel concept at the time. Many countries followed suit, and in Estonia, there are three primary sources of eID. In France, a source of eID doesn't even come from an ID card \cite{eidas-notify-france}.
+% Another topic the paper touches on is the possibility of having multiple eID schemes. The author spotlights Austria as they want to have various sources of eID, not limit themselves only to one card. Having multiple authentication methods was a novel concept at the time. Many countries followed suit, and in Estonia, there are three primary sources of eID. In France, a source of eID doesn't even come from an ID card \cite{eidas-notify-france}.
 
-The paper's conclusion emphasizes the importance of the eID itself, not ID cards. The EU took this path when implementing the legislation for eIDAS, which allowed easier integration of infrastructure member states already had in place.
+% The paper's conclusion emphasizes the importance of the eID itself, not ID cards. The EU took this path when implementing the legislation for eIDAS, which allowed easier integration of infrastructure member states already had in place.
 
 \subsection{The Austrian eID ecosystem in the public cloud: How to obtain privacy while preserving practicality}
 
@@ -40,22 +40,22 @@ Authors express a big concern that everything goes through one single source of 
 
 The paper's main contribution to this thesis is to remind us that even though technological barriers are crumbling, there might still be legal obstacles to overcome. Austria is currently not part of the eIDAS node network, and it would be an excellent further research topic to investigate how Austria's eIDAS node operates.
 
-\subsection{Secure cross-cloud single sign-on (SSO) using eIDs}
+% \subsection{Secure cross-cloud single sign-on (SSO) using eIDs}
 
-Researchers explore the possibility of users using an SSO system to log in via their eID instead of the traditional username/password authentication method \cite{secure-signon}. As means of doing so, they explore the capabilities of the STORK framework and other frameworks seen in previously mentioned related literature. The STORK framework is the predecessor to eIDAS \cite{stork}.
+% Researchers explore the possibility of users using an SSO system to log in via their eID instead of the traditional username/password authentication method \cite{secure-signon}. As means of doing so, they explore the capabilities of the STORK framework and other frameworks seen in previously mentioned related literature. The STORK framework is the predecessor to eIDAS \cite{stork}.
 
-The idea of the STORK framework is that any EU citizen should be able to use their eID issued by their home country to authenticate with services in other countries. An example of an activity would be opening a bank with an Italian ID card. The paper suggests extending the framework to support federation so private business identity providers can use the security options provided by eIDs and not store weak passwords.
+% The idea of the STORK framework is that any EU citizen should be able to use their eID issued by their home country to authenticate with services in other countries. An example of an activity would be opening a bank with an Italian ID card. The paper suggests extending the framework to support federation so private business identity providers can use the security options provided by eIDs and not store weak passwords.
 
-The paper shows a proof of concept prototype usage for bringing STORK to support SSO. Emphasis was given on the backward compatibility, not to require any breaking changes to an existing STORK protocol.
+% The paper shows a proof of concept prototype usage for bringing STORK to support SSO. Emphasis was given on the backward compatibility, not to require any breaking changes to an existing STORK protocol.
 
-Researchers found that one SAML protocol, however similar they may be, is not compatible with one another. The consumer company wishing to implement the proposed protocol must develop an adapter application to integrate different identity providers, such as STORK, Facebook, and Google. Before a protocol sees widespread mainstream adoption, facades will be required.
+% Researchers found that one SAML protocol, however similar they may be, is not compatible with one another. The consumer company wishing to implement the proposed protocol must develop an adapter application to integrate different identity providers, such as STORK, Facebook, and Google. Before a protocol sees widespread mainstream adoption, facades will be required.
 
 \subsection{LEPS - Leveraging eID in the private sector}
 
 This final research \cite{Martin2019303} was performed at a similar time to the eID@cloud \cite{guerola2019eid}, but in different countries. LEPS researchers 
 have implemented an eIDAS node for private customers. However, they also provided market analysis.
 
-The market analysis targeted four main categories of e-service providers, who would be interested in integrating eID authentication:
+The market analysis targeted four main categories of e-service providers who would be interested in integrating eID authentication:
 
 \begin{enumerate}
     \item Organizations that need or want to migrate from the existing identity and access management (IAM) solution. This could apply to organizations that have scaled out their internal or tailor-made IAM solutions or organizations that already use partially external or third-party e-identification or authentication services but are looking for a higher level of assurance (LoA).
@@ -67,8 +67,6 @@ The market analysis targeted four main categories of e-service providers, who wo
 In the case of the thesis, the targeted e-service providers are of the first category - organizations wishing to improve IAM solutions to include a higher level of assurance.
 
 The researchers recommend using an approach like LEPS to integrate eID authentication rather than creating an eIDAS node. The primary reason for avoiding node creation would be the cost-effectiveness of implementation. These adopters "are unlikely to have the know-how, resources, and capacity to implement eIDAS connectivity." "Many organizations do not have resources for eID service implementation and operation internally was already exploited by social networks." The targeted benefit is the "easy way to integrate highly scalable, yet low assurance, eID services."
-
-LEPS is a service similar to Estonia's eeID.
 
 \subsection{Federated Identity Architecture of the European eID System}
 
