@@ -6,15 +6,15 @@ With the emergence of COVID-19, work from home has rapidly grown in popularity. 
 
 Identity verification is a significant roadblock when establishing a remote work policy. In some managerial businesses, such as logistics, it is essential to assure the authenticity of persons logging in to perform their duties. This security requirement is essential for those dealing with contracts, where one input can cost thousands. Traditionally, as work was always on-premises, it was easy to verify the identity with the help of an identity document. With the constraints imposed by fully remote operations, companies no longer have the luxury to perform such a check.
 
-Establishing identity online for potential employees and clients is not the only use case for digital identity. Organizations such as the British Council employ privacy undermining practices. As part of the registration process for the IELTS exam, they require their customers to submit a photocopy of their identity document for verification purposes \cite{ielts-howtoregister}. This process is a significant privacy concern since anyone could replicate the uploaded document. Having no agency over their documents is of great concern for the end-users, making them reluctant to use the company services. Replacing the document upload with a digital signature check is more secure and less privacy undermining way of performing business.
+There is another use case for using this form of identity establishment. Organizations such as the British Council employ privacy undermining practices. As part of the registration process for the IELTS exam, they require their customers to submit a photocopy of their identity document for verification purposes \cite{ielts-howtoregister}. This process is a significant privacy concern since anyone could replicate the uploaded document. Having no agency over their documents is of great concern for the end-users, making them reluctant to use the company's services. Replacing the document upload with a digital signature check is more secure and less privacy undermining way of performing business.
 
-After the EU introduced the eIDAS regulation, an alternative method for identity verification became available \cite{eulaw-eidas}. All EU member states are mandated to implement an eID solution in their country and recognize other countries' eID solutions. Each eID solution guarantees some degree of authenticity, from substantial to high, allowing for verification of a persons' identity via trustworthy means.
+After the EU introduced the eIDAS regulation, an alternative method for identity verification became available \cite{eulaw-eidas}. All EU member states are mandated to implement an eID solution in their country and recognize other countries' eID solutions. Each eID solution guarantees some {level of assurance}, from substantial to high, over the certainty of the authenticated person's identity. This technology allows for verifying a person's identity via trustworthy means.
 
-Particular risks exist that businesses must be aware of before integrating an eID authentication service. There are no comprehensive resources outlining the obstacles and costs of implementing eID authentication in the private sector at this point in time. Unknown risks are an excellent deterrent to innovation, making companies reluctant to use new technologies. Proper research into this subject may lead companies to take risks associated with implementing new technology and kickstart the mainstream adoption of eIDs in the private sector.
+Particular risks exist that businesses must be aware of before integrating an eID authentication service. There are no comprehensive resources outlining the obstacles and costs of implementing eID authentication in the private sector at this point. Unknown risks are an excellent deterrent to innovation, making companies reluctant to use new technologies. This research may find it favorable for companies to take risks associated with implementing the new technology and start mainstream adoption of eIDs in the private sector.
 
 \subsection{Research Problem}
 
-The main goal of the thesis is to investigate what options companies have if they wish to integrate eID authentication into their day-to-day businesses and the steps they would need to take to adopt the technology. From this goal, the extracted research question is as follows:
+The main goal of the thesis is to investigate what options companies have if they wish to integrate eID authentication into their day-to-day businesses and the steps they would need to take to adopt the technology. From this goal, we extracted the following research question:
 
 \textbf{What is the best eID authentication solution available to an Estonian EU targeting enterprise?}
 
@@ -36,74 +36,74 @@ To help answer this question, we would need to refine it into additional sub-que
           \end{enumerate}
 \end{enumerate}
 
-From the initial question, the word "best" is ambiguous. This part was further narrowed down into six questions (3a-h) to help clear it up. These criteria were chosen based on the feedback provided by a CTO of a logistics company. We provide the full interview in the appendix \todo{Appendix no.}.
+From the initial question, the word "best" is ambiguous. This part was further narrowed down into six questions (3a-h) to help clarify it. These criteria were chosen based on the feedback provided by a CTO of a logistics company. We provide the full interview in the appendix \hyperref[appendix:interview]{I}.
 
-\paragraph{Hypothesis} To help answer the questions with no answers in literature, we have created the following hypotheses:
+\paragraph{Hypothesis} To help answer the last four questions, which have no answers in literature, we have created the following hypotheses:
 
 \begin{enumerate}
-    \item The providers give clear instructions on how to integrate.
-    \item The providers give clear instructions on how to harden against attacks.
-    \item The providers themselves are not vulnerable against common protocol attacks.
-    \item The hardening instructions cover all common protocol attacks.
+    \item The eID solution providers give clear integration instructions.
+    \item The eID solution providers give clear hardening instructions.
+    \item The eID solution providers themselves are not vulnerable to common protocol attacks.
+    \item The eID solution hardening instructions cover all common protocol attacks.
 \end{enumerate}
 
-These hypotheses will be verified for each of the eID solutions.
+We will verify these hypotheses for each of the eID solutions.
 
 \subsection{Research Method}
 
-In the previous section, we outlined the questions we aim to answer in this thesis. In this section we will describe how we will obtain the data necessary to answer the questions.
+The previous section outlined the questions we aim to answer in this thesis. This section will describe how we will obtain the data necessary to answer the questions.
 
 \paragraph{Question 1: What are the prerequisites for a given architecture to be able to support eID solutions?}\noindent
 
-The aim of this question is to identify which systems are capable of supporting eID solution integration. The validation can be done with a simple experiment of integrating any eID solution. If successful the tried system is capable of supporting eID.
+This question aims to identify which systems are capable of supporting eID solution integration. The validation can be done with a simple experiment of integrating any eID solution. If successful the tried system is capable of supporting eID.
 
 \paragraph{Question 2: What are the different eID authentication solutions available to Estonia's private sector?}\noindent
 
-The goal of this question is to enumerate already existing solutions the private could integrate today. To our knowledge, there is no compiled list of solutions available.
+This question aims to enumerate already existing solutions the private could integrate today. To our knowledge, there is no compiled list of solutions available.
 
-To answer this question we will construct a list from the various scattered sources of information. The final list is likely not to be exhaustive.
+To answer this question, we will construct a list from the various scattered sources of information. The final list is likely not to be exhaustive.
 
 \paragraph{Question 3: How do various eID providers compare?}\noindent
 
-Each of the following questions will be answered on a case study basis, by analyzing some eID solutions in-depth.
+Each of the following questions will be answered on a case study basis by analyzing some eID solutions in-depth.
 
 \subparagraph{Question 3a: How trustworthy is it to process sensitive information?}\noindent
 
-Trust is ultimately a highly subjective topic. To help companies make an informed decision, the aim will be to inform who the provider is (is it a government institution or a private company), and provide any records of auditing if they exist.
+Trust is ultimately a subjective topic. To help companies make an informed decision, we will look into who the provider is (e.g., a government institution or a private company) and their background.
 
 All information required to answer this question will be obtained from existing literature.
 
 \subparagraph{Question 3bc: How large is its market reach? How expensive is it to operate?}\noindent
 
-The company in question is a for profit organization, so it is in their interest to know what audience they can reach and how expensive is it to do so. Fortunately the analyzed eID solution providers are also for-profit and list their price sheets publicly. Market reach is a major selling point for them, so that information is also available.
+The company interested in integrating an eID solution is a for-profit organization, so it is in their interest to know what audience they can reach and how expensive it is to do so. Fortunately, the analyzed eID solution providers are also for-profit and list their price sheets publicly. Market reach is a significant selling point for them, so that information is also available.
 
-The information existing in literature is sufficient to answer these two questions.
+The information existing in the literature is sufficient to answer these two questions.
 
 \subparagraph{Question 3d: Does it inconvenience the end users any more than the regular eID providers would?}\noindent
 
-Our company wishes to not inconvenience the users any more than they need to, so if there are additional hurdles users would need to overcome when accessing a website (such as requiring to install additional software) the company would like to avoid it.
+Our company wishes not to inconvenience the users any more than they need to, so if there are additional hurdles users would need to overcome when accessing a website (such as requiring to install additional software), the company would like to avoid them.
 
-In our case, "additional software" does not include software used to access the government services of the issuer country. For example, a software solution distributed by the Spanish government and is capable of accessing Spanish public services using Spanish ID cards does not fall under additional software. In contrast if the solution was created distributed by some other country and is not capable of accessing Spanish public services using Spanish cards will fall under additional software.
+In our case, "additional software" does not include software used to access the government services of the issuer country. For example, a software solution distributed by the Spanish government and capable of accessing Spanish public services using Spanish ID cards does not fall under additional software. In contrast, if the solution was created and distributed by Estonia and is not capable of accessing Spanish public services using Spanish cards will fall under additional software.
 
-This information would be obtained by integrating a solution and verifying it works, or from literature.
+This information to answer this question would be obtained by integrating a solution and verifying it works or from literature.
 
 \subparagraph{Question 3e: How complicated is it to integrate?}\noindent
 
-This question aims to answer how many development resources a company would need to invest to add the ability for users to log in with their eID. Additionally we also ask how difficult would the solution to maintain after the active development process is finished.
+This question aims to answer how many development resources a company would need to invest in adding users' ability to log in with their eID. We also ask how difficult the solution would be to maintain after the active development process has finished.
 
-An intuitive metric to measure integration complexity would be to track the time taken to finish integration for each of the solutions. The main issue with this approach is that it favors the solutions integrated last as the developer would obtain the necessary skills to solve issues from prior solutions. Giving this task to multiple developers to work on is also not great as the skill level between them varies too greatly.
+An intuitive metric to measure integration complexity would be to track the time taken to finish integration for each solution. The main issue with this approach is that it favors the solutions integrated last, as the developer would obtain the necessary skills to solve issues from prior solutions. Giving this task to multiple developers to work on is also not ideal as the skill level between them varies too greatly.
 
-Instead the measure we have chosen is to track the inconsistencies between the real data provided by the eID solution provider and the documentation. In the best case scenario there should be no ambiguity or contradictions. The higher the number of inconsistencies, the lower the score for integration.
+Instead, the measure we have chosen is to track the inconsistencies between the actual data provided by the eID solution provider and their provided documentation. In the best-case scenario, there will be no ambiguity or contradictions. The higher the number of inconsistencies, the lower the score for integration.
 
 This question relates to hypotheses 1 and 2.
 
 \subparagraph{Question 3f: How complicated is it to maintain?}\noindent
 
-The maintenance part of this question will track the amount of moving parts the client company must add to support the solution. The larger the amount in quantity and the more complicated they are, the lower the maintainability score will be.
+The maintenance part of this question will track the amount of moving parts the client company must add to support the solution. The more significant the quantity and the more complicated they are, the lower the maintainability score will be.
 
 \subparagraph{Question 3g: Is the eID authentication solution provider protected against common protocol attacks?}\noindent
 
-Each of the eID authentication solutions will be subjected to the Internet Engineering Task Force (IETF) guide on the best practices to protect against attacks on the OAuth2.0 \cite{ietf-oauth-security-topics-19}. OAuth2.0 \cite{rfc6749} is a popular federated authentication framework. While the analyzed eID solutions may not necessarily use OAuth2.0, all HTTP and browser based attacks have very similar issues and it is easy to draw parallels between the authentication frameworks.
+Each of the eID authentication solutions will be subjected to the Internet Engineering Task Force (IETF) guide on the best practices to protect against attacks on the OAuth2.0 \cite{ietf-oauth-security-topics-19}. OAuth2.0 \cite{rfc6749} is a popular federated authentication framework. While the analyzed eID solutions may not necessarily use OAuth2.0, all HTTP and browser-based attacks have similar issues, and it is easy to draw parallels between the authentication frameworks.
 
 The IETF guide provides a list of attacks and countermeasures against these attacks, and the eID authentication provider must be resilient against all of them. Failure to meet all of the criteria would deem the solution unsafe to use.
 
@@ -111,7 +111,7 @@ This question relates to hypothesis 3.
 
 \subparagraph{Question 3e: Is the integration manual comprehensive enough to protect the relying company against common protocol attacks?}\noindent
 
-For an authentication protocol to be secure, both the identity provider and relying party must take measures to harden it. To answer the question if the manual provides sufficient instructions to mitigate attacks, we will integrate the eID solution with the provided specifications and verify if the final result is resilient against attacks by using the same IETF document as used to answer question 3g.
+For an authentication protocol to be secure, both the identity provider and relying party must take measures to harden it. To answer whether the manual provides sufficient instructions to mitigate attacks, we will integrate the eID solution with the provided specifications and verify if the final result is resilient against attacks by using the same IETF document as used to answer question 3g.
 
 Failure to provide sufficient instructions to mitigate against all attacks would negatively impact the score for integration.
 
@@ -136,12 +136,12 @@ The thesis contains the following contributions:
 \begin{enumerate}
     \item enumeration of eID service providers in Estonia;
     \item analysis of personal data storage under GDPR for use on authentication;
-    \item comparison of the different approaches eID service providers can take for integrating cross-border authentication;
+    \item comparison of the different approaches eID solution providers can take for integrating cross-border authentication;
     \item assessment of various data transfer protocols in use for eID authentication;
     \item security assessment and disclosure of weaknesses in analyzed eID authentication solutions;
     \item collaboration with the Estonian Internet Foundation to help develop their eID solution;
     \item collaboration with UAB Dokobit to help fix a discovered vulnerability in their eID solution;
-    \item release of a source code example on how to integrate eeID, Dokobit, and Web eID solutions.
+    \item release of a source code example on integrating eeID, Dokobit, and Web eID solutions.
 \end{enumerate}
 
 \subsection{Structure of work}
@@ -150,8 +150,8 @@ The thesis contains the following contributions:
 
 The thesis will consist of the following main chapters:
 
-\paragraph{Section 2: Background} This chapter contains literature relevant to understanding the terminology and concepts used later in the thesis. Additionally, it contains a list of currently available eID providers in Estonia.
-\paragraph{Section 3: Related Work} This chapter covers similar topics covered by the thesis. These studies may be done with different technologies or in different countries.
+\paragraph{Section 2: Background} This chapter contains literature relevant to understanding the terminology and concepts used later in the thesis. Additionally, it contains a list of currently available eID providers in Estonia alongside a short description.
+\paragraph{Section 3: Related Work} This chapter references literature that covers similar topics to the ones covered by the thesis. These studies may be done with different technologies or in different countries.
 \paragraph{Section 4: Architecture Definition} When integrating an eID provider into an existing system, one must first know how the system is composed. Here we provide a schema and process overview and address inherent weaknesses in the base system.
-\paragraph{Section 5-7: Case Studies} These sections look at data flow, trust, pricing, security requirements, integration specifics, and discovered weaknesses for each provider in the thesis (eeID, Dokobit, Web eID). These sections also spotlight the advantages and disadvantages of each provider.
-\paragraph{Section 8: Discussion} This section discusses other factors that would affect companies' decisions to integrate eID providers and attempts to answer the underlying question of which eID provider (if any) a company should integrate. This section was done in part with the help of a CTO of a logistics company.
+\paragraph{Section 5-7: Case Studies} These sections look at data flow, trust, pricing, security requirements, integration specifics, and discovered weaknesses for each provider in the thesis (eeID, Dokobit, Web eID). These sections spotlight the advantages and disadvantages of each provider.
+\paragraph{Section 8: Discussion} This section summarizes the findings from the previous three chapters, provides a comparison between the three eID providers and draws a conclusion about which is the best solution for different use cases.
