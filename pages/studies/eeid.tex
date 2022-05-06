@@ -1,20 +1,18 @@
 \section{Case Study: eeID}
 
-\subsection{About}
-
 The Estonian Information System Authority has created TARA - a gateway for public sector services to integrate eID authentication easier and cheaper \cite{tara-business}. It is heavily inspired by the OpenID Connect \cite{tara-technical} protocol to communicate between the service and relying parties.
 
 The Estonian Internet Foundation has then created the eeID service - a clone of TARA, but with the intent to open it up for private businesses at a premium \cite{eeid}.
 
 These services' goal is to use domestic eID providers (ID cards, Mobile-ID, and Smart-ID) and act as a gateway to the eIDAS node network.
 
-Cross-border authentication supported by these schemes extends (or will soon extend) to the notified countries \cite{eulaw-eidas-notified}. Currently notified countries (in order of time notified) include Germany, Italy, Croatia, Estonia, Spain, Luxembourg, Belgium, Portugal, Czechia, Netherlands, Slovakia, Latvia, Denmark, Lithuania, Malta, France, and Sweden.
+Cross-border authentication supported by these schemes extends (or will soon extend) to the notified countries \cite{eulaw-eidas-notified}. Currently notified countries (in order of time notified) include Germany, Italy, Croatia, Estonia, Spain, Luxembourg, Belgium, Portugal, Czech Republic, Netherlands, Slovakia, Latvia, Denmark, Lithuania, Malta, France, and Sweden.
 
 At the time of writing, TARA does not support the eID schemes of the last three - Malta, France, and Sweden, and cross-border authentication is only in the planned state for the eeID service and is currently not supported.
 
-\subsection{Data Flow}
+\subsection{Authentication Protocol}
 
-The underlying data transfer protocol used by eeID is almost identical to OpenID Connect code flow \cite{tara-technical, oidc}. One irregularity exists between the OIDC spec and TARA, which makes the whole flow non-compliant to the spec \cite{tara-non-oidc-compliant}. Otherwise, the flow is identical. A high-level overview of this flow can be seen in figure \ref{fig:oidc-code-flow}. It consists of seven main steps:
+The underlying data transfer protocol used by eeID is almost identical to OpenID Connect code flow \cite{tara-technical, oidc}. One irregularity exists between the OIDC spec and eeID, which makes the whole flow non-compliant to the spec \cite{tara-non-oidc-compliant}, which we will get back to in a later chapter. Otherwise, the flow is identical. A high-level overview of this flow can be seen in figure \ref{fig:oidc-code-flow}. It consists of seven main steps:
 
 \begin{figure}
   \centering
@@ -38,22 +36,22 @@ The underlying data transfer protocol used by eeID is almost identical to OpenID
 \end{figure}
 
 \begin{enumerate}
-  \item Initial log-in. Preparation for redirect to the eID provider.
+  \item Initial log-in. Preparation for redirect to the eID provider and generation of secrets.
   \item Redirection to the eID provider.
   \item Authentication. Users log in with the chosen authentication scheme (ID card, Mobile-ID, Smart-ID, eIDAS).
   \item Redirection back to the Auth server.
-  \item Browsing session verification. Cryptographically check if the request came from the same browser. This step is required to protect against CSRF attacks.
+  \item Browsing session verification. Check if the request came from the same browser. This step is required to protect against CSRF attacks.
   \item Token acquisition. The Auth server exchanges the received code for an identity token containing the user's information.
   \item Signature verification. Verify the authenticity and validity of the received token. 
 \end{enumerate}
 
 \subsection{Trust Anchor}
 
-One of the main advantages of using eeID is the simplicity of integrating multiple sources of eID (ID card, Mobile-ID, Smart-ID, and eIDAS) with a single API. To accommodate this, eeID acts as an intermediary service, reading and reprocessing data to create a normalized response. With this approach, there are two issues: confidentiality and integrity.
+One of the main advantages of using eeID is the simplicity of integrating multiple sources of eID (ID card, Mobile-ID, Smart-ID, and eIDAS) with a single API. To accommodate this, eeID acts as an intermediary service, reading and reprocessing identity data to create a standardized response. With this approach, there are two issues: confidentiality and integrity.
 
-Confidentiality issues occur whenever users do not wish to share their personal information with more parties than absolutely required. For example, if a user wants to authenticate with Smart-ID, only two parties should be involved: the company user is trying to log in to (WorkAuth) and the Smart-ID service provider (SK ID Solutions). With the eeID service, another entity is added between them who has full read and write to the data.
+Confidentiality issues occur whenever users do not wish to share their personal information with more parties than absolutely required. For example, if a user wants to authenticate with Smart-ID, only two parties should be involved: the company user is trying to log in to (WorkAuth) and the Smart-ID service provider (SK ID Solutions). With the inclusion of eeID service, another entity is added between them who has full read and write access to the data.
 
-Integrity issues are caused by having that full access to data. Should the eeID service get compromised, attackers could impersonate anyone in all services relying on eeID.
+Integrity issues are caused by having that full access to the identity data. Should the eeID service get compromised, attackers could impersonate anyone in all services relying on eeID.
 
 Companies should keep these risks in mind when integrating the eeID identity provider.
 
@@ -63,23 +61,23 @@ The operational cost when using the eeID identity provider is nine cents per suc
 
 \subsection{Security Requirements}
 
-The TARA documentation has an in-depth integration guide and the validation requirements clients must implement \cite{tara-technical}. Additionally, RIA claims that the protocol used is mostly OpenID Connect compliant. Because of this, we can have two resources to validate the resilience of the architecture - TARA docs themselves \cite{tara-technical} and IETF's OAuth 2.0 Security Best Current Practice document \cite{ietf-oauth-security-topics-19}.
+The TARA/eeID documentation has an in-depth integration guide and the validation requirements clients must implement \cite{tara-technical}. Additionally, RIA claims that the protocol used is mostly OpenID Connect compliant. Because of this, we can have two resources to validate the resilience of the architecture - TARA docs themselves \cite{tara-technical} and IETF's OAuth 2.0 Security Best Current Practice document \cite{ietf-oauth-security-topics-19}.
 
 \paragraph{Communication channel}
 
-The eeID service uses a secure communication channel, encrypted end-to-end using HTTPS. When the system is integrated correctly, malicious clients (or user agents) have no possible way of influencing any of the authentication parameters without triggering alarms when validating the request.
+The eeID service uses a secure communication channel, encrypted end-to-end using HTTPS. When the system is integrated correctly, malicious clients (or user agents) have no possible way of influencing any of the authentication parameters without causing any validation failures later on.
 
 \subsubsection{Protocol's built-in security features}
 
-OpenID Connect specifies three different flows - code, implicit, and hybrid \cite{oidc}. In code flow, all sensitive tokens are handled via backchannel - a secure communications channel where the user client is not involved. The implicit flow is the opposite - a client receives an identity token and sends it to the company's authentication server, which validates the signature. A hybrid flow is a mixture of the two. Security experts consider the code flow to be the safest option of the three \cite{ietf-oauth-security-topics-19}. Coincidentally, it is the only supported flow by TARA and eeID \cite{tara-technical}.
+OpenID Connect specifies three different flows - code, implicit, and hybrid \cite{oidc}. In code flow, all sensitive tokens are handled via backchannel - a secure communications channel between the eID solution provider and the relying party where the user client is not involved. The implicit flow is the opposite - a user agent receives the identity token from the eID solution provider and sends it directly to the company's authentication server, which validates the the authenticity of this token. A hybrid flow is a mixture of the two. Security experts consider the code flow to be the safest option of the three \cite{ietf-oauth-security-topics-19}. Coincidentally, it is the only supported flow by TARA and eeID \cite{tara-technical}.
 
 \paragraph{Replay attacks}
 
 \begin{itemize}
-  \item eeID will reject the second POST /token request with the same code. \todo{Image proof?}
+  \item eeID will reject the second POST /token request with the same code.
 \end{itemize}
 
-The developer does not have to implement internal state management to verify that a given session token was used only once. When combined with other countermeasures available, a replay attack becomes impossible to execute by any practical means. Mitigation measures provided by the eID provider are sufficient.
+The developer does not have to implement internal state management to verify that a given code was used only once. When combined with other countermeasures available, a replay attack becomes impossible to execute by any practical means. Mitigation measures provided by the eID solution provider are sufficient.
 
 \paragraph{Insufficient Redirect URI Validation}
 
@@ -342,7 +340,7 @@ The reason for the incorrect implementation stems from backward compatibility \c
 
 \subsubsection{Confusing state and nonce behavior}
 
-Nowhere in the OpenID Connect specification mentions that state should be transferred over to the id\_token. TARA confused the purposes of state and nonce properties, extended the behavior to cover each other, and, by extension, made one of the properties obsolete.
+OpenID Connect specification does not mention that state should be transferred over to the id\_token. TARA confused the purposes of state and nonce properties, extended the behavior to cover each other, and, by extension, made one of the properties obsolete.
 
 The state property is part of the underlying OAuth2.0 specification, where it is an "opaque value used by the client to maintain state between the request and callback" \cite{rfc6749}. The primary security feature is to prevent CSRF attacks \cite{rfc6749,ietf-oauth-security-topics-19}.
 

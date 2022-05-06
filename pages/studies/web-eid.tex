@@ -1,18 +1,16 @@
 \section{Case Study: Web eID}
 
-\subsection{About}
-
 Released in the Summer of 2021 \cite{ria-webeid} and having undergone significant changes in January of 2022, this eID solution allows users to authenticate and sign documents using their country's smart cards.
 
-Functionally this framework is split into three parts: software the user needs to install on their computer, a javascript library that acts as a data transfer intermediary, and the certificate validation library for the back-end.
+Functionally this software solution is split into three parts: software the user needs to install on their computer, a javascript library that acts as a data transfer intermediary, and the certificate validation library for the back-end.
 
 The software users need to install is similar to the one various countries' governments issue. The significant difference is that this software supports more than one country's eID solutions. Supported countries include Estonia, Latvia, Lithuania, and Finland \cite{ria-webeid}.
 
-This service is built by the Estonian Information System Authority, responsible for TARA - a service Estonia's most prominent public institutions use.
+This service is built by the Estonian Information System Authority.
 
-\subsection{Data Flow}
+\subsection{Authentication Protocol}
 
-Figure \ref{fig:web-eid-authentication} displays the high-level overview of the complete flow of data within the Web eID system. A detailed explanation of the steps can be found in the technical specification \cite{ria-webeid-systemarchitecture}. Companies implementing the framework should only consider the browser and the server application (steps 1-3 and 13-17).
+Figure \ref{fig:web-eid-authentication} displays the high-level overview of the complete flow of data within the Web eID system. A detailed explanation of the steps can be found in the technical specification \cite{ria-webeid-systemarchitecture}. Companies implementing the framework should only pay attention to the browser and the server application (steps 1-3 and 13-17).
 
 \begin{figure}
   \centering
@@ -23,13 +21,13 @@ Figure \ref{fig:web-eid-authentication} displays the high-level overview of the 
 
 \subsection{Trust Anchor}
 
-Unlike Dokobit and eeID, Web eID does not provide any guarantees about the trustworthiness of a certificate. It requires the relying party to manually verify the received identity certificate \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}. The verification process involves checking the origin, certificate expiry, trust chain, OCSP response, and the challenge.
+Unlike Dokobit and eeID, Web eID does not provide any guarantees about the trustworthiness of a certificate. It requires the relying party to manually verify the received identity certificate \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}. The verification process involves checking the origin, certificate expiry, trust chain, OCSP response, and the signed challenge token.
 
 One advantage of using Web eID is that there are no third-party intermediate services, which reduces the number of potential attack vectors, making it theoretically more secure than both eeID and Dokobit. The identity information comes directly from the device storing it. This benefit, however, comes with a comparatively massive implementation and maintenance cost, as the developers would have to create and maintain the trusted certificate store.
 
 \subsection{Pricing}
 
-The Web eID authentication service is free of charge, as the only external validation required, the OCSP \cite{rfc6960} requests, are free to use.
+The eID solutions enabled by Web eID software are free of charge to use, as the only external validation required, the OCSP \cite{rfc6960} requests, are free.
 
 \subsection{Security Requirements}
 
@@ -37,7 +35,7 @@ The data flow used by Web eID is fundamentally different from the used by the ot
 
 \paragraph{Communication channel}
 
-The Web eID framework is the only one covered by this thesis that uses an insecure communication channel. Developers must take caution and verify received data when integrating this eID solution. This channel is highly susceptible to man-in-the-middle, forgery, or other attacks done by a malicious end user.
+The Web eID framework is the only one covered by this thesis that uses an insecure communication channel. The reason why is it not secure is because the user or user agent can freely modify the identity data they send to the relying party. Developers must take caution and verify received data when integrating this eID solution. This channel is highly susceptible to man-in-the-middle, forgery, or other attacks done by a malicious end user.
 
 \subsubsection{Requirements for the identity provider}
 
@@ -93,11 +91,11 @@ The documentation is thorough, listing all requirements developers must take to 
 
 \subsection{Integration}
 
-For each protocol implementation step, developers will have to fulfill certain guarantees before the system goes into production.
+For each protocol implementation step, developers will have to fulfill certain validation requirements before the system goes into production.
 
 \subsubsection{Preparation}
 
-Building the challenge nonce. The goal of these steps is to create the challenge the user will have to sign with their private key. There are a couple of guarantees the application must provide:
+Building the challenge nonce. The goal of these steps is to create the challenge the user will have to sign with their private key. There are a couple of requirements the relying party must fulfil:
 \begin{enumerate}
   \item Generated challenge nonce must be between 32 and 96 bytes (inclusive) in length \cite{ria-webeid-source-web-eid-app-authenticate};
   \item It must be guaranteed that the authentication token is received from the same browser to which the corresponding challenge nonce was issued \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}. The eID solution creators suggest attaching it to the user session.
@@ -166,7 +164,7 @@ After the user signs the nonce challenge and sends their certificate, the server
   \item issue an authentication token with the fields from the certificate's subject;
 \end{enumerate}
 
-In the implementation example, these measures were addressed by:
+In our implementation, these measures were addressed by:
 \begin{enumerate}
   \item the back-end endpoint for log-in is decorated with ValidateAntiForgeryToken Attribute. This attribute instructs the ASP.NET API to ignore requests not containing a CSRF token \cite{msdocs-anti-request-forgery}. A JavaScript application can only access the protected endpoints by providing RequestVerificationToken header (see listing \ref{lst:web-eid-challenge-ui});
   \item the application tries to extract the challenge nonce from the browsing session. The process would succeed if the session cookie were not modified. After the extraction, the application checks the nonce cache to verify if the challenge is still active. Cache hit means the nonce has not expired, and no previous authentication attempt was performed. Remove the challenge nonce from all stores.

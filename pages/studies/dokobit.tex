@@ -1,7 +1,5 @@
 \section{Case Study: Dokobit}
 
-\subsection{Background}
-
 Dokobit \cite{dokobit}, trademark and subsidiary of Estina \cite{euipo-dokobit}, offers two products: Document Signing Portal and API solutions.
 
 The first product, the Document Signing Portal, was released in 2014 \cite{dokobit-aboutus}. The primary purpose of this solution is to allow users to upload documents and digitally sign them online.
@@ -41,7 +39,7 @@ When using federated log-in for Native Apps, "best current practice requires tha
 
 For this thesis, we will only analyze the Redirect flow.
 
-\subsection{Data Flow}
+\subsection{Authentication Protocol}
 
 This section will analyze Dokobit Identity Gateway, redirect-based user flow. The general overview of which can be seen in Figure \ref{fig:dokobit-identitygw-redirect}. We can group the authentication process into three parts: establishing a session with Dokobit, user authentication with an eID provider, and user information retrieval.
 
@@ -381,7 +379,7 @@ Dokobit Identity Gateway requires {relying parties} to send access tokens (API k
 
 No browser is involved when using the API key. However, it does not mean no traces are left anywhere, though. Companies frequently use application and network logging solutions to detect outages. Some logging solutions may be a bit overzealous when deciding what they should be allowed to log.
 
-I will use .NET 6 Web API and Application Insights to provide a concrete example. All dependency calls will be tracked and logged to Application Insights log storage on MS Azure with an out-of-the-box configuration. The data of dependency calls include the request path + query. The inclusion of query parameters would make the application leak the Dokobit API key by accident to Azure services (see figure \ref{fig:dokobit-vuln-query}). Improper access rules (allowing developers to troubleshoot issues in the application) would allow people with access to read the API key.
+We will use .NET 6 Web API and Application Insights to provide a concrete example. All dependency calls will be tracked and logged to Application Insights log storage on MS Azure with an out-of-the-box configuration. The data of dependency calls include the request path + query. The inclusion of query parameters would make the application leak the Dokobit API key by accident to Azure services (see figure \ref{fig:dokobit-vuln-query}). Improper access rules (allowing developers to troubleshoot issues in the application) would allow people with access to read the API key.
 
 \begin{figure}
   \centering
@@ -403,7 +401,7 @@ The impact of this attack appears to be insignificant, as it would only allow us
 
 When performing a session token injection attack, relying parties can successfully protect themselves by binding the Dokobit's session token to the user agent session. Unfortunately, this does not prevent attackers from injecting their session tokens into victims' computers.
 
-From the attacker's point of view, they can exploit this exploit can be achieved by performing these steps \cite{video-exploitdokobit}:
+From the attacker's point of view, they can exploit this vulnerability by performing these steps \cite{video-exploitdokobit}:
 
 \begin{enumerate}
   \item Establish session with identity server and Dokobit;
