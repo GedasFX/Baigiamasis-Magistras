@@ -130,7 +130,7 @@ Companies should perform a risk analysis for the data they are protecting and th
 
 \subsection{GDPR}
 
-Two years after the EU enacted the eIDAS legislation, the EU parliament issued new legislation, General Data Protection Regulation (GDPR), to consolidate all previous privacy laws \cite{eulaw-gdpr}. It is essential to be aware of it, as when dealing with eID, personal data processing is unavoidable. 
+Two years after the EU enacted the eIDAS legislation, the EU parliament issued new legislation, General Data Protection Regulation (GDPR), to consolidate all previous privacy laws \cite{eulaw-gdpr}. It is essential to be aware of it, as when dealing with eID, personal data processing is unavoidable.
 
 In GDPR, companies must be aware of key terminology. Interested parties can find a complete list of definitions in article 4 of the regulation. The thesis will go over only the most essential concepts.
 
@@ -144,25 +144,27 @@ In GDPR, companies must be aware of key terminology. Interested parties can find
 
 \begin{figure}
     \centering
-    \begin{sequencediagram}
-        \newthread{A}{Person}{}
-        \newinst[1]{B}{Relying Party}{}
-        \newinst[1]{C}{eID Provider}{}
-        \newinst[2]{D}{eID Tool}{}
+    {\small{
+            \begin{sequencediagram}
+                \newthread{A}{Person}{}
+                \newinst[1]{B}{Relying Party}{}
+                \newinst[2]{C}{eID Provider}{}
+                \newinst[2.5]{D}{eID Tool}{}
 
-        \begin{call}{A}{authenticate()}{B}{Success}
-            \begin{call}{B}{authenticate()}{C}{Identity + Authenticity proof}
-                \begin{sdblock}{Block}{Outside of RP control}
-                    \begin{call}{C}{getIdentity()}{D}{Identity}\end{call}
-                    \begin{call}{C}{proveIdentity()}{D}{Authenticity proof}
-                        \begin{call}{D}{enterPin()}{A}{PIN}\end{call}
+                \begin{call}{A}{authenticate()}{B}{Success}
+                    \begin{call}{B}{authenticate()}{C}{\shortstack{Identity + \\ Authenticity proof}}
+                        \begin{sdblock}{External}{Outside of RP control}
+                            \begin{call}{C}{getIdentity()}{D}{Identity}\end{call}
+                            \begin{call}{C}{proveIdentity()}{D}{Authenticity proof}
+                                \begin{call}{D}{enterPin()}{A}{PIN}\end{call}
+                            \end{call}
+                        \end{sdblock}
                     \end{call}
-                \end{sdblock}
-            \end{call}
-            \begin{call}{B}{validateResponse()}{B}{}\end{call}
-        \end{call}
+                    \begin{call}{B}{validateResponse()}{B}{}\end{call}
+                \end{call}
 
-    \end{sequencediagram}
+            \end{sequencediagram}
+        }}
     \caption{High-level sequence diagram of a eID authentication flow}
     \label{fig:eid-auth-flow-seq}
 \end{figure}

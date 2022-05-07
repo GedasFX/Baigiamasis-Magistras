@@ -16,21 +16,23 @@ The underlying data transfer protocol used by eeID is almost identical to OpenID
 
 \begin{figure}
   \centering
-  \begin{sequencediagram}
-    \newthread{A}{Actor}{}
-    \newinst[3]{B}{AuthServer}{}
-    \newinst[2]{C}{TARA/eeID}{}
+  {\small{
+      \begin{sequencediagram}
+        \newthread{A}{Actor}{}
+        \newinst[3]{B}{AuthServer}{}
+        \newinst[3]{C}{TARA/eeID}{}
 
-    \begin{call}{A}{1. login()}{B}{3xx Redirect}\end{call}
-    \begin{call}{A}{2. authorize()}{C}{Auth Page}\end{call}
-    \begin{call}{A}{3. login()}{C}{3xx Redirect + code}\end{call}
+        \begin{call}{A}{1. login()}{B}{3xx Redirect}\end{call}
+        \begin{call}{A}{2. authorize()}{C}{Auth Page}\end{call}
+        \begin{call}{A}{3. login()}{C}{3xx Redirect + code}\end{call}
 
-    \begin{call}{A}{4. loginCallback()}{B}{Auth token}
-      \begin{call}{B}{5. verifyState()}{B}{}\end{call}
-      \begin{call}{B}{6. token()}{C}{id\_token}\end{call}
-      \begin{call}{B}{7. verifySignature()}{B}{}\end{call}
-    \end{call}
-  \end{sequencediagram}
+        \begin{call}{A}{4. loginCallback()}{B}{Auth token}
+          \begin{call}{B}{5. verifyState()}{B}{}\end{call}
+          \begin{call}{B}{6. token()}{C}{id\_token}\end{call}
+          \begin{call}{B}{7. verifySignature()}{B}{}\end{call}
+        \end{call}
+      \end{sequencediagram}
+    }}
   \caption{OIDC code flow used in TARA/eeID}
   \label{fig:oidc-code-flow}
 \end{figure}
@@ -42,7 +44,7 @@ The underlying data transfer protocol used by eeID is almost identical to OpenID
   \item Redirection back to the Auth server.
   \item Browsing session verification. Check if the request came from the same browser. This step is required to protect against CSRF attacks.
   \item Token acquisition. The Auth server exchanges the received code for an identity token containing the user's information.
-  \item Signature verification. Verify the authenticity and validity of the received token. 
+  \item Signature verification. Verify the authenticity and validity of the received token.
 \end{enumerate}
 
 \subsection{Trust Anchor}
@@ -92,7 +94,7 @@ The manual verification process is sufficient to mitigate this attack; it is imp
 \begin{itemize}
   \item eeID does not include third-party resources (javascript, image, or other); therefore, it cannot leak any query parameters to third parties.
   \item The company is required not to have any third-party resources on the authentication and redirect pages.
-  % \item The client is using a secret API key, rendering it impossible to obtain private information without its use.
+        % \item The client is using a secret API key, rendering it impossible to obtain private information without its use.
 \end{itemize}
 
 The eeID service does not leak credentials to third parties anywhere on their log-in page (all resources used in their service are from their domain, see figure \ref{fig:eeid-leakviareferrer}). No mitigation measures are required.
@@ -111,7 +113,7 @@ The eeID service does not leak credentials to third parties anywhere on their lo
   \item The {form post} response mode is not supported. Not required, but it would prevent this form of attack completely.
 \end{itemize}
 
- Attackers can obtain authorization code, nonce, and state from the browser history (see figure \ref{fig:eeid-leakviahistory}); however, for them to be able to use codes, the relying party must be susceptible to CSRF attacks. Mitigation measures are sufficient only when CSRF mitigation is in place.
+Attackers can obtain authorization code, nonce, and state from the browser history (see figure \ref{fig:eeid-leakviahistory}); however, for them to be able to use codes, the relying party must be susceptible to CSRF attacks. Mitigation measures are sufficient only when CSRF mitigation is in place.
 
 \begin{figure}
   \centering
@@ -129,19 +131,20 @@ The eeID service does not leak credentials to third parties anywhere on their lo
 
 \begin{figure}
   \centering
-  \begin{sequencediagram}
-    \newthread{A}{User Agent}{}
-    \newinst[3]{B}{AuthServer}{}
-    \newinst[3]{C}{TARA/eeID}{}
+  {\small{
+      \begin{sequencediagram}
+        \newthread{A}{User Agent}{}
+        \newinst[3]{B}{AuthServer}{}
+        \newinst[4]{C}{TARA/eeID}{}
 
-    \begin{call}{A}{1. login()}{B}{3xx Redirect}\end{call}
-    \begin{call}{A}{2. authorize() [client\_id, redirect\_uri, response\_type, scope, \textcolor{red}{nonce}, \textcolor{red}{state}]}{C}{Auth Page}\end{call}
-    \begin{call}{A}{3. login()}{C}{3xx Redirect + [code, \textcolor{red}{state}]}\end{call}
+        \begin{call}{A}{1. login()}{B}{3xx Redirect}\end{call}
+        \begin{call}{A}{2. authorize() [client\_id, \dots, \textcolor{blue}{nonce}, \textcolor{blue}{state}]}{C}{Auth Page}\end{call}
+        \begin{call}{A}{3. login()}{C}{3xx Redirect + [code, \textcolor{blue}{state}]}\end{call}
 
-    \begin{call}{A}{4. loginCallback()}{B}{Auth token}
-      \begin{call}{B}{6. token() [client\_id, client\_secret, redirect\_uri, grant\_type, code]}{C}{id\_token \{ \textcolor{red}{nonce}, \dots \}}\end{call}
-    \end{call}
-  \end{sequencediagram}
+        \begin{call}{A}{4. loginCallback()}{B}{Auth token}
+          \begin{call}{B}{\shortstack{5. token() \\ {[client\_id, client\_secret, \dots, code]}}}{C}{id\_token \{ \textcolor{blue}{nonce}, \dots \}}\end{call}
+        \end{call}
+      \end{sequencediagram}}}
   \caption{CSRF/Code injection mitigation in OIDC code flow}
   \label{fig:oidc-code-flow-code-injection-mitigation}
 \end{figure}
@@ -354,19 +357,20 @@ The discovery endpoint provides all information about possible requests and resp
 
 \begin{figure}
   \centering
-  \begin{sequencediagram}
-    \newthread{A}{User Agent}{}
-    \newinst[3]{B}{AuthServer}{}
-    \newinst[3]{C}{TARA/eeID}{}
+  {\small{
+      \begin{sequencediagram}
+        \newthread{A}{User Agent}{}
+        \newinst[3]{B}{AuthServer}{}
+        \newinst[4]{C}{TARA/eeID}{}
 
-    \begin{call}{A}{1. login()}{B}{3xx Redirect}\end{call}
-    \begin{call}{A}{2. authorize() [client\_id, redirect\_uri, response\_type, scope, nonce, state]}{C}{Auth Page}\end{call}
-    \begin{call}{A}{3. login()}{C}{3xx Redirect + [code, \textcolor{red}{nonce}, state]}\end{call}
+        \begin{call}{A}{1. login()}{B}{3xx Redirect}\end{call}
+        \begin{call}{A}{2. authorize() [client\_id, \dots, \textcolor{blue}{nonce}, \textcolor{blue}{state}]}{C}{Auth Page}\end{call}
+        \begin{call}{A}{3. login()}{C}{3xx Redirect + [code, \textcolor{red}{nonce}, \textcolor{blue}{state}]}\end{call}
 
-    \begin{call}{A}{4. loginCallback()}{B}{Auth token}
-      \begin{call}{B}{6. token() [client\_id, client\_secret, redirect\_uri, grant\_type, code]}{C}{id\_token \{ nonce, \textcolor{red}{state}, \dots \}}\end{call}
-    \end{call}
-  \end{sequencediagram}
+        \begin{call}{A}{4. loginCallback()}{B}{Auth token}
+          \begin{call}{B}{\shortstack{5. token() \\ {[client\_id, client\_secret, \dots, code]}}}{C}{id\_token \{ \textcolor{blue}{nonce}, \textcolor{red}{state}, \dots \}}\end{call}
+        \end{call}
+      \end{sequencediagram}}}
   \caption{The incorrect OIDC code flow used in TARA/eeID}
   \label{fig:oidc-code-flow-wrong}
 \end{figure}

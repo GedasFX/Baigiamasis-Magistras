@@ -45,23 +45,24 @@ This section will analyze Dokobit Identity Gateway, redirect-based user flow. Th
 
 \begin{figure}
   \centering
-  \begin{sequencediagram}
-    \newthread{A}{Actor}{}
-    \newinst[2]{B}{AuthServer}{}
+  {\small{
+      \begin{sequencediagram}
+        \newthread{A}{Actor}{}
+        \newinst[2]{B}{AuthServer}{}
 
-    \newinst[1]{C}{IDGW Backend}{}
-    \newinst[1]{D}{IDGW Frontend}{}
+        \newinst[2]{C}{IDGW Backend}{}
+        \newinst[1]{D}{IDGW Frontend}{}
 
-    \begin{call}{A}{1. login()}{B}{3xx Redirect}
-      \begin{call}{B}{2. POST /api/authentication/create}{C}{session\_token}\end{call}
-    \end{call}
-    \begin{call}{A}{3. authorize() [session\_token]}{D}{Auth Page}\end{call}
-    \begin{call}{A}{4. login()}{D}{3xx Redirect + [session\_token]}\end{call}
-    \begin{call}{A}{5. loginCallback()}{B}{Auth token}
-      \begin{call}{B}{6. GET /api/authentication/\{session\_token\}/status}{C}{User data}\end{call}
-    \end{call}
-
-  \end{sequencediagram}
+        \begin{call}{A}{1. login()}{B}{3xx Redirect}
+          \begin{call}{B}{\shortstack{2. POST \\ /create}}{C}{session\_token}\end{call}
+        \end{call}
+        \begin{call}{A}{3. authorize() [session\_token]}{D}{Auth Page}\end{call}
+        \begin{call}{A}{4. login()}{D}{3xx Redirect + [session\_token]}\end{call}
+        \begin{call}{A}{5. loginCallback()}{B}{Auth token}
+          \begin{call}{B}{\shortstack{6. GET \\ /\{session\_token\}/status}}{C}{User data}\end{call}
+        \end{call}
+      \end{sequencediagram}
+    }}
   \caption{Dokobit Identity Gateway - Redirect-based user flow \cite{dokobit-idgw-docs}}
   \label{fig:dokobit-identitygw-redirect}
 \end{figure}
@@ -414,7 +415,7 @@ A video exists showing a live demonstration of how this attack appears for both 
 
 \paragraph{The underlying issue}
 
-At its core, this exploit is possible because of three issues: 
+At its core, this exploit is possible because of three issues:
 
 \begin{enumerate}
   \item The attacker knows the response session token. Because all requests are correlated with the same session token, the attacker already knows the redirect URL.
@@ -435,7 +436,7 @@ When a user refreshes the page, status checks are performed immediately, so if a
 
 \paragraph{The fix}
 
-On Apr 11, 2022, Dokobit developers fixed the issue by allowing only one HTTP request to the {authorize} endpoint. This fix prevents attackers from abusing the automatic redirect feature, eliminating this exploit. 
+On Apr 11, 2022, Dokobit developers fixed the issue by allowing only one HTTP request to the {authorize} endpoint. This fix prevents attackers from abusing the automatic redirect feature, eliminating this exploit.
 
 Figures \ref{fig:dokobit-vuln-csrf-fix-a} and \ref{fig:dokobit-vuln-csrf-fix-b} illustrate how the page looks after the fix was deployed.
 

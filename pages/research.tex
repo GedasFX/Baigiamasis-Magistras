@@ -73,34 +73,38 @@ The second use case (see Figure \ref{fig:sysprocess-b}) is also concerned with a
 
 \begin{figure}
   \centering
-  \begin{sequencediagram}
-    \newthread{A}{Actor}{}
-    \newinst[3]{B}{AuthServer}{}
-    \newinst[1]{C}{SuperApp}{}
+  {\small{
+      \begin{sequencediagram}
+        \newthread{A}{Actor}{}
+        \newinst[3]{B}{AuthServer}{}
+        \newinst[3]{C}{SuperApp}{}
 
-    \begin{call}{A}{accessProtected()}{C}{401 Unauthorized}\end{call}
+        \begin{call}{A}{accessProtected()}{C}{401 Unauthorized}\end{call}
 
-    \begin{call}{A}{authWithPassword()}{B}{Auth token}\end{call}
-    \begin{call}{A}{accessProtected()}{C}{Data}\end{call}
-    \begin{call}{A}{accessReallyProtected()}{C}{403 Forbidden}\end{call}
-  \end{sequencediagram}
+        \begin{call}{A}{authWithPassword()}{B}{Auth token}\end{call}
+        \begin{call}{A}{accessProtected()}{C}{Data}\end{call}
+        \begin{call}{A}{accessReallyProtected()}{C}{403 Forbidden}\end{call}
+      \end{sequencediagram}
+    }}
   \caption{System behavior when authenticated with a username + password scheme}
   \label{fig:sysprocess-a}
 \end{figure}
 
 \begin{figure}
   \centering
-  \begin{sequencediagram}
-    \newthread{A}{Actor}{}
-    \newinst[2]{B}{AuthServer}{}
-    \newinst[1]{C}{SuperApp}{}
+  {\small{
+      \begin{sequencediagram}
+        \newthread{A}{Actor}{}
+        \newinst[3]{B}{AuthServer}{}
+        \newinst[3]{C}{SuperApp}{}
 
-    \begin{call}{A}{accessProtected()}{C}{401 Unauthorized}\end{call}
+        \begin{call}{A}{accessProtected()}{C}{401 Unauthorized}\end{call}
 
-    \begin{call}{A}{authWithEid()}{B}{Auth token}\end{call}
-    \begin{call}{A}{accessProtected()}{C}{Data}\end{call}
-    \begin{call}{A}{accessReallyProtected()}{C}{Very Secret Data}\end{call}
-  \end{sequencediagram}
+        \begin{call}{A}{authWithEid()}{B}{Auth token}\end{call}
+        \begin{call}{A}{accessProtected()}{C}{Data}\end{call}
+        \begin{call}{A}{accessReallyProtected()}{C}{Very Secret Data}\end{call}
+      \end{sequencediagram}
+    }}
   \caption{System behavior when authenticated with an eID scheme}
   \label{fig:sysprocess-b}
 \end{figure}
