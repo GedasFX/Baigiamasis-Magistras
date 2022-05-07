@@ -43,12 +43,12 @@ With the inclusion of an external eID provider, we can compose the new system ar
 
 \begin{enumerate}
   \item {eID provider}. It is WorkAuth's gateway to obtain someone's eID. It can be any eID source such as Dokobit, TARA, Smart-ID, or an ID card.
-  \item {Remote key store}. Storage for unique identifiers provided by the eID provider. These keys are the person identifying information received from the eID providers.
+  \item {Remote key store}. Storage for unique identifiers provided by the eID provider. These keys are the person identifying information.
 \end{enumerate}
 
 The primary purpose of the remote key store is to link the user ID used in the internal system with the unique identifier given by the eID provider. Because the unique identifier can change or the same physical person can have multiple eIDs \cite{eidas-saml}, companies should foresee cases where numerous eIDs could map to a single internal ID.
 
-In the diagram (figure \ref{fig:sys-highlevel-witheid}), the key store has a red lock next to its icon. The data stored there may be subject to more strict privacy regulations in some countries than others. Companies must ensure sufficiently strict access control for this part of the infrastructure to satisfy the legal requirements.
+In the diagram (Figure \ref{fig:sys-highlevel-witheid}), the key store has a red lock next to its icon. The data stored there may be subject to more strict privacy regulations in some countries than others. Companies must ensure sufficiently strict access control for this part of the infrastructure to satisfy the legal requirements.
 
 \paragraph{Final state}
 
@@ -67,9 +67,9 @@ The link to the repository containing the source code of the final system can be
 
 The desired system must satisfy two business use cases.
 
-The first o (see Figure \ref{fig:sysprocess-a}) is concerned about accessing a protected resource with a token issued by the AuthServer. This use case is part of the base state of the system and validates that the baseline implementation is correct.
+The first one (see Figure \ref{fig:sysprocess-a}) is concerned about accessing a protected resource with a token issued by the AuthServer. This use case is part of the base state of the system and validates that the baseline implementation is correct.
 
-The second use case (see figure \ref{fig:sysprocess-b}) is also concerned with accessing a protected resource. This time it is intended to limit access to only those who authenticate with a higher level of assurance, like an eID solution. This process validates the successful implementation of eID authentication and access control.
+The second use case (see Figure \ref{fig:sysprocess-b}) is also concerned with accessing a protected resource. This time it is intended to limit access to only those who authenticate with a higher level of assurance, like an eID solution. This process validates the successful implementation of eID authentication and access control.
 
 \begin{figure}
   \centering
@@ -109,11 +109,11 @@ The second use case (see figure \ref{fig:sysprocess-b}) is also concerned with a
 
 There will be a need to uniquely link an identity to an internal account in the company SSO server. The security requirement, in this case, is not to allow other users to access the same account. For this goal, companies must use one or more person-identifying properties.
 
-Using Estonia's passport as an example, we see that it has the following identifiers: (issuer) country code, document number, surname, given name, personal code, citizenship, date of birth, document date of issue, expiry, and authority. In these cases, it is easy to use the {personal code} for identifying a person as it is unlikely to change - people change names, documents expire. Document authority information and date of birth do not narrow it down nearly enough. The use of a personal number seems like an obvious choice.
+Using Estonia's passport as an example, we see that it has the following identifiers: (issuer) country code, document number, surname, given name, personal code, citizenship, date of birth, document date of issue, expiry, and authority. In these cases, it is easy to use the {personal code} for identifying a person as it is unlikely to change - people change names, and documents expire. Document authority information and date of birth do not narrow it down nearly enough. The use of a personal number seems like an obvious choice.
 
 Unfortunately, not all countries have personal numbers. If we look at Ireland's, another EU member state's, passport, we would be unable to find such a code. The lack of an id number shows one of the many challenges eID authentication adopters will face. If the data on the passport is all we would have, the next best unique identifier for linking users would be to use the document number. It is cumbersome and would require users to update the account with a new number when the document eventually expires and is replaced. Still, no other option satisfies the security condition requiring an eID to link only to the correct user as effectively as this one.
 
-If we look at the eIDAS node network, its architecture does not have strong opinions on how an ID should look, as long as it has a country code and a unique code from the country. Each country must provide an identifier, even if the country doesn't have assigned a code to a person \cite{eidas-saml}. How countries achieve uniqueness is not of network's concern.
+If we look at the eIDAS node network, its architecture does not have strong opinions on how an ID should look, as long as it has a country code and a unique code from the country. Each country must provide an identifier, even if the government doesn't have assigned a code to a person \cite{eidas-saml}. How countries achieve uniqueness is not of the network's concern.
 
 The eIDAS node architecture solves another issue of what to do if a person's identifier changes. A unique identifier remains "unchanged for the lifetime of the account" \cite{eidas-saml}. If an identifier were to change when "the user's digital identity is replaced or repaired," relying parties should treat the newly obtained identifier as a completely new identity.
 
@@ -126,9 +126,9 @@ The eIDAS node architecture solves another issue of what to do if a person's ide
 
 Example: ES/AT/02635542Y (Spanish eID Number for an Austrian SP).
 
-\paragraph{Summary} Using the eIDAS Unique Identifier structure as a base, we can see that it is enough to uniquely identify a digital identity in eIDAS with the country of origin, country of destination, and a set of characters to identify that person in the origin country. The destination country will always be the same in z`' company's case. To uniquely identify a person, we will only need its origin country and a unique identifier a member state must provide.
+\paragraph{Summary} Using the eIDAS Unique Identifier structure as a base, we can see that it is enough to uniquely identify a digital identity in eIDAS with the country of origin, country of destination, and a set of characters to identify that person in the origin country. The destination country will always be the same in our company's case. To uniquely identify a person, we will only need its origin country and a unique identifier a member state must provide.
 
-As a result our chosen identifier structure will be of the following: "{\{ISO 3166-1 alpha-2\}}/{\{Code provided by country\}}". Unique identifier examples: EE/38001085718, LT/49003111045, SE/870314-2391.
+As a result, our chosen identifier structure will be of the following: "{\{ISO 3166-1 alpha-2\}}/{\{Code provided by country\}}". Unique identifier examples: EE/38001085718, LT/49003111045, SE/870314-2391.
 
 \subsubsection{Privacy Policy}
 

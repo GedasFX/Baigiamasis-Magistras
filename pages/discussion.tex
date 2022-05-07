@@ -37,11 +37,11 @@ The eeID service is an excellent option if the target audience is the residents 
 
 \paragraph{Dokobit}
 
-The eeID service is an excellent option if the target audience is the same as eeID or wider in a more international sense. It is a service created and maintained by a private company in Lithuania, supports the widest variety of authentication schemes and countries, and is the most straightforward service to integrate of the three. The biggest issue for companies to adopt this service would be to accept the risk of transferring sensitive data to a third-party private company. Additionally, although it is cheaper than eeID, it would still be too expensive for most businesses.
+The eeID service is an excellent option if the target audience is the same as eeID or broader in a more international sense. It is a service created and maintained by a private company in Lithuania, supports the widest variety of authentication schemes and countries, and is the most straightforward service to integrate of the three. The biggest issue for companies to adopt this service would be to accept the risk of transferring sensitive data to a third-party private company. Additionally, although it is cheaper than eeID, it would still be too expensive for most businesses.
 
 \paragraph{Web eID}
 
-The Web eID service is very different from the two others as it does not involve a third party, which significantly boosts security and trust. Another great advantage of this solution is that it is free to use. The main limitations of this eID solution are the comparatively weak market reach, the requirement for users to have special software installed, and the comparatively astronomical integration complexity.
+The Web eID service is very different from the two others as it does not involve a third party, which significantly boosts security and trust. Another great advantage of this solution is that it is free to use. The main limitations of this eID solution are the comparatively weak market reach, the requirement for users to have special software installed, and the relatively astronomical integration complexity.
 
 \subsubsection{Security and Integration Features Comparison}
 
@@ -70,7 +70,7 @@ The integration of the eeID service has left me with more questions than answers
 
 There is no best option for choosing an eID solution provider. Ultimately, the final decision comes on the priorities of the business.
 
-If the highest degree of trust factor is required, a company will have no other option other than to eliminate third-parties, which in our case would be to use Web eID. Additionally, this option is likely to be suitable for those who wish to cut costs as much as possible, as for this trust service provider, the authentication operational costs are zero.
+If the highest degree of trust factor is required, a company will have no other option other than to eliminate third parties, which in our case would be to use Web eID. Additionally, this option is likely most suitable for those who wish to cut costs as much as possible. For this trust service provider, the authentication operational costs are zero.
 
 If the highest market reach is everything, adequately vetted third-party providers are the best choice. The most tangible difference between Dokobit and eeID is their market reach, and, by having a more extensive selection of supported schemes, Dokobit is the favorable option over eeID.
 
@@ -92,7 +92,7 @@ Imagine a company that lets users open storefronts. These users can theoreticall
 
 This situation suffers from the same issue as the internal access scenario. Because the eID authentication is not performed on the database level, a rogue employee could frame someone by creating a listing for someone, as the access to the database is no longer restricted by eID.
 
-With this limitation, eID authentication becomes useless without proof of data integrity. Digital signatures or a blockchain solution would potentially fix these cases and further research on this topic may be beneficial.
+With this limitation, eID authentication becomes useless without proof of data integrity. Digital signatures or a blockchain solution would potentially fix these cases, and further research on this topic may be beneficial.
 
 \subsection{Alternatives to eID Authentication}
 
@@ -102,9 +102,9 @@ If we return to the original thesis idea of having one-time authentication, ther
 
 In the thesis, we covered only half of the data access flow. Secure authentication methods are essential, but authorization is equally as important.
 
-The eID authentication schemes are good at ensuring that someone is they claim they are with a high degree of certainty. This high level of assurance is not helpful if that person is not allowed to access the resources in the first place. Deciding which resources people can access requires manual role assignment by a higher authority.
+The eID authentication schemes ensure that someone is they claim they are with a high degree of certainty. This high level of assurance is not helpful if that person is not allowed to access the resources in the first place. Deciding which resources people can access requires manual role assignment by a higher authority.
 
-Consider an example. A company is hiring a senior developer Bob. They expect a person to register soon, and they see a registration at the time they would expect. What should the computer do? Should it assign the newly registered person the role of a senior? It should not, as there are no guarantees that Bob was the one who just registered, it could have been Charlie, who is not a senior-level developer. If we only look at the data provided by eID, we will see that it was, with an incredibly high degree of certainty, Charlie. If we had left the computer to automatically assign a role, we would have created an escalation of privileges vulnerability.
+Consider an example. A company is hiring a senior developer Bob. They expect a person to register soon, and they see registration at the time they would expect. What should the computer do? Should it assign the newly registered person the role of a senior? It should not, as there are no guarantees that Bob was the one who just registered - it could have been Charlie, who is not a senior-level developer. If we only look at the data provided by eID, we will see that it was, with an incredibly high degree of certainty, Charlie. If we had left the computer to assign a role automatically, we would have created an escalation of privileges vulnerability.
 
 Alternatively, the company could assign employees to manually input the data, linking the account to a national identification code before they log in. This approach would work, but it would also defeat the whole premise of trying to skip manual verification. In short, manual confirmation is unavoidable when setting up authorization rules.
 
@@ -114,11 +114,11 @@ Instead of looking at electronic authentication, we can look at digital signatur
 
 \begin{enumerate}
     \item Company employee creates a quarantined account for a new employee and gives a personalized registration link.
-    \item The potential client or employee visits the link and receives a file they need to digitally sign. The document's contents are not of concern; they could be a privacy policy, terms of service, or an empty text file.
+    \item The potential client or employee visits the link and receives a file they need to sign digitally. The document's contents are not of concern; they could be a privacy policy, terms of service, or an empty text file.
     \item After the visitor signs the document, they upload it to the website. Employees can then verify that the name and surname in the digital signature match the person they were talking with online.
     \item If the link given out in step one required them to register, this account could be taken out of quarantine, as the identity was verified successfully.
 \end{enumerate}
 
-This flow fully covers the introduction's proposed use case for eIDs. This approach is not only more convenient for the user, it is cheaper for the company too. The only disadvantage is that it does not provide the same high assurance for the subsequent authentications as the use of an eID authentication would. However, companies can tackle this issue by hardening internal operational security policies.
+This flow fully covers the introduction's proposed use case for eIDs. This approach is not only more convenient for the user, but it is also cheaper for the company too. The only disadvantage is that it does not provide the same high assurance for the subsequent authentications as the use of an eID authentication would. However, companies can tackle this issue by hardening internal operational security policies.
 
 Ultimately, if it is still necessary to ensure high certainty over someone's identity after each authentication, the use of eIDs is always available.

@@ -49,7 +49,7 @@ The underlying data transfer protocol used by eeID is almost identical to OpenID
 
 One of the main advantages of using eeID is the simplicity of integrating multiple sources of eID (ID card, Mobile-ID, Smart-ID, and eIDAS) with a single API. To accommodate this, eeID acts as an intermediary service, reading and reprocessing identity data to create a standardized response. With this approach, there are two issues: confidentiality and integrity.
 
-Confidentiality issues occur whenever users do not wish to share their personal information with more parties than absolutely required. For example, if a user wants to authenticate with Smart-ID, only two parties should be involved: the company user is trying to log in to (WorkAuth) and the Smart-ID service provider (SK ID Solutions). With the inclusion of eeID service, another entity is added between them who has full read and write access to the data.
+Confidentiality issues occur whenever users do not wish to share their personal information with more parties than absolutely required. For example, if a user wants to authenticate with Smart-ID, only two parties should be involved: the company user is trying to log in to (WorkAuth) and the Smart-ID service provider (SK ID Solutions). With the inclusion of eeID service, another entity is added between them that has full read and write access to the data.
 
 Integrity issues are caused by having that full access to the identity data. Should the eeID service get compromised, attackers could impersonate anyone in all services relying on eeID.
 
@@ -69,7 +69,7 @@ The eeID service uses a secure communication channel, encrypted end-to-end using
 
 \subsubsection{Requirements for the Identity Provider}
 
-OpenID Connect specifies three different flows - code, implicit, and hybrid \cite{oidc}. In code flow, all sensitive tokens are handled via backchannel - a secure communications channel between the eID solution provider and the relying party where the user client is not involved. The implicit flow is the opposite - a user agent receives the identity token from the eID solution provider and sends it directly to the company's authentication server, which validates the the authenticity of this token. A hybrid flow is a mixture of the two. Security experts consider the code flow to be the safest option of the three \cite{ietf-oauth-security-topics-19}. Coincidentally, it is the only supported flow by TARA and eeID \cite{tara-technical}.
+OpenID Connect specifies three different flows - code, implicit, and hybrid \cite{oidc}. In code flow, all sensitive tokens are handled via backchannel - a secure communications channel between the eID solution provider and the relying party where the user client is not involved. The implicit flow is the opposite - a user agent receives the identity token from the eID solution provider and sends it directly to the company's authentication server, which validates the authenticity of this token. A hybrid flow is a mixture of the two. Security experts consider the code flow to be the safest option of the three \cite{ietf-oauth-security-topics-19}. Coincidentally, it is the only supported flow by TARA and eeID \cite{tara-technical}.
 
 \paragraph{Replay attacks}
 
@@ -174,7 +174,7 @@ In the previous section, we saw the security features of the protocol. The relyi
 
 The relying party should make sure to use the correct OpenID Connect discovery document. For test environment the URL is \url{https://test-auth.eeid.ee/oidc/.well-known/openid-configuration}, and for production - \url{https://auth.eeid.ee/oidc/.well-known/openid-configuration}. A connection with a malicious party could be established when using the incorrect URL.
 
-Developers should make sure these values are not easily editable (such as placed in environment variables) by anyone. Best they should be hardcoded in the application.
+Developers should make sure these values are not easily editable (such as placed in environment variables) by anyone — best, hardcode them in the application.
 
 \subparagraph{Weak TLS configuration}
 
@@ -240,8 +240,8 @@ For the {authorize} endpoint URL generation is best to look at chapter 4.1 of TA
   \item \url{https://auth.eeid.ee/oidc/.well-known/openid-configuration} contains all of the necessary information to realize which endpoints to use and what values are currently accepted.
   \item \url{https://test-auth.eeid.ee/oidc/.well-known/openid-configuration} contains the configuration for the eeID test environment.
   \item {response\_type}: the only flow supported by TARA/eeID is code flow, so this value can only be code.
-  \item {nonce}: although not required, it protects against authorization code injection attacks and should be used whenever possible \cite{ietf-oauth-security-topics-19}. See previous chapter for more details.
-  \item {ui\_locales, acr\_values}: these fields are non-standard, and most if not all libraries will not support them out of the box. For most use cases, these values can be left empty.
+  \item {nonce}: although not required, it protects against authorization code injection attacks and should be used whenever possible \cite{ietf-oauth-security-topics-19}. See the previous chapter for more details.
+  \item {ui\_locales, acr\_values}: these fields are non-standard, and most, if not all, libraries will not support them out of the box. For most use cases, these values can be left empty.
   \item {code\_challenge, code\_verifier}: Proof Key for Code Exchange (PKCE) is not supported, {nonce} should be used in its place.
   \item {response\_mode}: not supported, therefore only response mode of {query} can be used.
   \item {nonce, state}: both nonce and state have the exact behavior (see Discovered Weaknesses section for more information).
@@ -350,7 +350,7 @@ In the security analysis performed last year, a researcher suggested removing th
 
 \subsubsection{Wrong Claims in the OpenID Connect Discovery Endpoint}
 
-The discovery endpoint provides all information about possible requests and responses. The data listed there does not match the documentation. For example, in the discovery endpoint for eeID (\url{https://auth.eeid.ee/oidc/.well-known/openid-configuration}), claims like gender are present, even though this claim can never appear inside of the identity token. On the flip side, the claim profile\_attributes, as described in the documentation, is missing from the discovery document.
+The discovery endpoint provides all information about possible requests and responses. The data listed there does not match the documentation. For example, in the discovery endpoint for eeID (\url{/oidc/.well-known/openid-configuration}), claims like gender are present, even though this claim can never appear inside of the identity token. On the flip side, the claim profile\_attributes, as described in the documentation, is missing from the discovery document.
 
 \begin{figure}
   \centering

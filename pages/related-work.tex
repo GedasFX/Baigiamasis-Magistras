@@ -1,54 +1,14 @@
 \section{Related Work}
 
-% \subsection{National e-ID card schemes: A European overview}
-
-% In 2008, researcher Siddhartha Arora investigated different uses of eID in Europe \cite{ARORA200846}.
-
-% The technical report was published when the eID technology was still in its infancy, and the concept of eID was tied to it being linked to a physical ID card.
-
-% Paper references that eID cards offer three forms of information security functionality, each with an increasing level of security provisions: identification, authentication, and signature (see table \ref{tab:formsofinfosecurity}). In this table, A is prover and B is verifier.
-
-% \begin{table}[h]
-%     \begin{center}
-%         \caption{Forms of information security functionality provided by eID \cite{ARORA200846, fiat1986prove}}
-%         \label{tab:formsofinfosecurity}
-%         \begin{tabular}{p{0.25\linewidth} | p{0.6\linewidth}}
-%             Identification (I) & A can prove to B that he is A, but someone else can not prove to B that he is A. \\
-%             Authentication (A) & A can prove to B that he is A, but B can not prove to someone else that he is A. \\
-%             Signature (S)      & A can prove to B that he is A, but B can not prove to himself that he is A.
-%         \end{tabular}
-%     \end{center}
-% \end{table}
-
-% The idea of splitting functionality into identification, authentication, and signature can be traced to today's Estonian \cite{ee-id-tech}, and Lithuanian \cite{lt-id-howtouse} ID cards. In these cards, there are two certificates — one for client authentication and the second for digital signature.
-
-% These authentication and identification certificates are not encrypted, and can anyone with the correct tools can read them from the ID card. Signed documents also have a copy of the certificate attached. These certificates identify a person, but due to ease of replication, the recipient should not trust the sender's certificate because there are no guarantees that the certificate belongs to the sender.
-
-% The authentication and signing certificates require their respective keys to perform asymmetric cryptographic operations. In theory, it is possible to sign documents with the authentication certificate; however, the verification software will reject such signatures because the certificate's purposes would not include a digital signature.
-
-% Another topic the paper touches on is the possibility of having multiple eID schemes. The author spotlights Austria as they want to have various sources of eID, not limit themselves only to one card. Having multiple authentication methods was a novel concept at the time. Many countries followed suit, and in Estonia, there are three primary sources of eID. In France, a source of eID doesn't even come from an ID card \cite{eidas-notify-france}.
-
-% The paper's conclusion emphasizes the importance of the eID itself, not ID cards. The EU took this path when implementing the legislation for eIDAS, which allowed easier integration of infrastructure member states already had in place.
-
 \subsection{The Austrian eID ecosystem in the public cloud: How to obtain privacy while preserving practicality}
 
-This paper explores what information the Austrian government stores on the issued identity documents and what operations the documents can perform \cite{ZWATTENDORFER201635}. Researchers identified four types of functionality: identification and authentication of Austrian citizens, qualified electronic signature creation, encryption and decryption, data storage. This functionality seems widely adopted as it matches Estonia's ID card.
+This paper explores what information the Austrian government stores on the issued identity documents and what operations the documents can perform \cite{ZWATTENDORFER201635}. Researchers identified four types of functionality: identification and authentication of Austrian citizens, qualified electronic signature creation, encryption and decryption, and data storage. This functionality seems widely adopted as it matches Estonia's ID card.
 
 Paper presented an interesting legal issue - Austria does not allow a person identifying code (CRR number) to be "used directly in e-Government applications due to legal data protection restrictions." The solution required Austria to create SourcePIN, a framework to develop different personal identifying numbers for each service trying to access it while hiding the original code \cite{ZWATTENDORFER201635,austria-eid-presentation}.
 
 Authors express a big concern that everything goes through one single source of trust, which does not scale well. If many people wanted to use the system, it would quickly become a bottleneck. Moving many essential components to the public cloud can alleviate the problem.
 
 The paper's main contribution to this thesis is to remind us that even though technological barriers are crumbling, there might still be legal obstacles to overcome. Austria is currently not part of the eIDAS node network, and it would be an excellent further research topic to investigate how Austria's eIDAS node operates.
-
-% \subsection{Secure cross-cloud single sign-on (SSO) using eIDs}
-
-% Researchers explore the possibility of users using an SSO system to log in via their eID instead of the traditional username/password authentication method \cite{secure-signon}. As means of doing so, they explore the capabilities of the STORK framework and other frameworks seen in previously mentioned related literature. The STORK framework is the predecessor to eIDAS \cite{stork}.
-
-% The idea of the STORK framework is that any EU citizen should be able to use their eID issued by their home country to authenticate with services in other countries. An example of an activity would be opening a bank with an Italian ID card. The paper suggests extending the framework to support federation so private business identity providers can use the security options provided by eIDs and not store weak passwords.
-
-% The paper shows a proof of concept prototype usage for bringing STORK to support SSO. Emphasis was given on the backward compatibility, not to require any breaking changes to an existing STORK protocol.
-
-% Researchers found that one SAML protocol, however similar they may be, is not compatible with one another. The consumer company wishing to implement the proposed protocol must develop an adapter application to integrate different identity providers, such as STORK, Facebook, and Google. Before a protocol sees widespread mainstream adoption, facades will be required.
 
 \subsection{LEPS - Leveraging eID in the private sector}
 
@@ -61,7 +21,7 @@ The market analysis targeted four main categories of e-service providers who wou
     \item Organizations that need or want to migrate from the existing identity and access management (IAM) solution. This could apply to organizations that have scaled out their internal or tailor-made IAM solutions or organizations that already use partially external or third-party e-identification or authentication services but are looking for a higher level of assurance (LoA).
     \item Organizations that use low assurance third-party eID providers such as a social login want to elevate the overall level of security and decrease identity theft and fraud by integrating eIDAS eID services.
     \item Organizations that are already acting or could be acting as eID brokers.
-    \item Organizations that want to open new service delivery channels through mobile phone and are interested in mobile ID solutions that work across borders.
+    \item Organizations that want to open new service delivery channels through mobile phones and are interested in mobile ID solutions that work across borders.
 \end{enumerate}
 
 In the case of the thesis, the targeted e-service providers are of the first category - organizations wishing to improve IAM solutions to include a higher level of assurance.
@@ -82,9 +42,9 @@ An emphasis is put on the importance of mixing and matching these authentication
 
 \subsubsection{Authentication Paradigms and Models}
 
-The second helpful point of the paper is the description of different identity management paradigms and models \cite{identity-paradigms}. Paradigms refer to the implementation and deployment, whereas models refer to the data storage and roles.
+The second helpful point of the paper is the description of different identity management paradigms, and models \cite{identity-paradigms}. Paradigms refer to the implementation and deployment, whereas models refer to the data storage and roles.
 
-The three main paradigms as network, service, or user-centric. The network-centric approach gathers all identities into one place, usually known as a "Domain Controller." The service-centric method would create a new identity for each service, leading to high duplication. The user-centric paradigm makes the user prove their own identity. Europe's eID solution does not favor any of the paradigms allowing identity providers to innovate \cite{eelaw-idcard,eeid,dokobit}.
+The three main paradigms as network, service, and user-centric. The network-centric approach gathers all identities into one place, usually known as a "Domain Controller." The service-centric method would create a new identity for each service, leading to high duplication. The user-centric paradigm makes the user prove their own identity. Europe's eID solution does not favor any of the paradigms allowing identity providers to innovate \cite{eelaw-idcard,eeid,dokobit}.
 
 There are also three authentication models: isolated, centralized, and federated. Unlike paradigms, where any of them is fair game, Europe's identity providers can use only the federated one. The isolated model requires all services to hold a copy of every identity in the EU. The centralized model is suitable for having a central place for looking up identity in a country, and it is an excellent solution for high-profile agencies. The federated system can scale well horizontally (adding more servers would increase the network capacity) and not require keeping an index of all citizens it would like to serve, which is a tremendous advantage when considering the GDPR requirements.
 

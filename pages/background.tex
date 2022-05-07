@@ -1,14 +1,14 @@
 \section{Background}
 
-In this section we will cover the background knowledge required to understand and reproduce the results of the thesis.
+In this section, we will cover the background knowledge required to understand and reproduce the results of the thesis.
 
 \subsection{Electronic Identity (eID)}
 
 In Estonia, digital identity has been around for over 20 years \cite{eelaw-idcard}. The Estonian government issues ID cards preloaded with certificates that enable cardholders to identify themselves digitally. Estonia's early adoption of eID, the political focus on digital government, has led to over 89\% of internet users accessing the e-government, making it the leading country in the EU \cite{eu-desi}. This adoption rate is in stark contrast to another EU country - Romania, where the first easy access to eIDs came in the form of new chip ID cards in August of 2021 \cite{romania-adopts-eid}. In that country, only 16\% of internet users access government services online. The adoption of eIDs in other countries lands somewhere between these two extremes.
 
-If a company wishes to implement eID authentication in a given country, it must realize the differences between the adoption rates. For some countries' citizens, the button "log-in with eID" will instinctively make them draw their smart card or other eID capable device, whereas, for others, it would confuse and repulse them. The eID authentication method may attract or repel potential clients depending on the country, and early adopters should be aware of this adoption gap.
+If a company wishes to implement eID authentication in a given country, it must realize the differences between the adoption rates. For some countries' citizens, the button "log-in with eID" will instinctively make them draw their smart card or other eID-capable devices, whereas, for others, it would confuse and repulse them. The eID authentication method may attract or repel potential clients depending on the country, and early adopters should be aware of this adoption gap.
 
-To better illustrate the differences, we will look at two countries with very similar eID schemes: Estonia and Lithuania.
+To better illustrate the differences, we will look at two countries with similar eID schemes: Estonia and Lithuania.
 
 \paragraph{eID adoption in Estonia and Lithuania}
 
@@ -52,7 +52,7 @@ Researchers found that the bank link protocol, while applicable, was in some cas
 
 \subsubsection{Smart Card (ID Card)}
 
-ID cards are one of the most common ways for citizens to access their eID in Estonia, primarily due to the legal requirement of owning an identity document. The Identity Documents Act \cite{eelaw-idcard} states that all EU, not only Estonian, citizens residing in Estonia must hold an ID card, with which they can access public services online. Interestingly, this requirement caused the government to issue more ID cards than people are living in Estonia \cite{ria-idee,statee-population}. Smart card functionality touches not only ID cards but residence permits and other government-issued cards as well \cite{eulaw-eidas-notified}.
+ID cards are one of the most common ways for citizens to access their eID in Estonia, primarily due to the legal requirement of owning an identity document. The Identity Documents Act \cite{eelaw-idcard} states that all EU, not only Estonian, citizens residing in Estonia must hold an ID card, with which they can access public services online. Interestingly, this requirement caused the government to issue more ID cards than people living in Estonia \cite{ria-idee,statee-population}. Smart card functionality touches not only ID cards but residence permits and other government-issued cards as well \cite{eulaw-eidas-notified}.
 
 There are no variable costs to allow a person to log in to websites with their smart card. For this authentication method, no per-transaction fees exist, as the certificate validity service (OCSP) \cite{rfc6960} can be queried for free.
 
@@ -116,28 +116,7 @@ Dokobit supports 11 countries: Estonia, Italy, Spain, Belgium, Latvia, Lithuania
 
 The company UAB Dokobit has been given certification for being a trust service provider for Qualified validation of qualified e-signature. It means the service itself does not provide Digital Signature certificates but was properly audited under eIDAS for trustworthy verification of signatures \cite{eu-trustservices}.
 
-% \subsection{Difference between Authentication and Digital Signature}
-
-% The requirements for Estonian ID cards make a clear distinction between "ADF AWP" and "ADF QSCD" applications \cite{ee-id-tech}. Both of these applications are intended to perform cryptographic operations. However, the purposes of each application are different. The AWP module handles authentication, encryption, and other processes, whereas the QSCD is used exclusively for signing documents. This separation means at least some level of distinction between authentication and signing.
-
-% Under eIDAS there are a lot stricter requirements 
-
-% The fact that smart cards do not use a QSCD for authentication does not mean that the certificate used was not audited under eIDAS. In practice, the same QTSP CA can and likely will issue both the authentication and the QSCD certificates (see figure \ref{fig:est-id-sameissuer}). "Since the authentication certificate is issued under the same CA and the same Terms and Conditions, the certificate policy documents and other CA statements are applicable to both certificates" \cite{arnis-phd}. While eIDAS does not outline any requirements for authentication modules in the QSCDs, we will assume that the QTSP took the exact organizational and technical measures to protect the authentication key on the same physical device.
-
-% \begin{figure}
-%     \centering
-%     \includegraphics[scale=0.69]{est_id_sameissuer}
-%     \caption{Comparison of authentication (left) and signing (right) certificate issuer field}
-%     \label{fig:est-id-sameissuer}
-% \end{figure}
-
-% For different eID authentication schemes, companies have to assess the scheme's security on a case-by-case basis. For all of the methods analyzed in the thesis (Lithuanian and Estonian ID cards, Mobile-ID, and Smart-ID), the same QTSP signed both certificates - for authentication and signing. There seems to be no discernable benefit to issuing an authentication certificate with a different CA, so if a device offers both authentication and qualified signature creation functionality, it is highly likely that the authentication certificate is as trustworthy as the eIDAS compliant QSCD.
-
-% \paragraph{Special case: third-party providers}
-
-% When using an intermediary such as TARA (eeID) or Dokobit, the new eID provider acts as a new trust anchor. All rigorous eIDAS and QTSP auditing become irrelevant when using intermediary services, as systems are as secure as their weakest links. Companies must first look at the security auditing and the certifications of the intermediary; only then consider the security of authentication options the intermediary service uses.
-
-\subsection{Confidence for Identity Authenticity}
+\subsection{Confidence over Authenticity of Identity}
 
 The eIDAS regulation uses three assurance levels: low, substantial, and high. These levels refer to the degree of confidence about the claimed or asserted identity of a person \cite{eulaw-eidas}. These assurance levels map to levels 2-4 of ISO 29115 \cite{iso29115}. The supported schemes we will analyze in the thesis will all have a rating of at least substantial, making them provide a high degree of confidence over someone's identity.
 

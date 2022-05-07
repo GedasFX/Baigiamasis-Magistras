@@ -95,7 +95,7 @@ For each protocol implementation step, developers will have to fulfill certain v
 
 \subsubsection{Preparation}
 
-Building the challenge nonce. The goal of these steps is to create the challenge the user will have to sign with their private key. There are a couple of requirements the relying party must fulfil:
+Building the challenge nonce. The goal of these steps is to create the challenge the user will have to sign with their private key. There are a couple of requirements the relying party must satisfy:
 \begin{enumerate}
   \item Generated challenge nonce must be between 32 and 96 bytes (inclusive) in length \cite{ria-webeid-source-web-eid-app-authenticate};
   \item It must be guaranteed that the authentication token is received from the same browser to which the corresponding challenge nonce was issued \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}. The eID solution creators suggest attaching it to the user session.
