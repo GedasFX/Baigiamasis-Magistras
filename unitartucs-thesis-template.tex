@@ -314,55 +314,43 @@
       \vspace*{1ex}
     }}%\newcommand\EngInfo
 
-
 %=== Info in Estonian
-% \newcommand\EstInfo{{%
-% \selectlanguage{estonian}
-% \noindent\textbf{\large Tüübituletus neljandat järku loogikavalemitele}
-% \vspace*{1ex}
+\newcommand\EstInfo{{%
+      \selectlanguage{estonian}
+      \noindent\textbf{\large Erinevate Eesti erasektoris kasutatavate eID autentimislahenduste integratsioonianalüüs}
+      \vspace*{3ex}
 
-% \noindent\textbf{Lühikokkuvõte:} 
+      \noindent\textbf{Lühikokkuvõte:}
 
-% %\noindent ...
+      \noindent
+      Eestis saavad kodanikud veebiteenustesse sisse logida eID autentimisskeemide nagu Smart-ID, Mobiil-ID ja kiipkaartide kaudu. Valdav enamus neist autentimistest läheb pankadesse ja e-riigi teenustesse.
+      Kui mõni muu erasektori ettevõte sooviks eID autentimist integreerida, siis puutuks kokku sellega, et autentimise pakkujate kohta on teavet napilt ja laiali. Puuduvad arusaadavad materjalid, mis loetleksid ja võrdleksid erinevaid hetkel saadaolevaid eID skeeme.
+      Lõputöö eesmärk on täita see lünk, loetledes saadaolevad eID lahendused ning pakkudes veebi eID, eeID ja Dokobiti turva- ja integratsioonianalüüsi.
 
-% \TODO{One or two sentences providing a basic introduction to the field, comprehensible to a scientist in
-% any discipline.}
-% \TODO{Two to three sentences of
-% more detailed background, comprehensible to scientists in related disciplines.}
-% \TODO{One sentence clearly stating the general problem being addressed by this particular
-% study.}
-% \TODO{One sentence summarising the main result (with the words "here we show" or their equivalent).}
-% \TODO{Two or three sentences explaining what
-% the main result reveals in direct
-% comparison to what was thought to be the case previously, or how the main result adds to previous knowledge.}
-% \TODO{One or two sentences to put the results into a more general context.}
-% \TODO{Two or three sentences to provide a
-% broader perspective, readily
-% comprehensible to a scientist in any
-% discipline, may be included in the first paragraph
-% if the editor considers that the accessibility of
-% the paper is significantly enhanced by their inclusion.}
+      \noindent
+      Lõputöö peamised järeldused näitavad, et eID autentimist toetav tehnoloogia on olemas ja enamik ettevõtteid otsustab eID autentimist mitte kasutada, kuna sellise süsteemi kasutamisest saadav kasu ei kaalu üles integreerimisega kaasnevaid kulusid.
+      Lisaks avastas see lõputöö mõningates eID-lahendustes, mida varem peeti turvaliseks ja turvaliseks, olulisi turvanõrkusi.
 
-% \vspace*{1ex}
+      \noindent
+      Lõputöö tulemused tuletavad meelde, et ei tohiks eeldada, et toode on turvaline ainult seetõttu, et see on spetsialiseerunud turvalisusele.
 
-% \noindent\textbf{Võtmesõnad:}\\
-% \TODO{List of keywords}
-% %Layout, formatting, template
+      \vspace*{1ex}
 
-% \vspace*{1ex}
+      \noindent\textbf{Võtmesõnad:}\\
+      eID, autentimine, eIDAS, eeID, Dokobit, Web eID, Eesti, EL, erasektor
 
-% \noindent\textbf{CERCS:}\TODO{CERCS kood ja nimetus:~\url{https://www.etis.ee/Portal/Classifiers/Details/d3717f7b-bec8-4cd9-8ea4-c89cd56ca46e}}
+      \vspace*{1ex}
 
-% \vspace*{1ex}
-% }}%\newcommand\EstInfo
+      \noindent\textbf{CERCS:} Arvutiteadus, arvutusmeetodid, süsteemid, juhtimine (automaatjuhtimisteooria)
+
+      \vspace*{1ex}
+    }}%\newcommand\EstInfo
 
 
 %=== Determine the order of languages on Info page
-\iflanguage{english}{\EngInfo}{\EstInfo}
-% \iflanguage{estonian}{\EngInfo}{\EstInfo}
+\iflanguage{english}{\EngInfo}{\EstInfo}\newpage
+\iflanguage{estonian}{\EngInfo}{\EstInfo}\newpage
 
-
-\newpage
 \tableofcontents
 
 
