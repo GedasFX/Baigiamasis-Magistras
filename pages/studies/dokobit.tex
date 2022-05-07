@@ -158,7 +158,7 @@ Of the three case studies analyzed in the thesis, Dokobit Identity Gateway was t
 
 The Dokobit identity gateway uses a secure communication channel, encrypted end-to-end using HTTPS. When the system is integrated correctly, malicious clients (or user agents) have no possible way of influencing any of the authentication parameters without triggering alarms when validating the request.
 
-\subsubsection{Protocol's built-in security features}
+\subsubsection{Requirements for the Identity Provider}
 
 \paragraph{Replay attacks}
 
@@ -238,7 +238,7 @@ Mitigation measures are sufficient on almost all browsers released in the last t
   \label{fig:dokobit-responseheaders}
 \end{figure}
 
-\subsubsection{Validation requirements for the relying party}
+\subsubsection{Requirements for the Relying Party}
 
 In the previous section, we saw the security features of the protocol. The relying party should implement validation and reject requests for some features if those validations do not match. This section will contain all of the features the RP needs to address.
 
@@ -371,9 +371,9 @@ After the user authenticates and returns, the next code block gets executed (lis
 
 After completing these steps, the final code will be resilient to CSRF and session token injection attacks.
 
-\subsection{Discovered weaknesses}
+\subsection{Discovered Weaknesses}
 
-\subsubsection{API key transferred via query parameters}
+\subsubsection{API Key Transferred via Query Parameters}
 
 Dokobit Identity Gateway requires {relying parties} to send access tokens (API keys) via query parameters. When looking at the OAuth2.0 security best practices document \cite{ietf-oauth-security-topics-19}, under section 4.3.2, we can see that it may lead to Credential Leakage via Browser History.
 
@@ -397,12 +397,12 @@ The impact of this attack appears to be insignificant, as it would only allow us
   \item Mar 13, 2022: Dokobit CIRT acknowledged the issue but decided against taking any action.
 \end{itemize}
 
-\subsubsection{CSRF on the authorize endpoint}
+\subsubsection{CSRF on the Authorize Endpoint}
 
 When performing a session token injection attack, relying parties can successfully protect themselves by binding the Dokobit's session token to the user agent session. Unfortunately, this does not prevent attackers from injecting their session tokens into victims' computers.
 
 From the attacker's point of view, they can exploit this vulnerability by performing these steps \cite{video-exploitdokobit}:
-
+P
 \begin{enumerate}
   \item Establish session with identity server and Dokobit;
   \item Trick the user into opening the link issued by Dokobit (phishing works);

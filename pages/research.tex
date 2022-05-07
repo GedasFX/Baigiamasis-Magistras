@@ -1,14 +1,14 @@
 \section{Architecture Definition}
 
-In this section we will outline the initial state of the system, before the introduction of any eID solutions. This sets a baseline to accurately test and validate the findings of the research.
+This section will outline the system's initial state before introducing any eID solution. This outline will set a baseline to test accurately and validate the research findings.
 
-For better clarity with terminology, the company wishing to integrate eID authentication is a physical exercise data tracking enterprise, \textbf{WorkAuth}. They are the relying party with respect to the eID solution providers.
+For better clarity with terminology, the company wishing to integrate eID authentication is a physical exercise data tracking enterprise, \textbf{WorkAuth}. They are the relying party with respect to the eID solution providers. For a list of other abbreviations, see \hyperref[appendix:glossary]{Appendix I}
 
-\subsection{System architecture}
+\subsection{System Architecture}
 
-This section will focus on the technological architecture surrounding the integration; we will explain the business requirements for the system to better illustrate the intended use case.
+This section will focus on the technological architecture surrounding the integration; we will explain the business requirements for the system to illustrate the intended use case.
 
-\subsubsection{System overview}
+\subsubsection{System Overview}
 
 \begin{figure}
   \centering
@@ -23,9 +23,9 @@ Figure \ref{fig:sys-highlevel} shows us a high-level overview of a system where 
 
 \begin{enumerate}
   \item AuthServer. The company's authentication server. Acts as a central authority for identity. This server issues OIDC id tokens containing user ID numbers, roles, and claims. It is the primary access control mechanism in the company.
-  \item SuperApp. A resource server with access control enabled. It uses OIDC id tokens issued by AuthServer and verifies them using public key cryptography. It contains the data the company is trying to protect with stricter access control.
+  \item SuperApp. A resource server with access control enabled. It uses OIDC id tokens issued by AuthServer and verifies them using public-key cryptography. It contains the data the company is trying to protect with stricter access control.
   \item User store. A data store containing user log-in information - usernames, password hashes, other Personally Identifiable Information (PII).
-  \item Actor. A person accessing the resources in the system. Typically can be anyone, including computers; however, in our thesis's scope, only natural persons holding an eID will be considered.
+  \item Actor. A person accessing the resources in the system. Typically can be anyone, including computers; however, only natural persons holding an eID will be considered in our thesis's scope.
 \end{enumerate}
 
 \paragraph{Desired state}
@@ -61,13 +61,15 @@ The end goal for the scope of this thesis is to implement three eID providers in
   \label{fig:sys-highlevel-final}
 \end{figure}
 
-\subsubsection{Process overview}
+The link to the repository containing the source code of the final system can be found in \hyperref[appendix:source]{Appendix III}.
+
+\subsubsection{Process Overview}
 
 The desired system must satisfy two business use cases.
 
 The first o (see Figure \ref{fig:sysprocess-a}) is concerned about accessing a protected resource with a token issued by the AuthServer. This use case is part of the base state of the system and validates that the baseline implementation is correct.
 
-The second use case (see figure \ref{fig:sysprocess-b}) is also concerned about accessing a protected resource, but to limit access to only those, who authenticate with a higher level of assurance, like an eID solution. This process validates the successful implementation of eID authentication and access control.
+The second use case (see figure \ref{fig:sysprocess-b}) is also concerned with accessing a protected resource. This time it is intended to limit access to only those who authenticate with a higher level of assurance, like an eID solution. This process validates the successful implementation of eID authentication and access control.
 
 \begin{figure}
   \centering
@@ -103,7 +105,7 @@ The second use case (see figure \ref{fig:sysprocess-b}) is also concerned about 
   \label{fig:sysprocess-b}
 \end{figure}
 
-\subsubsection{Linking eID to an internal user ID}
+\subsubsection{Linking eID to Internal User Accounts}
 
 There will be a need to uniquely link an identity to an internal account in the company SSO server. The security requirement, in this case, is not to allow other users to access the same account. For this goal, companies must use one or more person-identifying properties.
 
@@ -136,9 +138,9 @@ A privacy policy is a legal document and is outside of the scope of a technical 
 
 From the cursory analysis of the two policies, there are three fundamental aspects any company needs to address: what data is processed, with whom the company shares the data, and what is the retention policy. An actual privacy policy varies drastically from case to case.
 
-Based on the privacy policies of Web eID and Dokobit, we constructed a rudimentary privacy policy for the use of the test application environment. The thesis appendix \hyperref[appendix:privacy]{II} contains a copy of the text.
+Based on the privacy policies of Web eID and Dokobit, we constructed a rudimentary privacy policy for the use of the test application environment. The thesis \hyperref[appendix:privacy]{Appendix IV} contains a copy of the final text.
 
-\subsection{Weaknesses in the architecture}
+\subsection{Weaknesses in the Architecture}
 
 When analyzing the weaknesses of WorkAuth's internal systems, it is good to understand their cause. Some vulnerabilities can appear due to existing issues, faulty implementation, or deeply rooted issues in the architecture itself. In this chapter, we will address these categories.
 
@@ -203,7 +205,7 @@ With this requirement in place, registration with an email and password becomes 
 
 In short, if a person logs in with a low level of assurance, they should not be able to add a higher level of assurance authentication scheme to the same account as that would artificially elevate their account trust.
 
-\subsubsection{Data stores}
+\subsubsection{Data Stores}
 
 All three data stores have the exact issues between them. For the sake of brevity, we will group them under the umbrella of \textit{data store}.
 

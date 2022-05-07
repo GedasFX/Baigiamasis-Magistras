@@ -67,7 +67,7 @@ The TARA/eeID documentation has an in-depth integration guide and the validation
 
 The eeID service uses a secure communication channel, encrypted end-to-end using HTTPS. When the system is integrated correctly, malicious clients (or user agents) have no possible way of influencing any of the authentication parameters without causing any validation failures later on.
 
-\subsubsection{Protocol's built-in security features}
+\subsubsection{Requirements for the Identity Provider}
 
 OpenID Connect specifies three different flows - code, implicit, and hybrid \cite{oidc}. In code flow, all sensitive tokens are handled via backchannel - a secure communications channel between the eID solution provider and the relying party where the user client is not involved. The implicit flow is the opposite - a user agent receives the identity token from the eID solution provider and sends it directly to the company's authentication server, which validates the the authenticity of this token. A hybrid flow is a mixture of the two. Security experts consider the code flow to be the safest option of the three \cite{ietf-oauth-security-topics-19}. Coincidentally, it is the only supported flow by TARA and eeID \cite{tara-technical}.
 
@@ -164,7 +164,7 @@ Mitigation measures are sufficient on almost all browsers released in the last t
   \label{fig:eeid-responseheaders}
 \end{figure}
 
-\subsubsection{Validation requirements for the relying party}
+\subsubsection{Requirements for the Relying Party}
 
 In the previous section, we saw the security features of the protocol. The relying party should implement validation and reject requests for some of the features if those validations do not match. This section will contain all of the features the RP needs to address.
 
@@ -303,15 +303,13 @@ In the unlikely event the token endpoint request failed, it could mean a sophist
 
 If the token endpoint returns the identity token successfully, the user should validate its authenticity. If the nonce parameter was used in the first request, the server should verify that nonce in the user agent session matches the one in the id\_token. The rest of the verification should be done as described in the TARA documentation \cite{tara-technical}.
 
-\TODO{I have no clue about the benefit of performing additional verification. The token was received within a secure backchannel, and the nonce matches, meaning the user created the request. If the server makes the user agent session in a way so that no one other than the server itself can tamper, why bother verifying the rest?}
-
 \subparagraph{Issue access token}
 
 After the server verifies the identity token, issue a new access token with the necessary information from the identity token. The most common solution would be to create a new cookie and attach it to the response.
 
 \subsection{Discovered Weaknesses}
 
-\subsubsection{Incorrect implementation of at\_hash}
+\subsubsection{Incorrect Implementation of at\_hash}
 
 In the TARA Technical Specification \cite{tara-technical}, the identity token has at\_hash value that is not according to the OIDC spec \cite{oidc}.
 
@@ -338,7 +336,7 @@ The implication of this discovery means that all working clients who use eeID ha
 
 The reason for the incorrect implementation stems from backward compatibility \cite{tara-non-oidc-compliant}.
 
-\subsubsection{Confusing state and nonce behavior}
+\subsubsection{Confusing state and nonce Behavior}
 
 OpenID Connect specification does not mention that state should be transferred over to the id\_token. TARA confused the purposes of state and nonce properties, extended the behavior to cover each other, and, by extension, made one of the properties obsolete.
 
@@ -350,7 +348,9 @@ If we look at the data flow diagram (see figure \ref{fig:oidc-code-flow-wrong}),
 
 In the security analysis performed last year, a researcher suggested removing the nonce parameter from the protocol \cite{tara-security-arnis}. We disagree with this approach and would suggest removing the state parameter from the id\_token response. Removing the nonce parameter and having no support for PKCE would break OIDC compliant libraries' ability to mitigate authorization code injection attacks.
 
-\subsubsection{Wrong claims in the OpenID Connect discovery endpoint} The discovery endpoint provides all information about possible requests and responses. The data listed there does not match the documentation. For example, in the discovery endpoint for eeID (\url{https://auth.eeid.ee/oidc/.well-known/openid-configuration}), claims like gender are present, even though this claim can never appear inside of the identity token. On the flip side, the claim profile\_attributes, as described in the documentation, is missing from the discovery document.
+\subsubsection{Wrong Claims in the OpenID Connect Discovery Endpoint}
+
+The discovery endpoint provides all information about possible requests and responses. The data listed there does not match the documentation. For example, in the discovery endpoint for eeID (\url{https://auth.eeid.ee/oidc/.well-known/openid-configuration}), claims like gender are present, even though this claim can never appear inside of the identity token. On the flip side, the claim profile\_attributes, as described in the documentation, is missing from the discovery document.
 
 \begin{figure}
   \centering

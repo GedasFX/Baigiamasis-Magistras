@@ -37,13 +37,13 @@ The data flow used by Web eID is fundamentally different from the used by the ot
 
 The Web eID framework is the only one covered by this thesis that uses an insecure communication channel. The reason why is it not secure is because the user or user agent can freely modify the identity data they send to the relying party. Developers must take caution and verify received data when integrating this eID solution. This channel is highly susceptible to man-in-the-middle, forgery, or other attacks done by a malicious end user.
 
-\subsubsection{Requirements for the identity provider}
+\subsubsection{Requirements for the Identity Provider}
 
 In Web eID's case, the identity provider is the Javascript library and the software used to bridge the connection between the library and the smart cards. Because the library can and should be embedded into the log-in page, the user is not required to leave the company's website.
 
 Additionally, because the identity provider is on the same website as the relying party, it does not make sense to discuss the requirements separately, as was the case for eeID and Dokobit. For this reason, we will cover all common protocol attacks in the next section.
 
-\subsubsection{Requirements for the relying party}
+\subsubsection{Requirements for the Relying Party}
 
 Web eID does not have a hosted website to verify security of. Instead, we will check if the integration documentation covers all common attacks.
 
@@ -202,7 +202,7 @@ public async Task<IActionResult> Login([FromBody] WebIdAuthTokenResponse token)
 }
 \end{lstlisting}
 
-\subsubsection{Certificate and nonce verification}
+\subsubsection{Certificate and Challenge Verification}
 
 This step is the most complicated in the entire validation process. To prevent any issues with incorrect implementation, the framework maintainers recommend using their library for validation \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}. Libraries can come with security vulnerabilities, and developers are reluctant to update their used version; however, it is still more favorable than to create vulnerabilities from misconfiguration \cite{9240619}.
 

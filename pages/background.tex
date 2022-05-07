@@ -1,6 +1,8 @@
 \section{Background}
 
-\subsection{Electronic identity (eID)}
+In this section we will cover the background knowledge required to understand and reproduce the results of the thesis.
+
+\subsection{Electronic Identity (eID)}
 
 In Estonia, digital identity has been around for over 20 years \cite{eelaw-idcard}. The Estonian government issues ID cards preloaded with certificates that enable cardholders to identify themselves digitally. Estonia's early adoption of eID, the political focus on digital government, has led to over 89\% of internet users accessing the e-government, making it the leading country in the EU \cite{eu-desi}. This adoption rate is in stark contrast to another EU country - Romania, where the first easy access to eIDs came in the form of new chip ID cards in August of 2021 \cite{romania-adopts-eid}. In that country, only 16\% of internet users access government services online. The adoption of eIDs in other countries lands somewhere between these two extremes.
 
@@ -14,7 +16,7 @@ On the surface, Estonia and Lithuania have the exact eID solutions: Bank Link, I
 
 Consider Lithuania. It is possible to connect from a centralized website (\url{https://epaslaugos.lt}) to access the country's public services \cite{eidasnode-lt}. Here it is possible to authenticate via bank link, ID card, and Mobile-ID. Smart-ID is not an option. The omission of Smart-ID is strange, as most banks support authentication via the three major eID providers, which include Smart-ID.
 
-Some banks, like PaySera, are listed on the public sector gateway portal and raise significant security concerns. With that bank, it is possible to access the e-government services with only email, password, and a 2FA code sent to the registered person's phone number \todo{source: I did it myself 02-27, have video recorded, will have to blur}. For similar security concerns, Estonia's Information System Authority has taken steps to deprecate bank link \cite{ria-deprecates-bank-link} from use in TARA, a service that all primary public services rely on.
+Some banks, like PaySera, are listed on the public sector gateway portal and raise significant security concerns. With that bank, it is possible to access the e-government services with only email, password, and a 2FA code sent to the registered person's phone number \cite{video-paysera}. For similar security concerns, Estonia's Information System Authority has taken steps to deprecate bank link \cite{ria-deprecates-bank-link} from use in TARA, a service that all primary public services rely on.
 
 In Estonia, all three major authentication options, ID card, Mobile-ID, and Smart-ID, can be used to access the e-government.
 
@@ -42,13 +44,13 @@ Applied Cyber Security Group of the University of Tartu maintains a list of e-se
 
 While the list does not count Dokobit and eeID as primary eID providers, they list them as consumers of at least one of the aforementioned schemes. These services act as intermediaries, where users could indirectly authenticate with eID schemes.
 
-\subsubsection{Bank link}
+\subsubsection{Bank Link}
 
 Banks have initially created this authentication method to provide close integration with e-commerce providers to receive risk-free payments \cite{kerem2003internet}. Over time it saw an additional use case - a secure and trustworthy authentication method for the public and private services \cite{sebbanklink}.
 
 Researchers found that the bank link protocol, while applicable, was in some cases "extremely insecure" \cite{banklinksecurityanalysis}. From March of 2021, RIA has disabled the use of {bank link} to access public services \cite{ria-deprecates-bank-link}, which accounted for only 1 percent of all authentications, revealing its overall popularity.
 
-\subsubsection{Smart card (ID card)}
+\subsubsection{Smart Card (ID Card)}
 
 ID cards are one of the most common ways for citizens to access their eID in Estonia, primarily due to the legal requirement of owning an identity document. The Identity Documents Act \cite{eelaw-idcard} states that all EU, not only Estonian, citizens residing in Estonia must hold an ID card, with which they can access public services online. Interestingly, this requirement caused the government to issue more ID cards than people are living in Estonia \cite{ria-idee,statee-population}. Smart card functionality touches not only ID cards but residence permits and other government-issued cards as well \cite{eulaw-eidas-notified}.
 
@@ -135,7 +137,7 @@ The company UAB Dokobit has been given certification for being a trust service p
 
 % When using an intermediary such as TARA (eeID) or Dokobit, the new eID provider acts as a new trust anchor. All rigorous eIDAS and QTSP auditing become irrelevant when using intermediary services, as systems are as secure as their weakest links. Companies must first look at the security auditing and the certifications of the intermediary; only then consider the security of authentication options the intermediary service uses.
 
-\subsection{Confidence over someone's identity}
+\subsection{Confidence for Identity Authenticity}
 
 The eIDAS regulation uses three assurance levels: low, substantial, and high. These levels refer to the degree of confidence about the claimed or asserted identity of a person \cite{eulaw-eidas}. These assurance levels map to levels 2-4 of ISO 29115 \cite{iso29115}. The supported schemes we will analyze in the thesis will all have a rating of at least substantial, making them provide a high degree of confidence over someone's identity.
 
