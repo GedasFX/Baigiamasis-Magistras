@@ -12,7 +12,7 @@ At the time of writing, TARA does not support the eID schemes of the last three 
 
 \subsection{Authentication Protocol}
 
-The underlying data transfer protocol used by eeID is almost identical to OpenID Connect code flow \cite{tara-technical, oidc}. One irregularity exists between the OIDC spec and eeID, which makes the whole flow non-compliant to the spec \cite{tara-non-oidc-compliant}, which we will get back to in a later chapter. Otherwise, the flow is identical. A high-level overview of this flow can be seen in figure \ref{fig:oidc-code-flow}. It consists of seven main steps:
+The underlying data transfer protocol used by eeID is almost identical to OpenID Connect code flow \cite{tara-technical, oidc}. One irregularity exists between the OIDC spec and eeID, which makes the whole flow non-compliant to the spec \cite{tara-non-oidc-compliant}, which we will get back to in a later chapter. Otherwise, the flow is identical. A high-level overview of this flow can be seen in Figure \ref{fig:oidc-code-flow}. It consists of seven main steps:
 
 \begin{figure}
   \centering
@@ -94,10 +94,9 @@ The manual verification process is sufficient to mitigate this attack; it is imp
 \begin{itemize}
   \item eeID does not include third-party resources (javascript, image, or other); therefore, it cannot leak any query parameters to third parties.
   \item The company is required not to have any third-party resources on the authentication and redirect pages.
-        % \item The client is using a secret API key, rendering it impossible to obtain private information without its use.
 \end{itemize}
 
-The eeID service does not leak credentials to third parties anywhere on their log-in page (all resources used in their service are from their domain, see figure \ref{fig:eeid-leakviareferrer}). No mitigation measures are required.
+The eeID service does not leak credentials to third parties anywhere on their log-in page (all resources used in their service are from their domain, see Figure \ref{fig:eeid-leakviareferrer}). No mitigation measures are required.
 
 \begin{figure}
   \centering
@@ -113,7 +112,7 @@ The eeID service does not leak credentials to third parties anywhere on their lo
   \item The {form post} response mode is not supported. Not required, but it would prevent this form of attack completely.
 \end{itemize}
 
-Attackers can obtain authorization code, nonce, and state from the browser history (see figure \ref{fig:eeid-leakviahistory}); however, for them to be able to use codes, the relying party must be susceptible to CSRF attacks. Mitigation measures are sufficient only when CSRF mitigation is in place.
+Attackers can obtain authorization code, nonce, and state from the browser history (see Figure \ref{fig:eeid-leakviahistory}); however, for them to be able to use codes, the relying party must be susceptible to CSRF attacks. Mitigation measures are sufficient only when CSRF mitigation is in place.
 
 \begin{figure}
   \centering
@@ -154,7 +153,7 @@ Figure \ref{fig:oidc-code-flow-code-injection-mitigation} illustrates this mitig
 \paragraph{Clickjacking}
 
 \begin{itemize}
-  \item The eeID service's auth page does not use Content-Security-Policy, however it does use header X-Frame-Option: {DENY} (see figure \ref{fig:eeid-responseheaders}).
+  \item The eeID service's auth page does not use \texttt{Content-Security-Policy}, however it does use header \texttt{X-Frame-Option: {DENY}} (see Figure \ref{fig:eeid-responseheaders}).
   \item Relying party should integrate this or a similar countermeasure.
 \end{itemize}
 
@@ -189,7 +188,7 @@ The primary validation user has to implement is protection against CSRF and code
 
 \subparagraph{Attack description}
 
-For reference to how the mitigation works, we will use the figure \ref{fig:oidc-code-flow-code-injection-mitigation}. We will provide three examples for the countermeasure: no state and nonce, strong state and nonce, and strong state and nonce. Because eeID and TARA both require sending the {state} parameter, for this example, we will use a weak constant state string, such as "x".
+For reference to how the mitigation works, we will use the Figure \ref{fig:oidc-code-flow-code-injection-mitigation}. We will provide three examples for the countermeasure: no state and nonce, strong state and nonce, and strong state and nonce. Because eeID and TARA both require sending the {state} parameter, for this example, we will use a weak constant state string, such as "x".
 
 Our attack exists on the third step of the OIDC code flow - right after the user agent receives the redirect response but before they are redirected. An attacker can stop a request by changing the victim's firewall settings to block the WorkAuth servers and would be able to extract the authorization code from the browser history. This attack, however, is just a single example of countless similarly creative attacks.
 
@@ -199,7 +198,7 @@ After the user agent gets redirected, the attacker can extract both code and sta
 
 \subparagraph{Attack \#2 - Strong state without nonce}
 
-This attack is similar to the first example but with the introduction of user agent session binding. The relying party, before they redirect the user agent (step 1 response in figure \ref{fig:oidc-code-flow-code-injection-mitigation}), would issue a cookie on who's value the state parameter depends. An example would be to have a session token, a regular 32-byte random string, and the state parameter would be an {SHA-256} hash of that string. Attackers would not be able to reverse the hash to fabricate the cookie, and if the server, when validating the request, notices that the hash of the session cookie does not match the state, it would reject the HTTP request.
+This attack is similar to the first example but with the introduction of user agent session binding. The relying party, before they redirect the user agent (step 1 response in Figure \ref{fig:oidc-code-flow-code-injection-mitigation}), would issue a cookie on who's value the state parameter depends. An example would be to have a session token, a regular 32-byte random string, and the state parameter would be an {SHA-256} hash of that string. Attackers would not be able to reverse the hash to fabricate the cookie, and if the server, when validating the request, notices that the hash of the session cookie does not match the state, it would reject the HTTP request.
 
 A way to circumvent this for attackers would be to use two sessions. Attackers would create a session with the relying party and wait for a victim. The victim creates a session, gets redirected, and authenticates. After the victim tries to return, the attacker stops them, takes only their authorization code, and puts it in their request. When the relying party validates the request, it would see that the attacker's cookie's hash matches the attacker's state parameter.
 
@@ -207,7 +206,7 @@ A way to circumvent this for attackers would be to use two sessions. Attackers w
 
 To protect against authorization token injection, the relying party must bind the user agent session to the state parameter and the identity token (the result of consuming the authorization code). The relying party can achieve this by using the nonce parameter.
 
-In step 6 of figure \ref{fig:oidc-code-flow-code-injection-mitigation}, we see that if we use the nonce parameter, additionally, we receive a nonce value in the identity token. This value exactly matches the one sent in the initial {authorize} request (step 2). If we store nonce and state inside of a user agent cookie, we can see that this prevents the previous attack, as it required victims to create a session themselves, and by doing so, they would generate a nonce that would be different than the attackers. Unlike the state parameter, they do not know what nonce was used and are unlikely to guess.
+In step 6 of Figure \ref{fig:oidc-code-flow-code-injection-mitigation}, we see that if we use the nonce parameter, additionally, we receive a nonce value in the identity token. This value exactly matches the one sent in the initial {authorize} request (step 2). If we store nonce and state inside of a user agent cookie, we can see that this prevents the previous attack, as it required victims to create a session themselves, and by doing so, they would generate a nonce that would be different than the attackers. Unlike the state parameter, they do not know what nonce was used and are unlikely to guess.
 
 If the attackers manage to guess the nonce, they would also be required to update their user agent cookie. For {relying parties} to protect against this attack, they can encrypt this cookie to prevent external tampering.
 
@@ -231,7 +230,7 @@ This thesis will use Microsoft's official ASP.NET Core library \cite{ms-auth-oid
   \label{fig:addoidc-azure}
 \end{figure}
 
-\paragraph{Manual integration} If, for any reason, the use of libraries is not available or acceptable, developers can integrate the OpenID Connect protocol themselves. They do not have to integrate the whole protocol, just the code flow. For reference, we will use the source code from the {.NET} library \cite{ms-auth-oidc-src} and the TARA documentation \cite{tara-technical}. The steps listed will be as seen in figure \ref{fig:oidc-code-flow}.
+\paragraph{Manual integration} If, for any reason, the use of libraries is not available or acceptable, developers can integrate the OpenID Connect protocol themselves. They do not have to integrate the whole protocol, just the code flow. For reference, we will use the source code from the {.NET} library \cite{ms-auth-oidc-src} and the TARA documentation \cite{tara-technical}. The steps listed will be as seen in Figure \ref{fig:oidc-code-flow}.
 
 \subparagraph{Login}
 
@@ -240,19 +239,19 @@ This step is all about user agent session binding and {authorize URL} generation
 For the {authorize} endpoint URL generation is best to look at chapter 4.1 of TARA documentation \cite{tara-technical}. There are, however, some notes to keep in mind when integrating the eeID service:
 
 \begin{itemize}
-  \item \url{https://auth.eeid.ee/oidc/.well-known/openid-configuration} contains all of the necessary information to realize which endpoints to use and what values are currently accepted.
-  \item \url{https://test-auth.eeid.ee/oidc/.well-known/openid-configuration} contains the configuration for the eeID test environment.
-  \item {response\_type}: the only flow supported by TARA/eeID is code flow, so this value can only be code.
-  \item {nonce}: although not required, it protects against authorization code injection attacks and should be used whenever possible \cite{ietf-oauth-security-topics-19}. See the previous chapter for more details.
-  \item {ui\_locales, acr\_values}: these fields are non-standard, and most, if not all, libraries will not support them out of the box. For most use cases, these values can be left empty.
-  \item {code\_challenge, code\_verifier}: Proof Key for Code Exchange (PKCE) is not supported, {nonce} should be used in its place.
-  \item {response\_mode}: not supported, therefore only response mode of {query} can be used.
-  \item {nonce, state}: both nonce and state have the exact behavior (see Discovered Weaknesses section for more information).
+  \item \url{https://auth.eeid.ee/} is the eeID production environment.
+  \item \url{https://test-auth.eeid.ee/} is the eeID test environment.
+  \item \texttt{response\_type}: the only flow supported by TARA/eeID is \texttt{code} flow, so this value can only be \texttt{code}.
+  \item \texttt{nonce}: although not required, it protects against authorization code injection attacks and should be used whenever possible \cite{ietf-oauth-security-topics-19}. See the previous chapter for more details.
+  \item \texttt{ui\_locales, acr\_values}: these fields are non-standard, and most, if not all, libraries will not support them out of the box. For most use cases, these values can be left empty.
+  \item \texttt{code\_challenge, code\_verifier}: Proof Key for Code Exchange (PKCE) is not supported, \texttt{nonce} should be used in its place.
+  \item \texttt{response\_mode}: not supported, therefore only response mode of \texttt{query} can be used.
+  \item \texttt{nonce, state}: both \texttt{nonce} and \texttt{state} have the exact behavior (see Discovered Weaknesses section for more information).
 \end{itemize}
 
-With this information, we can extrapolate a working {authorize} request (see listing \ref{lst:eeid-authorize}).
+With this information, we can extrapolate a working {authorize} request (see Listing \ref{lst:eeid-authorize}).
 
-\begin{lstlisting}[caption={The eeID service authorize endpoint request}, label={lst:eeid-authorize}]
+\begin{lstlisting}[caption={The eeID service authorize endpoint request}, label={lst:eeid-authorize}] 
   GET https://test-auth.eeid.ee/oidc/authorize?
 
   client_id=oidc-b0669946-896b-4cdf-a478-a60afd5c18a5-20&
@@ -263,7 +262,7 @@ With this information, we can extrapolate a working {authorize} request (see lis
   state=J5BpaPNynnbhZCWmDlCZc5QWznVyIfebYGkZ3...
 \end{lstlisting}
 
-Before redirecting the user to the {authorize} endpoint, it is essential to bind the nonce and the state to the user agent session. We accomplish this by attaching an encrypted cookie to the response, which the user agent will save before it gets redirected.
+Before redirecting the user to the \texttt{authorize} endpoint, it is essential to bind the \texttt{nonce} and the \texttt{state} to the user agent session. We accomplish this by attaching an encrypted cookie to the response, which the user agent will save before it gets redirected.
 
 \subparagraph{Authorize and Second log-in}
 
@@ -271,7 +270,7 @@ When the user agent redirects the user to the eeID service authentication page, 
 
 \subparagraph{Callback: verify state}
 
-After the user finishes authentication with the eeID service, they are redirected to the redirect\_url defined in the request with particular query parameters (see listing \ref{lst:eeid-authorize-callback}). Note the inclusion of nonce, as this value should not be here \cite{okta-oidc-spec} (see Discovered Weaknesses section), and we will ignore it for the rest of this section.
+After the user finishes authentication with the eeID service, they are redirected to the \texttt{redirect\_url} defined in the request with particular query parameters (see Listing \ref{lst:eeid-authorize-callback}). Note the inclusion of \texttt{nonce}, as this value should not be here \cite{okta-oidc-spec} (see Discovered Weaknesses section), and we will ignore it for the rest of this section.
 
 \begin{lstlisting}[caption={The eeID service authorize redirect response}, label={lst:eeid-authorize-callback}]
   GET https://auth.eid.gedas.dev/signin-tara?
@@ -281,11 +280,11 @@ After the user finishes authentication with the eeID service, they are redirecte
   state=J5BpaPNynnbhZCWmDlCZc5QWznVyIfebYGkZ3...
 \end{lstlisting}
 
-The WorkAuth's server's first step is to verify if the state received in the callback matches the one stored in the user agent session. If it does not, it was a possible CSRF attack, and the process should end here.
+The WorkAuth's server's first step is to verify if the \texttt{state} received in the callback matches the one stored in the user agent session. If it does not, it was a possible CSRF attack, and the process should end here.
 
 \subparagraph{Callback: acquire token}
 
-Once the authorization server that the state matches the user agent session, it is safe to exchange the received code for an identity token. See listing \ref{lst:eeid-token} for a request example.
+Once the authorization server that the state matches the user agent session, it is safe to exchange the received code for an identity token. See Listing \ref{lst:eeid-token} for a request example.
 
 \begin{lstlisting}[caption={The eeID service token request}, label={lst:eeid-token}]
   POST /oidc/token HTTP/1.1
@@ -298,7 +297,7 @@ Once the authorization server that the state matches the user agent session, it 
   redirect_uri=https%3A%2F%2Fauth.eid.gedas.dev%2Fsignin-tara
 \end{lstlisting}
 
-The inclusion of redirect\_uri here may be confusing. It is required as per the OAuth2 spec (section 4.1.3) \cite{rfc6749} and prevents open redirection attacks when using wildcards. The eeID service does not appear to allow them, so the inclusion of this value is redundant; however, if it were excluded, the protocol would no longer be OpenID Connect compliant.
+The inclusion of \texttt{redirect\_uri} here may be confusing. It is required as per the OAuth2 spec (section 4.1.3) \cite{rfc6749} and prevents open redirection attacks when using wildcards. The eeID service does not appear to allow them, so the inclusion of this value is redundant; however, if it were excluded, the protocol would no longer be OpenID Connect compliant.
 
 \subparagraph{Callback: verify token}
 
@@ -314,18 +313,18 @@ After the server verifies the identity token, issue a new access token with the 
 
 \subsubsection{Incorrect Implementation of at\_hash}
 
-In the TARA Technical Specification \cite{tara-technical}, the identity token has at\_hash value that is not according to the OIDC spec \cite{oidc}.
+In the TARA Technical Specification \cite{tara-technical}, the identity token has \texttt{at\_hash} value that is not according to the OIDC spec \cite{oidc}.
 
-When looking at the id token response, it has a property at\_hash with the value of {X0MVjwrmMQs/IBzfU2osvw==}. This value is supposed to be base64url encoded. Instead, it is a regular base64 string. The Demo REST Client example provided by the same authors \cite{tara-demorest} correctly converts the base64 value into the base64url encoded value, which leads us to believe that there is a mistake in the documentation and or implementation. If it was following the specifications of the TARA documentation and not OIDC spec, it should have no reason to do so.
+When looking at the id token response, it has a property \texttt{at\_hash} with the value of \texttt{X0MVjwrmMQs/IBzfU2osvw==}. This value is supposed to be \texttt{base64url} encoded. Instead, it is a regular \texttt{base64} string. The Demo REST Client example provided by the same authors \cite{tara-demorest} correctly converts the \texttt{base64} value into the \texttt{base64url} encoded value, which leads us to believe that there is a mistake in the documentation and or implementation. If it was following the specifications of the TARA documentation and not OIDC spec, it should have no reason to do so.
 
-The eeID service follows the TARA documentation, and because of that, the at\_hash uses base64. An issue arises when the using OpenID Connect libraries (see listing \ref{lst:ms-oidc-at-hash}).
+The eeID service follows the TARA documentation, and because of that, the \texttt{at\_hash} uses \texttt{base64}. An issue arises when the using OpenID Connect libraries (see Listing \ref{lst:ms-oidc-at-hash}).
 
 \begin{lstlisting}[caption={Microsoft.IdentityModel.Protocols.OpenIdConnect fails to validate at\_hash}, label={lst:ms-oidc-at-hash}]
   IDX21348: Validating the 'at_hash' failed, see inner exception.
   IDX21300: The hash claim: 'UtsKV8+hA/bB0EE/xR9cCQ==' in the id_token did not validate with against: 'AT-95-VU6Y2LZjrNrVCdhlEaCxG6Gpzt0RsE-Z', algorithm: 'RS256'.
 \end{lstlisting}
 
-If we compute the hash manually, we see precisely why the verification failure happens (see listing \ref{lst:athash-manual}). The implementation expects a different string than was provided. The same transcoding behavior is seen on the TARA Demo Client \cite{tara-demorest}.
+If we compute the hash manually, we see precisely why the verification failure happens (see Listing \ref{lst:athash-manual}). The implementation expects a different string than was provided. The same transcoding behavior is seen on the TARA Demo Client \cite{tara-demorest}.
 
 \begin{lstlisting}[caption={Verifying at\_hash manually}, label={lst:athash-manual}, language={bash}]
   user@localhost:~$ access_token="AT-95-VU6Y2LZjrNrVCdhlEaCxG6Gpzt0RsE-Z"
@@ -341,15 +340,15 @@ The reason for the incorrect implementation stems from backward compatibility \c
 
 \subsubsection{Confusing state and nonce Behavior}
 
-OpenID Connect specification does not mention that state should be transferred over to the id\_token. TARA confused the purposes of state and nonce properties, extended the behavior to cover each other, and, by extension, made one of the properties obsolete.
+OpenID Connect specification does not mention that state should be transferred over to the \texttt{id\_token}. TARA confused the purposes of state and nonce properties, extended the behavior to cover each other, and, by extension, made one of the properties obsolete.
 
 The state property is part of the underlying OAuth2.0 specification, where it is an "opaque value used by the client to maintain state between the request and callback" \cite{rfc6749}. The primary security feature is to prevent CSRF attacks \cite{rfc6749,ietf-oauth-security-topics-19}.
 
-The nonce property is part of the OpenID Connect specification, and its primary purpose is to prevent replay attacks when using implicit or hybrid flows \cite{oidc}. Later, researchers discovered that it could also protect against authorization code injection attacks with the code flow. The disadvantage of using {nonce} as a state parameter is that it directly influences the size of the id\_token, which should be kept as small as possible. The reason for keeping this token as small as possible is so that developers could later send them in request headers to their resource servers \cite{rfc7519}. The only issue is that these tokens expire after 40 seconds and cannot be refreshed \cite{tara-technical}, making this approach impractical.
+The \texttt{nonce} property is part of the OpenID Connect specification, and its primary purpose is to prevent replay attacks when using implicit or hybrid flows \cite{oidc}. Later, researchers discovered that it could also protect against authorization code injection attacks with the \texttt{code} flow. The disadvantage of using \texttt{nonce} as a \texttt{state} parameter is that it directly influences the size of the \texttt{id\_token}, which should be kept as small as possible. The reason for keeping this token as small as possible is so that developers could later send them in request headers to their resource servers \cite{rfc7519}. The only issue is that the tokens sent by eeID expire after 40 seconds and cannot be refreshed \cite{tara-technical}, making this approach impractical.
 
-If we look at the data flow diagram (see figure \ref{fig:oidc-code-flow-wrong}), we see that both state and nonce have each other's properties. After the user agent returns to the callback URL, both {nonce} and {state} are returned when only {state} is required. After the company's authentication server establishes a backchannel and redeems the code for an id\_token, this token again contains both {nonce} and {state} when only {nonce} is required.
+If we look at the data flow diagram (see Figure \ref{fig:oidc-code-flow-wrong}), we see that both \texttt{state} and \texttt{nonce} have each other's properties. After the user agent returns to the callback URL, both \texttt{nonce} and \texttt{state} are returned when only \texttt{state} is required. After the company's authentication server establishes a backchannel and redeems the \texttt{code} for an \texttt{id\_token}, this token again contains both \texttt{nonce} and \texttt{state} when only \texttt{nonce} is required.
 
-In the security analysis performed last year, a researcher suggested removing the nonce parameter from the protocol \cite{tara-security-arnis}. We disagree with this approach and would suggest removing the state parameter from the id\_token response. Removing the nonce parameter and having no support for PKCE would break OIDC compliant libraries' ability to mitigate authorization code injection attacks.
+In the security analysis performed last year, a researcher suggested removing the \texttt{nonce} parameter from the protocol \cite{tara-security-arnis}. We disagree with this approach and would suggest removing the \texttt{state} parameter from the \texttt{id\_token} response. Removing the \texttt{nonce} parameter and having no support for PKCE would break OIDC compliant libraries' ability to mitigate authorization code injection attacks.
 
 \subsubsection{Wrong Claims in the OpenID Connect Discovery Endpoint}
 

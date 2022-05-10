@@ -4,7 +4,7 @@ This thesis tried to answer the question of what is the best eID authentication 
 
 To answer that question, we first compiled a list of all eID solutions available to Estonia and filtered out those who offer services to the private sector. This list included {bank link}, smart cards, Mobile-ID, Smart-ID, eeID, and Dokobit. For the in-depth analysis, we chose eeID, Dokobit, and smart cards in the form of Web eID.
 
-We investigated the architectural requirements to support eID authentication and discovered that a simple SSO server is sufficient to integrate the authentication protocol fully. However, upon further research, we found that eID authentication does not cover data confidentiality or integrity requirements if the attacker is a malicious employee. They are likely to have alternative means to access the data store, allowing them to read and tamper with data without using eID.
+We investigated the architectural requirements to support eID authentication and discovered that a simple SSO server is sufficient to integrate the authentication protocol fully. However, upon further research, we found that eID authentication does not cover data confidentiality or integrity requirements if the attacker is a malicious employee. They are likely to have alternative means to access the data store, allowing them to read and tamper with data without using eID. Having alternate methods of accessing protected data limits the usefulness of eID authentication.
 
 We compared three eID solutions: eeID, Dokobit, and Web eID. The chosen comparison criteria were trust, market reach, price, convenience, integration and maintenance costs, security, and documentation comprehensiveness.
 

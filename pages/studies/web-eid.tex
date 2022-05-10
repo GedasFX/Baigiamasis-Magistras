@@ -50,8 +50,8 @@ Web eID does not have a hosted website to verify security of. Instead, we will c
 \paragraph{Replay attacks}
 
 \begin{itemize}
-  \item The protocol requires the server to send a challenge nonce to the Web eID software.
-  \item This generated nonce must be between 32 and 96 bytes (inclusive) in length \cite{ria-webeid-source-web-eid-app-authenticate}.
+  \item The protocol requires the server to send a \texttt{challenge nonce} to the Web eID software.
+  \item This generated \texttt{nonce} must be between 32 and 96 bytes (inclusive) in length \cite{ria-webeid-source-web-eid-app-authenticate}.
 \end{itemize}
 
 The software allows for the use of nonces more than once. It is the server's responsibility to create nonces; make sure that they were not already used or expired.
@@ -61,7 +61,7 @@ The documentation states this explicitly: "Cache must be used for protection aga
 \paragraph{Insufficient Redirect URI Validation}
 
 \begin{itemize}
-  \item When signing the challenge nonce, the Web eID library hashes and signs {location.origin} variable in addition to the nonce.
+  \item When signing the \texttt{challenge nonce}, the Web eID library hashes and signs {location.origin} variable in addition to the \texttt{nonce}.
 \end{itemize}
 
 While not entirely redirect URI validation, the protocol still requires the domain check to mitigate against man-in-the-middle and authentication token export and replay attacks \cite{ria-webeid-systemarchitecture}.
@@ -84,7 +84,7 @@ Web eID, unlike the eID solutions analyzed before, comes with a hazardous proble
   \item the authentication certificate does not contain any disallowed policies;
   \item the authentication certificate is signed by a trusted certificate authority;
   \item certificate is not revoked (OCSP);
-  \item signed challenge nonce corresponds to the certificate's public key.
+  \item signed \texttt{challenge nonce} corresponds to the certificate's public key.
 \end{enumerate}
 
 The documentation is thorough, listing all requirements developers must take to harden their systems. Additionally, documentation also provides reasons for the requirements' inclusion. Unfortunately, this list of validations is far longer than the other two eID solutions mentioned earlier, making it more challenging to integrate.
@@ -95,19 +95,19 @@ For each protocol implementation step, developers will have to fulfill certain v
 
 \subsubsection{Preparation}
 
-Building the challenge nonce. The goal of these steps is to create the challenge the user will have to sign with their private key. There are a couple of requirements the relying party must satisfy:
+Building the \texttt{challenge nonce}. The goal of these steps is to create the challenge the user will have to sign with their private key. There are a couple of requirements the relying party must satisfy:
 \begin{enumerate}
-  \item Generated challenge nonce must be between 32 and 96 bytes (inclusive) in length \cite{ria-webeid-source-web-eid-app-authenticate};
-  \item It must be guaranteed that the authentication token is received from the same browser to which the corresponding challenge nonce was issued \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}. The eID solution creators suggest attaching it to the user session.
+  \item Generated \texttt{challenge nonce} must be between 32 and 96 bytes (inclusive) in length \cite{ria-webeid-source-web-eid-app-authenticate};
+  \item It must be guaranteed that the authentication token is received from the same browser to which the corresponding \texttt{challenge nonce} was issued \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}. The eID solution creators suggest attaching it to the user session.
   \item Cache must be used for protection against replay attacks by guaranteeing that each authentication token can be used exactly once \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}.
 \end{enumerate}
 
 In the implementation example, these measures were addressed by:
 \begin{enumerate}
-  \item a 64 byte cryptographically secure randomly generated nonce is created (see listing \ref{lst:web-eid-challenge});
-  \item challenge nonce is set in the user's session, which adversaries cannot access or tamper;
-  \item the generated nonce is stored into local memory cache for later use; nonce expires after 5 minutes;
-  \item an input field is rendered on the page with a unique CSRF validation token, which prevents cross-site request forgery attacks (see listing \ref{lst:web-eid-challenge-ui});
+  \item a 64 byte cryptographically secure randomly generated \texttt{nonce} is created (see Listing \ref{lst:web-eid-challenge});
+  \item \texttt{challenge nonce} is set in the user's session, which adversaries cannot access or tamper;
+  \item the generated \texttt{nonce} is stored into local memory cache for later use; \texttt{nonce} expires after 5 minutes;
+  \item an input field is rendered on the page with a unique CSRF validation token, which prevents cross-site request forgery attacks (see Listing \ref{lst:web-eid-challenge-ui});
 \end{enumerate}
 
 \begin{lstlisting}[caption={Web eID Challenge Endpoint}, label={lst:web-eid-challenge}]
@@ -155,20 +155,20 @@ public IActionResult GetChallenge()
 
 \subsubsection{Validation}
 
-After the user signs the nonce challenge and sends their certificate, the server must verify its authenticity. The application must perform all of the following before allowing the user to sign in:
+After the user signs the \texttt{nonce} challenge and sends their certificate, the server must verify its authenticity. The application must perform all of the following before allowing the user to sign in:
 
 \begin{enumerate}
   \item verify the CSRF token from earlier steps \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme};
-  \item verify the challenge nonce came from the original user and has not expired, was not consumed;
-  \item verify the certificate validity and check if nonce was signed by the associated private key (see below);
+  \item verify the \texttt{challenge nonce} came from the original user and has not expired, was not consumed;
+  \item verify the certificate validity and check if \texttt{nonce} was signed by the associated private key (see below);
   \item issue an authentication token with the fields from the certificate's subject;
 \end{enumerate}
 
 In our implementation, these measures were addressed by:
 \begin{enumerate}
-  \item the back-end endpoint for log-in is decorated with ValidateAntiForgeryToken Attribute. This attribute instructs the ASP.NET API to ignore requests not containing a CSRF token \cite{msdocs-anti-request-forgery}. A JavaScript application can only access the protected endpoints by providing RequestVerificationToken header (see listing \ref{lst:web-eid-challenge-ui});
-  \item the application tries to extract the challenge nonce from the browsing session. The process would succeed if the session cookie were not modified. After the extraction, the application checks the nonce cache to verify if the challenge is still active. Cache hit means the nonce has not expired, and no previous authentication attempt was performed. Remove the challenge nonce from all stores.
-  \item The API calls a standalone validation service to verify the nonce and certificate (see certificate and nonce verification section below).
+  \item the back-end endpoint for log-in is decorated with \texttt{ValidateAntiForgeryToken} attribute. This attribute instructs the ASP.NET API to ignore requests not containing a CSRF token \cite{msdocs-anti-request-forgery}. A JavaScript application can only access the protected endpoints by providing \texttt{RequestVerificationToken} header (see Listing \ref{lst:web-eid-challenge-ui});
+  \item the application tries to extract the \texttt{challenge nonce} from the browsing session. The process would succeed if the session cookie were not modified. After the extraction, the application checks the \texttt{nonce} cache to verify if the challenge is still active. Cache hit means the \texttt{nonce} has not expired, and no previous authentication attempt was performed. Remove the \texttt{challenge nonce} from all stores.
+  \item The API calls a standalone validation service to verify the \texttt{nonce} and certificate (see certificate and \texttt{nonce} verification section below).
   \item Application populates the ASP.NET identity management system with the fields from the certificate: serial number, given name, surname, country. An identity session cookie is sent to the client.
 \end{enumerate}
 
@@ -206,7 +206,7 @@ public async Task<IActionResult> Login([FromBody] WebIdAuthTokenResponse token)
 
 This step is the most complicated in the entire validation process. To prevent any issues with incorrect implementation, the framework maintainers recommend using their library for validation \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}. Libraries can come with security vulnerabilities, and developers are reluctant to update their used version; however, it is still more favorable than to create vulnerabilities from misconfiguration \cite{9240619}.
 
-The eu.webeid.security Java package performs most of the certificate validation: expiry, purpose, policy, OCSP \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}. Developers will only have to configure the CA and host validation. Configuration is handled by providing a set of trusted CA certificates for trust chain verification and the hostname for challenge nonces (see listing \ref{lst:web-eid-java-lib}).
+The eu.webeid.security Java package performs most of the certificate validation: expiry, purpose, policy, OCSP \cite{ria-webeid-source-web-eid-authtoken-validation-java-readme}. Developers will only have to configure the CA and host validation. Configuration is handled by providing a set of trusted CA certificates for trust chain verification and the hostname for challenge nonces (see Listing \ref{lst:web-eid-java-lib}).
 
 \begin{lstlisting}[caption={Web eID Login Endpoint}, label={lst:web-eid-java-lib}]
 public class AuthTokenValidatorService {
@@ -247,11 +247,11 @@ public class AuthTokenValidatorService {
 }
 \end{lstlisting}
 
-The token validation service described in listing \ref{lst:web-eid-java-lib} requires WorkAuth maintainers to set the origin URL in the form of an environment variable and to populate the folder {/certs} with trusted CA certificates.
+The token validation service described in Listing \ref{lst:web-eid-java-lib} requires WorkAuth maintainers to set the origin URL in the form of an environment variable and to populate the folder \texttt{/certs} with trusted CA certificates.
 
-Origin URL can be obtained by checking the {window.origin} JavaScript variable in the page containing the log-in button.
+Origin URL can be obtained by checking the \texttt{window.origin} JavaScript variable in the page containing the log-in button.
 
-For the CA certificate set, the company can get an up-to-date list of trusted certificates at the EU Trust Services Dashboard \cite{eu-trustservices}. The issue with this list is that it contains all trust certificates for various scopes. In our case, we should limit the search to the extent of QCert for ESig. In the case of Estonia and Lithuania, only three entities are certified to issue certificates for QSCD (see figure \ref{fig:eu-tsp-list}). It is in stark contrast to Spain's 31 \cite{eu-trustservices}. It is possible to further narrow down to only certificate generation services for qualified certificates (CA/QC); however, it would not be possible to narrow down anymore. In the case of Estonia's single TSP, we can see that only 3 CA are currently operational (see figure \ref{fig:eu-tsp-skid}).
+For the CA certificate set, the company can get an up-to-date list of trusted certificates at the EU Trust Services Dashboard \cite{eu-trustservices}. The issue with this list is that it contains all trust certificates for various scopes. In our case, we should limit the search to the extent of QCert for ESig. In the case of Estonia and Lithuania, only three entities are certified to issue certificates for QSCD (see Figure \ref{fig:eu-tsp-list}). It is in stark contrast to Spain's 31 \cite{eu-trustservices}. It is possible to further narrow down to only certificate generation services for qualified certificates (CA/QC); however, it would not be possible to narrow down anymore. In the case of Estonia's single TSP, we can see that only 3 CA are currently operational (see Figure \ref{fig:eu-tsp-skid}).
 
 \begin{figure}
   \centering
@@ -277,6 +277,6 @@ The final count of certificates is six. Four certificates are required to suppor
 
 \paragraph{Exposing the service}
 
-With the certificate validation service configured, it is now required to link it to the Web API. If the company orients around using microservices, this service can be just that. All that the validation service requires is to expose an endpoint that accepts a nonce and a token from the javascript library and returns a validation result.
+With the certificate validation service configured, it is now required to link it to the Web API. If the company orients around using microservices, this service can be just that. All that the validation service requires is to expose an endpoint that accepts a \texttt{nonce} and a token from the JavaScript library and returns a validation result.
 
 Companies must take proper measures to protect such service from adversaries as it acts as a fundamental trust anchor. {Zero trust architecture} \cite{zero-trust-architecture} is an excellent choice for this task.
